@@ -17,11 +17,23 @@ class Spider():
 
 
     def spider(self):
+        '''
+        爬取当前页面的URL
+        :return:
+        '''
         try:
             res = requests.post(self.url,headers=self.headers,cookies=self.cookies,timeout=10)
-            websites = []
-            print(res.text)
+            img_sites = []      # 图片链接
+            web_sites = []      # 网站链接
+            img_results = re.finditer('<img.*?src="(.*?)".*?>',res.text,re.S)
+            web_results = re.finditer('<a href="(.*?)".*?>',res.text,re.S)
+            for i in img_results:
+                img_sites.append(i.group(1))
+            for j in web_results:
+                web_sites.append(j.group(1))
+            print(img_sites)
+            print(web_sites)
 
         except:
-            print("网站访问超时")
+            print("网站访问出现点问题了...")
             sys.exit(1)
