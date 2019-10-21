@@ -25,8 +25,10 @@ class Scanner():
             sys.argv.append('-h')
         parser = argparse.ArgumentParser()
         parser.add_argument('-u','--url',help='扫描对象的url')
-        parser.add_argument('--spider',help='爬取网站上的网页链接',action="store_true")
-        parser.add_argument('--scan',help='扫描网站后台',action="store_true")
+        parser.add_argument('--cookies',default=None,help='目标网站的cookies')
+        parser.add_argument('--spider',help='爬取网站上的网页链接',action='store_true')
+        parser.add_argument('--scan',help='扫描网站后台',action='store_true')
+        parser.add_argument('--sqlscan',help='网站SQL注入检测',action='store_true')
         args = parser.parse_args()
         for x, y in args._get_kwargs():
             ter_opt[x] = y    # 保存为键值对
@@ -54,6 +56,7 @@ class Scanner():
         if re.match('(http|https)://(.*?)\.(.*)',url):     # 匹配以http|https开头的网站
             return
         elif re.match('(.*?)\.(.*)',url):                  # 匹配xxx.xxx...规则的网站
+            self.opt['url'] = "https://"+url               # 添加协议头
             return
         else:
             print("URL格式出错!")
@@ -66,11 +69,12 @@ class Scanner():
         :return:
         '''
         if self.opt['spider']:
-            func_spider.Spider(self.opt['url'])
+            func_spider.Spider(self.opt['url'],self.opt['cookies'])
         if self.opt['scan']:
-            func_scan.Scan(self.opt['url'])
+            func_scan.Scan(self.opt['url'],self.opt['cookies'])
         else:
-            print("Nothing to do...")
+            # print("Nothing to do...")
+            pass
 
 
 
