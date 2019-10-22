@@ -65,7 +65,7 @@ class Spider():
             os.mkdir(dirpath)
         imgfile = open(imgfilepath,"a")
         try:
-            print("[ 网站图片链接 已保存于：{}]".format(imgfilepath))
+            print("[ 网站图片链接已保存于：{}]".format(imgfilepath))
             for m in self.img:
                 print(m)
                 imgfile.write(m+"\n")
@@ -74,7 +74,7 @@ class Spider():
         imgfile.close()
         webfile = open(webfilepath, "a")
         try:
-            print("[ 网站网页链接 已保存于：{}]".format(webfilepath))
+            print("[ 网站网页链接已保存于：{}]".format(webfilepath))
             for m in self.web:
                 print(m)
                 webfile.write(m + "\n")
