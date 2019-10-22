@@ -48,7 +48,7 @@ class Spider():
 
         except:
             print("网站访问出现点问题了...")
-            sys.exit(1)
+            # sys.exit(1)
 
 
     def spider_report(self):
@@ -70,7 +70,7 @@ class Spider():
                 print(m)
                 imgfile.write(m+"\n")
         except:
-            pass
+            print("[ 并没有扫描到图片链接 ]")
         imgfile.close()
         webfile = open(webfilepath, "a")
         try:
@@ -79,6 +79,6 @@ class Spider():
                 print(m)
                 webfile.write(m + "\n")
         except:
-            pass
+            print("[ 并没有扫描到网页链接 ]")
         webfile.close()
         return
