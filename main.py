@@ -56,7 +56,7 @@ class Scanner():
         if re.match('(http|https)://(.*?)\.(.*)',url):     # 匹配以http|https开头的网站
             return
         elif re.match('(.*?)\.(.*)',url):                  # 匹配xxx.xxx...规则的网站
-            self.opt['url'] = "https://"+url               # 添加协议头
+            self.opt['url'] = "http://"+url                # 添加协议头
             return
         else:
             print("URL格式出错!")
