@@ -137,10 +137,9 @@ class Scan():
         res = requests.post(url,cookies=self.cookies,timeout=5)
         status = res.status_code
         self.sites_reports = []
-        # if status == '200' or status == '302':
-        if res.status_code:
+        if status == 200 or status == 302:
             msg = "{0} : {1}".format(status,url)
-            print(msg)
+            # print(msg)
             self.sites_reports.append(msg)
         return False
 
