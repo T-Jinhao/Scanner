@@ -63,11 +63,20 @@ class Scanner():
             sys.exit(1)
 
 
+    def base_report(self):
+        print('>>>>>base_report'+'-'*40)
+        for i in self.opt:
+            if self.opt[i]:
+                print("{0} : {1}".format(i,self.opt[i]))
+        print('-'*40+'<<<<<base_report'+'\n')
+
+
     def run(self):
         '''
         调用模块
         :return:
         '''
+        self.base_report()
         if self.opt['spider']:
             func_spider.Spider(self.opt['url'],self.opt['cookies'])
         if self.opt['scan']:
