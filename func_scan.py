@@ -12,7 +12,6 @@ import time
 class Scan():
     def __init__(self,url,cookies):
         self.url = self.url_parse(url)
-        self.sites_reports = []
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
         }
@@ -101,14 +100,14 @@ class Scan():
                 # print(x.replace('\n',''))
             f.close()
 
-        payloadpath = "{0}\{1}\{2}".format(path, 'dict\scan', file)
-        F = open(payloadpath,'rb')
-        for x in F:
-            try:
-                payloads.append(x.decode('gb2312').replace('\n',''))
-            except:
-                pass
-        F.close()
+        # payloadpath = "{0}\{1}\{2}".format(path, 'dict\scan', file)
+        # F = open(payloadpath,'rb')
+        # for x in F:
+        #     try:
+        #         payloads.append(x.decode('gb2312').replace('\n',''))
+        #     except:
+        #         pass
+        # F.close()
         return payloads
 
 
@@ -137,16 +136,19 @@ class Scan():
         '''
         res = requests.post(url,cookies=self.cookies,timeout=5)
         status = res.status_code
-        if status == '200' or status == '302':
+        self.sites_reports = []
+        # if status == '200' or status == '302':
+        if res.status_code:
             msg = "{0} : {1}".format(status,url)
             print(msg)
-            self.sites_reposts.append(msg)
+            self.sites_reports.append(msg)
         return False
 
 
     def scan_report(self,report):
         path = os.path.abspath(os.path.dirname(__file__))
-        dirname = self.url.replace("https://", "")
+        parse_url = urlparse(self.url)
+        dirname = parse_url.netloc
         dirpath = "{0}\{1}\{2}".format(path, "reports", dirname)
         filepath = "{0}\{1}".format(dirpath, "scan_report.txt")
         if not os.path.exists(dirpath):
