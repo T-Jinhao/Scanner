@@ -19,6 +19,8 @@ class Scan():
         print('>>>>>scan'+'-'*40)
         print("[ 开始分析网站：{} ]".format(self.url))
         web_type = self.web_indetify(url)
+        if not web_type:
+            web_type = self.web_auto_indetify(url)
         print("[ 网站类型：{} ]".format(web_type))
         payloads = self.load_payload(web_type)
         print('[ payload导入完成 ]')
@@ -64,24 +66,39 @@ class Scan():
         try:
             s = re.match('(.*?)\.(.*)', path[1])
         except:
-            return '未知'      # 识别无path情况的url
+            return ''      # 识别无path情况的url
         if s == None:
-            return '未知'
+            return ''
         else:
             return s.group(2)
+
+    def web_auto_indetify(self,url):
+        '''
+        自动添加path并识别网页类型
+        :param url:
+        :return:
+        '''
+        for i in ['/index.php','/index.asp','/index.aspx','/index.mdb']:
+            URL = "{0}{1}".format(url,i)
+            try:
+                res = requests.post(URL,cookies=self.cookies,headers=self.headers,timeout=5)
+                if res.status_code == 200:
+                    m = self.web_indetify(URL)
+                    return m
+            except:
+                pass
+        return '未能识别'
 
 
     def load_payload(self,type):
         '''
-        根据网站类型加载响应payload，但最终都会加载完整的cgi.list
+        根据网站类型附加相应payload
         :param type: 网站类型
         :return: payloads
         '''
-        file = 'cgi.list'
+        file = 'dicc.txt'
         payloads = []
-        if type == '未知' :
-            filename = ''
-        elif type == 'php':
+        if type == 'php':
             filename = 'PHP.txt'
         elif type == 'asp':
             filename = 'ASP.txt'
@@ -92,6 +109,15 @@ class Scan():
         else:
             filename = ''
         path = os.path.abspath(os.path.dirname(__file__))
+        payloadpath = "{0}\{1}\{2}".format(path, 'dict\scan', file)
+        F = open(payloadpath, 'r')
+        for x in F:
+            try:
+                t = '/' + x.replace('\n','')
+                payloads.append(t)
+            except:
+                pass
+        F.close()
         if filename != '':
             filepath = "{0}\{1}\{2}".format(path,'dict\scan',filename)
             f = open(filepath,'r')
@@ -100,14 +126,6 @@ class Scan():
                 # print(x.replace('\n',''))
             f.close()
 
-        # payloadpath = "{0}\{1}\{2}".format(path, 'dict\scan', file)
-        # F = open(payloadpath,'rb')
-        # for x in F:
-        #     try:
-        #         payloads.append(x.decode('gb2312').replace('\n',''))
-        #     except:
-        #         pass
-        # F.close()
         return payloads
 
 
@@ -134,13 +152,16 @@ class Scan():
         :param url:
         :return:
         '''
-        res = requests.post(url,cookies=self.cookies,timeout=5)
-        status = res.status_code
-        self.sites_reports = []
-        if status == 200 or status == 302:
-            msg = "{0} : {1}".format(status,url)
-            # print(msg)
-            self.sites_reports.append(msg)
+        try:
+            res = requests.post(url,cookies=self.cookies,headers=self.headers,timeout=10)
+            status = res.status_code
+            self.sites_reports = []
+            if status == 200 or status == 302:
+                msg = "{0} : {1}".format(status,url)
+                # print(msg)
+                self.sites_reports.append(msg)
+        except:
+            return False
         return False
 
 
