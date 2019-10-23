@@ -5,7 +5,7 @@
 import requests,sys
 import re,os
 from bs4 import BeautifulSoup
-
+from urllib.parse import urlparse
 
 
 class Spider():
@@ -57,7 +57,8 @@ class Spider():
         :return:
         '''
         path = os.path.abspath(os.path.dirname(__file__))
-        dirname = self.url.replace("https://","")
+        parse_url = urlparse(self.url)
+        dirname = parse_url.netloc
         dirpath = "{0}\{1}\{2}".format(path,"reports",dirname)
         imgfilepath = "{0}\{1}".format(dirpath,"spider_img_report.txt")
         webfilepath = "{0}\{1}".format(dirpath, "spider_web_report.txt")
