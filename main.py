@@ -26,6 +26,7 @@ class Scanner():
         parser = argparse.ArgumentParser()
         parser.add_argument('-u','--url',help='扫描对象的url')
         parser.add_argument('--cookies',default=None,help='目标网站的cookies')
+        parser.add_argument('--threads',default=20,help='脚本启动线程数',type=int)
         parser.add_argument('--spider',help='爬取网站上的网页链接',action='store_true')
         parser.add_argument('--scan',help='扫描网站后台',action='store_true')
         parser.add_argument('--sqlscan',help='网站SQL注入检测',action='store_true')
@@ -80,7 +81,7 @@ class Scanner():
         if self.opt['spider']:
             func_spider.Spider(self.opt['url'],self.opt['cookies'])
         if self.opt['scan']:
-            func_scan.Scan(self.opt['url'],self.opt['cookies'])
+            func_scan.Scan(self.opt['url'],self.opt['cookies'],self.opt['threads'])
         else:
             # print("Nothing to do...")
             pass
