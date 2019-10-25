@@ -6,11 +6,12 @@ import os,sys
 import requests,re
 from dict import *
 from urllib.parse import urlparse
+from concurrent.futures import ThreadPoolExecutor
 import threading
 import time
 
 class Scan():
-    def __init__(self,url,cookies):
+    def __init__(self,url,cookies,threads):
         self.url = self.url_parse(url)
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
@@ -24,8 +25,8 @@ class Scan():
         print("[ 网站类型：{} ]".format(web_type))
         payloads = self.load_payload(web_type)
         print('[ payload导入完成 ]')
-        self.run(payloads)
-        self.scan_report(self.sites_reports)
+        self.run(payloads,threads)
+        self.scan_report()
         print('-'*40+'scan<<<<<'+'\n')
 
 
@@ -39,11 +40,13 @@ class Scan():
         :return:url的上级目录
         '''
         parse_url = urlparse(url)
+        print(parse_url)
         try:
-            url = parse_url.scheme + '://' + parse_url.netloc + parse_url.path
+            url = parse_url.scheme + '://' + parse_url.netloc + parse_url.path    # 除去参数
         except:
-            return url               # 返回IP形式
-        if parse_url.path == '':
+            return url             # 返回IP形式
+        if parse_url.path == '/' or parse_url.path == '':
+            url = parse_url.scheme + '://' + parse_url.netloc     # url最后不能以/结尾，不然影响添加payload
             return url
         else:
             url = url.rsplit('/', 1)
@@ -129,21 +132,22 @@ class Scan():
         return payloads
 
 
-    def run(self,payloads):
+    def run(self,payloads,threads):
         '''
-        部署网站路径扫描
-        :param payloads:
+        调用线程池
+        :param payloads: 导入的payload
+        :param threads: 最大线程数
         :return:
         '''
-        Threads = []
+        URL = []
         for x in payloads:
             url = self.url + x
-            thread = threading.Thread(target=self.sites_scan,args=(url,))
-            Threads.append(thread)
-        for t in Threads:
-            t.start()
-            t.join()
-            # self.sites_scan(url)
+            URL.append(url)
+        with ThreadPoolExecutor(max_workers=threads) as pool:
+            results = pool.map(self.sites_scan,URL)
+            for result in results:
+                print(result)
+            return results
 
 
     def sites_scan(self,url):
@@ -156,16 +160,18 @@ class Scan():
             res = requests.post(url,cookies=self.cookies,headers=self.headers,timeout=10)
             status = res.status_code
             self.sites_reports = []
-            if status == 200 or status == 302:
+            if status == 200 or status == 302 or status == 500 or status == 502:
                 msg = "{0} : {1}".format(status,url)
-                # print(msg)
                 self.sites_reports.append(msg)
+                return msg
         except:
-            return False
-        return False
+            msg = "[Timeout : {}]".format(url)
+            return msg
+        msg = "<Not Found : {}>".format(url)
+        return msg
 
 
-    def scan_report(self,report):
+    def scan_report(self):
         path = os.path.abspath(os.path.dirname(__file__))
         parse_url = urlparse(self.url)
         dirname = parse_url.netloc
@@ -176,7 +182,7 @@ class Scan():
         F = open(filepath,'a')
         try:
             print("[ 网站后台扫描报告已存放于：{}]".format(filepath))
-            for m in report:
+            for m in self.sites_reports:
                 F.write(m + '\n')
         except:
             print("[ 并没有扫描出可疑后台 ]")
