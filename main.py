@@ -23,13 +23,14 @@ class Scanner():
         ter_opt={}
         if len(sys.argv) == 1:
             sys.argv.append('-h')
-        parser = argparse.ArgumentParser()
-        parser.add_argument('-u','--url',help='扫描对象的url')
+        parser = argparse.ArgumentParser(description='简易扫描器，<>内为开启极致模式的简述',add_help=True)
+        parser.add_argument('-u','--url',help='扫描对象的url<递归爬取网站中url的url>')
         parser.add_argument('--cookies',default=None,help='目标网站的cookies')
-        parser.add_argument('--threads',default=20,help='脚本启动线程数',type=int)
+        parser.add_argument('--threads',default=20,help='脚本启动线程数<50>',type=int)
         parser.add_argument('--spider',help='爬取网站上的网页链接',action='store_true')
-        parser.add_argument('--scan',help='扫描网站后台',action='store_true')
+        parser.add_argument('--scan',help='扫描网站后台<附带超大payload>',action='store_true')
         parser.add_argument('--sqlscan',help='网站SQL注入检测',action='store_true')
+        parser.add_argument('-R','--crazy',help='以极致模式启动功能，比较耗时',action='store_true')
         args = parser.parse_args()
         for x, y in args._get_kwargs():
             ter_opt[x] = y    # 保存为键值对
@@ -77,11 +78,13 @@ class Scanner():
         调用模块
         :return:
         '''
+        if self.opt['crazy'] and self.opt['threads'] < 50:
+            self.opt['threads'] = 50
         self.base_report()
         if self.opt['spider']:
-            func_spider.Spider(self.opt['url'],self.opt['cookies'])
+            func_spider.Spider(self.opt['url'],self.opt['cookies'],self.opt['crazy'])
         if self.opt['scan']:
-            func_scan.Scan(self.opt['url'],self.opt['cookies'],self.opt['threads'])
+            func_scan.Scan(self.opt['url'],self.opt['cookies'],self.opt['threads'],self.opt['crazy'])
         else:
             # print("Nothing to do...")
             pass
