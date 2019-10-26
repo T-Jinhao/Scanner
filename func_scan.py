@@ -148,9 +148,10 @@ class Scan():
         with ThreadPoolExecutor(max_workers=threads) as pool:
             results = pool.map(self.sites_scan,URL)
             for result in results:
-                if result['flag']:     # 选择性输出
-                    reports.append(result['msg'])
+                if result['flag'] != 0:     # 选择性输出
                     print(result['msg'])
+                    if result['flag'] == 1:
+                        reports.append(result['msg'])
             return reports
 
 
@@ -171,10 +172,11 @@ class Scan():
                 return m
         except:
             msg = "[Timeout : {}]".format(url)
-            m = {'msg': msg, 'flag': 0}
+            m = {'msg': msg, 'flag': 2}
             return m
-        msg = "<Not Found : {}>".format(url)
-        m = {'msg': msg, 'flag': 0}
+        # msg = "<Not Found : {}>".format(url)
+        # m = {'msg': msg, 'flag': 0}
+        m = {'flag':0}
         return m
 
 
