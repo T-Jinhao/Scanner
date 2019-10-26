@@ -11,8 +11,9 @@ import threading
 import time
 
 class Scan():
-    def __init__(self,url,cookies,threads):
+    def __init__(self,url,cookies,threads,flag):
         self.url = self.url_parse(url)
+        self.flag = flag
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
         }
@@ -25,8 +26,8 @@ class Scan():
         print("[ 网站类型：{} ]".format(web_type))
         payloads = self.load_payload(web_type)
         print('[ payload导入完成 ]')
-        self.run(payloads,threads)
-        self.scan_report()
+        reports = self.run(payloads,threads)
+        self.scan_report(reports)
         print('-'*40+'scan<<<<<'+'\n')
 
 
@@ -40,7 +41,7 @@ class Scan():
         :return:url的上级目录
         '''
         parse_url = urlparse(url)
-        print(parse_url)
+        # print(parse_url)
         try:
             url = parse_url.scheme + '://' + parse_url.netloc + parse_url.path    # 除去参数
         except:
@@ -121,7 +122,7 @@ class Scan():
             except:
                 pass
         F.close()
-        if filename != '':
+        if filename != '' and self.flag:         # 此模块需要启动极致模式
             filepath = "{0}\{1}\{2}".format(path,'dict\scan',filename)
             f = open(filepath,'r')
             for x in f:
@@ -140,14 +141,17 @@ class Scan():
         :return:
         '''
         URL = []
+        reports = []
         for x in payloads:
             url = self.url + x
             URL.append(url)
         with ThreadPoolExecutor(max_workers=threads) as pool:
             results = pool.map(self.sites_scan,URL)
             for result in results:
-                print(result)
-            return results
+                if result['flag']:     # 选择性输出
+                    reports.append(result['msg'])
+                    print(result['msg'])
+            return reports
 
 
     def sites_scan(self,url):
@@ -159,19 +163,22 @@ class Scan():
         try:
             res = requests.post(url,cookies=self.cookies,headers=self.headers,timeout=10)
             status = res.status_code
-            self.sites_reports = []
+            # self.sites_reports = []
             if status == 200 or status == 302 or status == 500 or status == 502:
                 msg = "{0} : {1}".format(status,url)
-                self.sites_reports.append(msg)
-                return msg
+                # self.sites_reports.append(msg)
+                m = {'msg':msg,'flag':1}
+                return m
         except:
             msg = "[Timeout : {}]".format(url)
-            return msg
+            m = {'msg': msg, 'flag': 0}
+            return m
         msg = "<Not Found : {}>".format(url)
-        return msg
+        m = {'msg': msg, 'flag': 0}
+        return m
 
 
-    def scan_report(self):
+    def scan_report(self,reports):
         path = os.path.abspath(os.path.dirname(__file__))
         parse_url = urlparse(self.url)
         dirname = parse_url.netloc
@@ -181,9 +188,9 @@ class Scan():
             os.mkdir(dirpath)
         F = open(filepath,'a')
         try:
-            print("[ 网站后台扫描报告已存放于：{}]".format(filepath))
-            for m in self.sites_reports:
+            for m in reports:
                 F.write(m + '\n')
+            print("[ 网站后台扫描报告已存放于：{}]".format(filepath))
         except:
             print("[ 并没有扫描出可疑后台 ]")
         F.close()
