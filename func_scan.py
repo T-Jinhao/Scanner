@@ -164,18 +164,14 @@ class Scan():
         try:
             res = requests.post(url,cookies=self.cookies,headers=self.headers,timeout=10)
             status = res.status_code
-            # self.sites_reports = []
             if status == 200 or status == 302 or status == 500 or status == 502:
                 msg = "{0} : {1}".format(status,url)
-                # self.sites_reports.append(msg)
                 m = {'msg':msg,'flag':1}
                 return m
         except:
             msg = "[Timeout : {}]".format(url)
             m = {'msg': msg, 'flag': 2}
             return m
-        # msg = "<Not Found : {}>".format(url)
-        # m = {'msg': msg, 'flag': 0}
         m = {'flag':0}
         return m
 
