@@ -2,13 +2,12 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
-from dict import *
 import argparse,sys,os
 import re
 import requests
-import func_spider,func_scan,func_ports
 from urllib import parse
 import socket
+import func_spider,func_scan,func_ports
 
 class Scanner():
     def __init__(self):
@@ -27,14 +26,14 @@ class Scanner():
         if len(sys.argv) == 1:
             sys.argv.append('-h')
         parser = argparse.ArgumentParser(description='简易扫描器，<>内为开启极致模式的简述',add_help=True)
-        parser.add_argument('-u','--url',help='扫描对象的url<递归爬取网站中url的url>')
-        parser.add_argument('--cookies',default=None,help='目标网站的cookies')
-        parser.add_argument('--threads',default=20,help='脚本启动线程数<50>',type=int)
-        parser.add_argument('--spider',help='爬取网站上的网页链接',action='store_true')
-        parser.add_argument('--scan',help='扫描网站后台<附带超大payload>',action='store_true')
-        parser.add_argument('-P','--ports',help='探测目标主机开放端口',action='store_true')
+        parser.add_argument('-u','--url',help='扫描对象的url')
+        parser.add_argument('-R', '--crazy', help='以极致模式启动功能，比较耗时', action='store_true')
+        parser.add_argument('-S','--spider',help='爬取网站上的网页链接<递归爬取网站中url的url>',action='store_true')
+        parser.add_argument('-B','--burp',help='爆破网站目录<附带超大payload>',action='store_true')
+        parser.add_argument('-P','--ports',help='探测目标主机开放端口<支持自定义端口范围>',action='store_true')
         parser.add_argument('--sqlscan',help='网站SQL注入检测',action='store_true')
-        parser.add_argument('-R','--crazy',help='以极致模式启动功能，比较耗时',action='store_true')
+        parser.add_argument('--cookies', default=None, help='目标网站的cookies')
+        parser.add_argument('--threads', default=20, help='脚本启动线程数<50>', type=int)
         args = parser.parse_args()
         for x, y in args._get_kwargs():
             ter_opt[x] = y    # 保存为键值对
