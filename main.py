@@ -5,7 +5,10 @@
 from dict import *
 import argparse,sys,os
 import re
-import func_spider,func_scan
+import requests
+import func_spider,func_scan,func_ports
+from urllib import parse
+import socket
 
 class Scanner():
     def __init__(self):
@@ -29,6 +32,7 @@ class Scanner():
         parser.add_argument('--threads',default=20,help='脚本启动线程数<50>',type=int)
         parser.add_argument('--spider',help='爬取网站上的网页链接',action='store_true')
         parser.add_argument('--scan',help='扫描网站后台<附带超大payload>',action='store_true')
+        parser.add_argument('-P','--ports',help='探测目标主机开放端口',action='store_true')
         parser.add_argument('--sqlscan',help='网站SQL注入检测',action='store_true')
         parser.add_argument('-R','--crazy',help='以极致模式启动功能，比较耗时',action='store_true')
         args = parser.parse_args()
@@ -64,12 +68,17 @@ class Scanner():
             print("URL格式出错!")
             sys.exit(1)
 
+    def base_search(self):
+        name = parse.urlparse(self.opt['url']).hostname
+        self.opt['host'] = socket.gethostbyname(name)
+
 
     def base_report(self):
         print('>>>>>base_report'+'-'*40)
+        self.base_search()
         for i in self.opt:
             if self.opt[i]:
-                print("{0} : {1}".format(i,self.opt[i]))
+                print("[ {0} : {1} ]".format(i,self.opt[i]))
         print('-'*40+'<<<<<base_report'+'\n')
 
 
@@ -82,9 +91,11 @@ class Scanner():
             self.opt['threads'] = 50
         self.base_report()
         if self.opt['spider']:
-            func_spider.Spider(self.opt['url'],self.opt['cookies'],self.opt['crazy'])
+            func_spider.Spider(self.opt['url'],self.opt['cookies'],self.opt['threads'],self.opt['crazy'])
         if self.opt['scan']:
             func_scan.Scan(self.opt['url'],self.opt['cookies'],self.opt['threads'],self.opt['crazy'])
+        if self.opt['ports']:
+            func_ports.Ports(self.opt['host'],self.opt['threads'],self.opt['crazy'])
         else:
             # print("Nothing to do...")
             pass
