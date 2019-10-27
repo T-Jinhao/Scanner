@@ -7,7 +7,7 @@ import re
 import requests
 from urllib import parse
 import socket
-import func_spider,func_scan,func_ports
+import func_spider,func_burp,func_ports
 
 class Scanner():
     def __init__(self):
@@ -29,7 +29,7 @@ class Scanner():
         parser.add_argument('-u','--url',help='扫描对象的url')
         parser.add_argument('-R', '--crazy', help='以极致模式启动功能，比较耗时', action='store_true')
         parser.add_argument('-S','--spider',help='爬取网站上的网页链接<递归爬取网站中url的url>',action='store_true')
-        parser.add_argument('-B','--scan',help='爆破网站目录<附带超大payload>',action='store_true')
+        parser.add_argument('-B','--burp',help='爆破网站目录<附带超大payload>',action='store_true')
         parser.add_argument('-P','--ports',help='探测目标主机开放端口<支持自定义端口范围>',action='store_true')
         parser.add_argument('--sqlscan',help='网站SQL注入检测',action='store_true')
         parser.add_argument('--cookies', default=None, help='目标网站的cookies')
@@ -91,8 +91,8 @@ class Scanner():
         self.base_report()
         if self.opt['spider']:
             func_spider.Spider(self.opt['url'],self.opt['cookies'],self.opt['threads'],self.opt['crazy'])
-        if self.opt['scan']:
-            func_scan.Scan(self.opt['url'],self.opt['cookies'],self.opt['threads'],self.opt['crazy'])
+        if self.opt['burp']:
+            func_burp.Burp(self.opt['url'],self.opt['cookies'],self.opt['threads'],self.opt['crazy'])
         if self.opt['ports']:
             func_ports.Ports(self.opt['host'],self.opt['threads'],self.opt['crazy'])
         else:
