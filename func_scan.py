@@ -7,7 +7,6 @@ import requests,re
 from dict import *
 from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor
-import threading
 import time
 
 class Scan():
@@ -114,7 +113,7 @@ class Scan():
             filename = ''
         path = os.path.abspath(os.path.dirname(__file__))
         payloadpath = "{0}\{1}\{2}".format(path, 'dict\scan', file)
-        F = open(payloadpath, 'r')
+        F = open(payloadpath, "r")
         for x in F:
             try:
                 t = '/' + x.replace('\n','')
