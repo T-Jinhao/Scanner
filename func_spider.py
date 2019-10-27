@@ -6,7 +6,6 @@ import requests,sys
 import re,os
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
-import threading
 from concurrent.futures import ThreadPoolExecutor
 
 
@@ -30,9 +29,18 @@ class Spider():
 
 
     def crazy(self,url):
+        url = self.url_check(url)        # 规范化url
         img,web = self.spider(url)
         self.spider_report(url,img,web)
         return
+
+
+    def url_check(self,url):
+        if re.match("(http|https)://.*",url):
+            return url
+        else:
+            u = "http://{}".format(url)
+            return u
 
 
     def spider(self,url):
@@ -61,7 +69,7 @@ class Spider():
 
         except:
             print("网站访问出现点问题了...")
-            # sys.exit(1)
+            sys.exit(1)
 
 
     def spider_report(self,url,img,web):
