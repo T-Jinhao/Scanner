@@ -99,7 +99,7 @@ class Burp():
 
     def load_payload(self,type):
         '''
-        根据网站类型附加相应payload
+        根据网站类型加载相应payload
         :param type: 网站类型
         :return: payloads
         '''
@@ -135,13 +135,13 @@ class Burp():
                 except:
                     pass
             F.close()
-        if filename != '' and self.flag:         # 此模块需要启动极致模式
-            filepath = "{0}\{1}\{2}".format(path,r'dict\burp',filename)
-            f = open(filepath,'r')
-            for x in f:
-                payloads.append(x.replace('\n',''))
-                # print(x.replace('\n',''))
-            f.close()
+            if filename != '' and self.flag:         # 此模块需要启动极致模式
+                filepath = "{0}\{1}\{2}".format(path,r'dict\burp',filename)
+                f = open(filepath,'r')
+                for x in f:
+                    payloads.append(x.replace('\n',''))
+                    # print(x.replace('\n',''))
+                f.close()
         return payloads
 
 
