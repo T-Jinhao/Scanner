@@ -10,9 +10,10 @@ from concurrent.futures import ThreadPoolExecutor
 import time
 
 class Burp():
-    def __init__(self,url,cookies,threads,flag):
+    def __init__(self,url,file,cookies,threads,flag):
         self.url = self.url_parse(url)
         self.flag = flag
+        self .file = file
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
         }
@@ -99,7 +100,6 @@ class Burp():
         :param type: 网站类型
         :return: payloads
         '''
-        file = 'dicc.txt'
         payloads = []
         if type == 'php':
             filename = 'PHP.txt'
@@ -111,16 +111,27 @@ class Burp():
             filename = 'MDB.txt'
         else:
             filename = ''
+
         path = os.path.abspath(os.path.dirname(__file__))
-        payloadpath = "{0}\{1}\{2}".format(path, 'dict\scan', file)
-        F = open(payloadpath, "r")
-        for x in F:
-            try:
-                t = '/' + x.replace('\n','')
-                payloads.append(t)
-            except:
-                pass
-        F.close()
+        if self.file:
+            F = open(self.file,'r')
+            for x in F:
+                try:
+                    t = x.replace('\n','')
+                    payloads.append(t)
+                except:
+                    print('文件读取失败')
+        else:
+            file = 'dicc.txt'
+            payloadpath = "{0}\{1}\{2}".format(path, 'dict\scan', file)
+            F = open(payloadpath, "r")
+            for x in F:
+                try:
+                    t = '/' + x.replace('\n','')
+                    payloads.append(t)
+                except:
+                    pass
+            F.close()
         if filename != '' and self.flag:         # 此模块需要启动极致模式
             filepath = "{0}\{1}\{2}".format(path,'dict\scan',filename)
             f = open(filepath,'r')
@@ -128,7 +139,6 @@ class Burp():
                 payloads.append(x.replace('\n',''))
                 # print(x.replace('\n',''))
             f.close()
-
         return payloads
 
 

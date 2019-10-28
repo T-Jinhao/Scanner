@@ -30,6 +30,7 @@ class Scanner():
         parser.add_argument('-R', '--crazy', help='以极致模式启动功能，比较耗时', action='store_true')
         parser.add_argument('-S','--spider',help='爬取网站上的网页链接<递归爬取网站中url的url>',action='store_true')
         parser.add_argument('-B','--burp',help='爆破网站目录<附带超大payload>',action='store_true')
+        parser.add_argument('-F', '--file', default='None', help='自定义目录爆破payload文件')
         parser.add_argument('-P','--ports',help='探测目标主机开放端口<支持自定义端口范围>',action='store_true')
         parser.add_argument('--sqlscan',help='网站SQL注入检测',action='store_true')
         parser.add_argument('--cookies', default=None, help='目标网站的cookies')
@@ -91,10 +92,10 @@ class Scanner():
         self.base_report()
         if self.opt['spider']:
             func_spider.Spider(self.opt['url'],self.opt['cookies'],self.opt['threads'],self.opt['crazy'])
-        if self.opt['burp']:
-            func_burp.Burp(self.opt['url'],self.opt['cookies'],self.opt['threads'],self.opt['crazy'])
         if self.opt['ports']:
-            func_ports.Ports(self.opt['host'],self.opt['threads'],self.opt['crazy'])
+            func_ports.Ports(self.opt['host'], self.opt['threads'], self.opt['crazy'])
+        if self.opt['burp']:
+            func_burp.Burp(self.opt['url'],self.opt['file'],self.opt['cookies'],self.opt['threads'],self.opt['crazy'])
         else:
             # print("Nothing to do...")
             pass
