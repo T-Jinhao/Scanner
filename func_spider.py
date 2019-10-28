@@ -18,7 +18,14 @@ class Spider():
         print(">>>>>spider" + "-" * 40)
         print("[ 开始爬取网页链接：{}]".format(url))
         img,web = self.spider(self.url)
-        self.spider_report(self.url,img,web)
+        if img:
+            self.spider_report(self.url,img,'img')
+        else:
+            print("[ 并没有在{}扫描到图片链接 ]".format(self.url))
+        if web:
+            self.spider_report(self.url,web,'web')
+        else:
+            print("[ 并没有在{}扫描到网站链接 ]".format(self.url))
         print("-"*40+"<<<<<spider"+"\n")
         if self.flag:
             with ThreadPoolExecutor(max_workers=5) as pool:
@@ -72,7 +79,7 @@ class Spider():
             sys.exit(1)
 
 
-    def spider_report(self,url,img,web):
+    def spider_report(self,url,report,flag):
         '''
         对爬取结果进行处理
         :return:
@@ -81,27 +88,17 @@ class Spider():
         parse_url = urlparse(url)
         dirname = parse_url.netloc
         dirpath = "{0}\{1}\{2}".format(path,"reports",dirname)
-        imgfilepath = "{0}\{1}".format(dirpath,"spider_img_report.txt")
-        webfilepath = "{0}\{1}".format(dirpath, "spider_web_report.txt")
+        filepath = "{0}\{1}".format(dirpath,"spider_{}_report.txt".format(flag))
         if not os.path.exists(dirpath):
             os.mkdir(dirpath)
-        imgfile = open(imgfilepath,"a")
+        F = open(filepath,"a")
         try:
-            for m in img:
+            for m in report:
                 print(m)
-                imgfile.write(m+"\n")
-            print("[ 网站图片链接已保存于：{}]".format(imgfilepath))
+                F.write(m+"\n")
+            print("[ 网站{0}链接已保存于：{1}]".format(filepath,flag))
         except:
-            print("[ 并没有扫描到图片链接 ]")
-        imgfile.close()
-        webfile = open(webfilepath, "a")
-        try:
-            for m in web:
-                print(m)
-                webfile.write(m + "\n")
-            print("[ 网站网页链接已保存于：{}]".format(webfilepath))
-        except:
-            print("[ 并没有扫描到网页链接 ]")
-            self.flag = 0
-        webfile.close()
+            print("[ 并没有扫描到{}链接 ]".format(flag))
+        F.close()
+        # self.flag = 0
         return

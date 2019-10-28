@@ -39,8 +39,11 @@ class Ports():
             ports = self.scan_ports()
         print('[ 准备就绪，开始扫描 ]')
         reports = self.run(ports)
-        self.port_report(reports)
-        print('-'*40 + 'PortsScan<<<<<')
+        if reports:
+            self.port_report(reports)
+        else:
+            print("[ 并没有扫描出主机开放端口 ]")
+        print('-'*40 + 'PortsScan<<<<<'+'\n')
 
 
 

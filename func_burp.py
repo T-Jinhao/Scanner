@@ -18,7 +18,7 @@ class Burp():
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
         }
         self.cookies = cookies
-        print('>>>>>scan'+'-'*40)
+        print('>>>>>burp'+'-'*40)
         print("[ 开始分析网站：{} ]".format(self.url))
         web_type = self.web_indetify(url)
         if not web_type:
@@ -27,8 +27,11 @@ class Burp():
         payloads = self.load_payload(web_type)
         print('[ payload导入完成 ]')
         reports = self.run(payloads,threads)
-        self.scan_report(reports)
-        print('-'*40+'scan<<<<<'+'\n')
+        if reports:
+            self.scan_report(reports)
+        else:
+            print("[ 并没有扫描出可疑后台 ]")
+        print('-'*40+'burp<<<<<'+'\n')
 
 
 
@@ -123,7 +126,7 @@ class Burp():
                     print('文件读取失败')
         else:
             file = 'dicc.txt'
-            payloadpath = "{0}\{1}\{2}".format(path, 'dict\scan', file)
+            payloadpath = "{0}\{1}\{2}".format(path, r'dict\burp', file)
             F = open(payloadpath, "r")
             for x in F:
                 try:
@@ -133,7 +136,7 @@ class Burp():
                     pass
             F.close()
         if filename != '' and self.flag:         # 此模块需要启动极致模式
-            filepath = "{0}\{1}\{2}".format(path,'dict\scan',filename)
+            filepath = "{0}\{1}\{2}".format(path,r'dict\burp',filename)
             f = open(filepath,'r')
             for x in f:
                 payloads.append(x.replace('\n',''))
@@ -190,14 +193,14 @@ class Burp():
         parse_url = urlparse(self.url)
         dirname = parse_url.netloc
         dirpath = "{0}\{1}\{2}".format(path, "reports", dirname)
-        filepath = "{0}\{1}".format(dirpath, "scan_report.txt")
+        filepath = "{0}\{1}".format(dirpath, "burp_report.txt")
         if not os.path.exists(dirpath):
             os.mkdir(dirpath)
         F = open(filepath,'a')
         try:
             for m in reports:
                 F.write(m + '\n')
-            print("[ 网站后台扫描报告已存放于：{}]".format(filepath))
+            print("[ 网站目录爆破报告已存放于：{}]".format(filepath))
         except:
             print("[ 并没有扫描出可疑后台 ]")
         F.close()
