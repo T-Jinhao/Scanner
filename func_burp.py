@@ -18,20 +18,28 @@ class Burp():
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
         }
         self.cookies = cookies
-        print('>>>>>burp'+'-'*40)
+        self.threads = threads
+        self.start(url)
+
+    def start(self,url):
+        print('>>>>>burp' + '-' * 40)
         print("[ 开始分析网站：{} ]".format(self.url))
         web_type = self.web_indetify(url)
         if not web_type:
             web_type = self.web_auto_indetify(url)
         print("[ 网站类型：{} ]".format(web_type))
         payloads = self.load_payload(web_type)
-        print('[ payload导入完成 ]')
-        reports = self.run(payloads,threads)
-        if reports:
-            self.scan_report(reports)
+        if payloads:
+            print('[ payload导入完成 ]')
+            reports = self.run(payloads, self.threads)
+            if reports:
+                self.scan_report(reports)
+            else:
+                print("[ 并没有扫描出可疑后台 ]")
         else:
-            print("[ 并没有扫描出可疑后台 ]")
-        print('-'*40+'burp<<<<<'+'\n')
+            print('[ payload导入失败 ]')
+        print('-' * 40 + 'burp<<<<<' + '\n')
+        return
 
 
 
@@ -123,7 +131,8 @@ class Burp():
                     t = x.replace('\n','')
                     payloads.append(t)
                 except:
-                    print('文件读取失败')
+                    # print('文件读取失败')
+                    return
         else:
             file = 'dicc.txt'
             payloadpath = "{0}\{1}\{2}".format(path, r'dict\burp', file)
@@ -142,6 +151,7 @@ class Burp():
                     payloads.append(x.replace('\n',''))
                     # print(x.replace('\n',''))
                 f.close()
+            payloads = list(set(payloads))
         return payloads
 
 
@@ -189,6 +199,11 @@ class Burp():
 
 
     def scan_report(self,reports):
+        '''
+        导出报告
+        :param reports:
+        :return:
+        '''
         path = os.path.abspath(os.path.dirname(__file__))
         parse_url = urlparse(self.url)
         dirname = parse_url.netloc

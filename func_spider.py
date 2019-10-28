@@ -15,34 +15,50 @@ class Spider():
         self.flag = flag
         self.headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"}
         self.cookies = cookies
+        self.start()
+
+
+    def start(self):
         print(">>>>>spider" + "-" * 40)
-        print("[ 开始爬取网页链接：{}]".format(url))
-        img,web = self.spider(self.url)
+        print("[ 开始爬取网页链接：{}]".format(self.url))
+        img, web = self.spider(self.url)
         if img:
-            self.spider_report(self.url,img,'img')
+            self.spider_report(self.url, img, 'img')
         else:
             print("[ 并没有在{}扫描到图片链接 ]".format(self.url))
         if web:
-            self.spider_report(self.url,web,'web')
+            self.spider_report(self.url, web, 'web')
         else:
             print("[ 并没有在{}扫描到网站链接 ]".format(self.url))
-        print("-"*40+"<<<<<spider"+"\n")
-        if self.flag:
+        print("-" * 40 + "<<<<<spider" + "\n")
+        while self.flag:
             with ThreadPoolExecutor(max_workers=5) as pool:
                 results = pool.map(self.crazy,web)
                 for result in results:
                     print(result)
             self.flag = 0
+        return
 
 
     def crazy(self,url):
+        '''
+        crazy模式
+        :param url:
+        :return:
+        '''
         url = self.url_check(url)        # 规范化url
         img,web = self.spider(url)
         self.spider_report(url,img,web)
+        self.flag = 0  # 调用一次即停止
         return
 
 
     def url_check(self,url):
+        '''
+        检测url完整性
+        :param url:
+        :return:
+        '''
         if re.match("(http|https)://.*",url):
             return url
         else:

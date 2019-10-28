@@ -31,9 +31,14 @@ class Ports():
     def __init__(self,host,threads,flag):
         self.host = host
         self.threads = threads
-        print('>>>>>PortsScan' + '-'*40)
-        print("[ 开始扫描端口 : {} ]".format(host))
-        if flag:
+        self.flag = flag
+        self.start()
+
+
+    def start(self):
+        print('>>>>>PortsScan' + '-' * 40)
+        print("[ 开始扫描端口 : {} ]".format(self.host))
+        if self.flag:
             ports = self.scan_ports_crazy()
         else:
             ports = self.scan_ports()
@@ -43,8 +48,8 @@ class Ports():
             self.port_report(reports)
         else:
             print("[ 并没有扫描出主机开放端口 ]")
-        print('-'*40 + 'PortsScan<<<<<'+'\n')
-
+        print('-' * 40 + 'PortsScan<<<<<' + '\n')
+        return
 
 
     def scan_ports(self):
@@ -86,6 +91,11 @@ class Ports():
         return ports
 
     def run(self,port):
+        '''
+        调用线程池开始探测
+        :param port:
+        :return:
+        '''
         reports = []
         with ThreadPoolExecutor(max_workers=self.threads) as pool:
             results = pool.map(self.scan,port)
