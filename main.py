@@ -6,8 +6,9 @@ import argparse,sys,os
 import re
 import requests
 from urllib import parse
+from urllib.parse import urlparse
 import socket
-import func_spider,func_burp,func_ports
+import func_spider,func_burp,func_ports,func_domain
 
 class Scanner():
     def __init__(self):
@@ -28,11 +29,12 @@ class Scanner():
         parser = argparse.ArgumentParser(description='简易扫描器，<>内为开启极致模式的简述',add_help=True)
         parser.add_argument('-u','--url',help='扫描对象的url')
         parser.add_argument('-R', '--crazy', help='以极致模式启动功能，比较耗时', action='store_true')
+        parser.add_argument('-P', '--ports', help='探测目标主机开放端口<支持自定义端口范围>', action='store_true')
         parser.add_argument('-S','--spider',help='爬取网站上的网页链接<递归爬取网站中url的url>',action='store_true')
         parser.add_argument('-B','--burp',help='爆破网站目录<附带超大payload>',action='store_true')
-        parser.add_argument('-F', '--file', default=None, help='自定义目录爆破payload文件')
-        parser.add_argument('-P','--ports',help='探测目标主机开放端口<支持自定义端口范围>',action='store_true')
-        parser.add_argument('--sqlscan',help='网站SQL注入检测',action='store_true')
+        parser.add_argument('-D','--domain',help='挖掘网站子域名<更多线程进行挖掘>',action='store_true')
+        parser.add_argument('-F', '--file', default=None, help='可自定义payload文件')
+        parser.add_argument('-I','--sqlscan',help='网站SQL注入检测',action='store_true')
         parser.add_argument('--cookies', default=None, help='目标网站的cookies')
         parser.add_argument('--threads', default=20, help='脚本启动线程数<50>', type=int)
         args = parser.parse_args()
@@ -69,8 +71,13 @@ class Scanner():
             sys.exit(1)
 
     def base_search(self):
-        name = parse.urlparse(self.opt['url']).hostname
-        self.opt['host'] = socket.gethostbyname(name)
+        try:
+            name = parse.urlparse(self.opt['url']).hostname
+            self.opt['host'] = socket.gethostbyname(name)
+        except:
+            netloc = 'www.{}'.format(urlparse(self.opt['url']).netloc)
+            name = netloc
+            self.opt['host'] = socket.gethostbyname(name)
 
 
     def base_report(self):
@@ -96,6 +103,8 @@ class Scanner():
             func_ports.Ports(self.opt['host'], self.opt['threads'], self.opt['crazy'])
         if self.opt['burp']:
             func_burp.Burp(self.opt['url'],self.opt['file'],self.opt['cookies'],self.opt['threads'],self.opt['crazy'])
+        if self.opt['domain']:
+            func_domain.Domain(self.opt['url'],self.opt['file'],self.opt['threads'],self.opt['crazy'])
         else:
             # print("Nothing to do...")
             pass
