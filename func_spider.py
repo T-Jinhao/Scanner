@@ -112,7 +112,7 @@ class Spider():
             for m in report:
                 print(m)
                 F.write(m+"\n")
-            print("[ 网站{0}链接已保存于：{1}]".format(filepath,flag))
+            print("[ 网站{1}链接已保存于：{0}]".format(filepath,flag))
         except:
             print("[ 并没有扫描到{}链接 ]".format(flag))
         F.close()
