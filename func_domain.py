@@ -73,6 +73,12 @@ class Domain:
 
 
     def load_payload(self,file,flag):
+        '''
+        读取payload
+        :param file: 外部payload，可为空
+        :param flag: crazy标识
+        :return:
+        '''
         payload = []
         path = os.path.abspath(os.path.dirname(__file__))
         if file:
@@ -83,17 +89,31 @@ class Domain:
                 return payload
             except:
                 return
-        elif flag:
-            file = 'domain.txt'
+        
         else:
             file = 'dict.txt'
-        filepath = "{0}\{1}\{2}".format(path, r'dict\domain', file)
-        F = open(filepath,'r')
-        for x in F:
-            payload.append(x.replace('\n', ''))
+            filepath = "{0}\{1}\{2}".format(path, r'dict\domain', file)
+            F = open(filepath, 'r')
+            for x in F:
+                payload.append(x.replace('\n', ''))
+            if flag:
+                file = 'domain.txt'
+                filepath = "{0}\{1}\{2}".format(path, r'dict\domain', file)
+                F = open(filepath, 'r')
+                for x in F:
+                    payload.append(x.replace('\n', ''))
+
+        payload = list(set(payload))
         return payload
 
     def run(self,domain,payload,threads):
+        '''
+        配置线程池
+        :param domain:提取到的域名
+        :param payload:导入的payload
+        :param threads:最大线程数
+        :return:
+        '''
         URL = []
         report = []
         for x in payload:
@@ -111,6 +131,11 @@ class Domain:
 
 
     def scan(self,url):
+        '''
+        开始扫描
+        :param url:
+        :return:
+        '''
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
         }
@@ -130,6 +155,12 @@ class Domain:
 
 
     def domain_report(self,url,report):
+        '''
+        导出报告
+        :param url: 用作文件夹命名
+        :param report: 报告list
+        :return:
+        '''
         report = list(set(report))
         path = os.path.abspath(os.path.dirname(__file__))
         dirname = urlparse(url).netloc
