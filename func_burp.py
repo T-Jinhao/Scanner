@@ -14,6 +14,7 @@ class Burp():
         self.url = self.url_parse(url)
         self.flag = flag
         self .file = file
+        self.scan_mode = 0
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
         }
@@ -28,6 +29,9 @@ class Burp():
         if not web_type:
             web_type = self.web_auto_indetify(url)
         print("[ 网站类型：{} ]".format(web_type))
+        mode_msg = self.scan_mode_indetify()
+        msg = {0:'基于网站状态码检验模式',1:'基于网站页面内容检验模式'}
+        print('[ 网站分析模式：{} ]'.format(msg[mode_msg]))
         payloads = self.load_payload(web_type)
         if payloads:
             print('[ payload导入完成 ]')
@@ -86,6 +90,9 @@ class Burp():
             return ''
         else:
             return s.group(2)
+
+
+
 
     def web_auto_indetify(self,url):
         '''
@@ -154,6 +161,18 @@ class Burp():
             payloads = list(set(payloads))
         return payloads
 
+    def scan_mode_indetify(self):
+        '''
+        用bad_payload去访问，获取出错页面的情况
+        :return:
+        '''
+        impossible_payload = ['/aaaaaaaaaaaaaaaaaaaa','/bbbbbbbbbbbbbbbb','/asodhpfpowehrpoadosjfho']   # 无中生有的payload
+        res = self.run(impossible_payload,3)
+        if res:
+            self.scan_mode = 1
+            return 1
+        return 0
+
 
     def run(self,payloads,threads):
         '''
@@ -168,7 +187,10 @@ class Burp():
             url = self.url + x
             URL.append(url)
         with ThreadPoolExecutor(max_workers=threads) as pool:
-            results = pool.map(self.sites_scan,URL)
+            if self.scan_mode:
+                results = pool.map(self.text_scan, URL)
+            else:
+                results = pool.map(self.sites_scan,URL)
             for result in results:
                 if result['flag'] != 0:     # 选择性输出
                     print(result['msg'])
@@ -195,6 +217,28 @@ class Burp():
             m = {'msg': msg, 'flag': 2}
             return m
         m = {'flag':0}
+        return m
+
+    def text_scan(self,url):
+        '''
+        根据页面信息检测网站，用于判断自定义错误页面的网站
+        :param url:
+        :return:
+        '''
+        bm = []
+        bad_msg = ['404','页面不存在','不可访问','page can\'t be found']    # 用于检测页面自定义报错的信息
+        try:
+            res = requests.post(url,cookies=self.cookies,headers=self.headers,timeout=10)
+            for msg in bad_msg:
+                if msg in res.text:
+                    bm.append(msg)
+            if len(bm)>5:                        # 若报错信息超过一定数量可视为文章自带内容
+                msg = "{0} : {1}".format(res.status_code, url)
+                m = {'flag':1,'msg':msg}
+            else:
+                m = {'flag':0,'msg':bm}
+        except:
+            m = {'flag':2,'msg':'[Timeout : {}]'.format(url)}
         return m
 
 
