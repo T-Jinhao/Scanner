@@ -8,7 +8,7 @@ import requests
 from urllib import parse
 from urllib.parse import urlparse
 import socket
-import func_spider,func_burp,func_ports,func_domain,func_hosts
+from scripts import func_sqli,func_hosts,func_domain,func_ports,func_burp,func_spider
 
 class Scanner():
     def __init__(self):
@@ -108,12 +108,11 @@ class Scanner():
             func_burp.Burp(self.opt['url'],self.opt['file'],self.opt['cookies'],self.opt['threads'],self.opt['crazy'])
         if self.opt['domain']:
             func_domain.Domain(self.opt['url'],self.opt['file'],self.opt['threads'],self.opt['crazy'])
+        if self.opt['sqlscan']:
+            func_sqli.Sql(self.opt['url'],self.opt['crazy'])
         else:
             # print("Nothing to do...")
             pass
-
-
-
 
 
 

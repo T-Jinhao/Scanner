@@ -1,20 +1,29 @@
 #!/usr/bin/python
 # -*-encoding:utf8 -*-
 
-import argparse
+import queue
+import threading
+import time
+import argparse,sys,os
+import re,requests
+from urllib import parse
+from socket import *
 
 
-# helpinfo='''
-#         扫描器：
-#         -h/--help : 使用帮助
-#         -u/--url : 接收目标url
-#         '''
-#         ter_opt = {}
-#         opts,args = getopt.getopt(sys.argv[1:],'-h-u:',['help','--url='])  # 接收参数
-#         for opt_name,arg_value in opts:
-#             if opt_name in ('-u','--url'):
-#                 url = arg_value
-#                 print("url="+url)
-#                 continue
-#             elif opt_name in ('-h','--help'):
-#                 print(helpinfo)
+url = 'https://www.andseclab.com/wp-admi'
+# sock = socket(AF_INET, SOCK_STREAM)
+# sock.settimeout(5)
+# result = sock.connect_ex((url,80))
+# print(result)
+
+bad_msg = ['404', '页面不存在', '不可访问','can\'t be found']  # 用于检测页面自定义报错的信息
+headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
+        }
+res = requests.post(url, headers=headers,timeout=10)
+
+print(res.status_code)
+
+
+
+
