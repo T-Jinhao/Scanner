@@ -28,14 +28,14 @@ class Scanner():
             sys.argv.append('-h')
         parser = argparse.ArgumentParser(description='简易扫描器，<>内为开启极致模式的简述',add_help=True)
         parser.add_argument('-u','--url',help='扫描对象的url')
-        parser.add_argument('-R', '--crazy', help='以极致模式启动功能，比较耗时', action='store_true')
+        parser.add_argument('-X', '--crazy', help='以极致模式启动功能，比较耗时', action='store_true')
         parser.add_argument('-P', '--ports', help='探测目标主机开放端口 <支持自定义端口范围>', action='store_true')
         parser.add_argument('-H','--hosts',help='探测存活主机',action='store_true')
         parser.add_argument('-S','--spider',help='爬取网站上的网页链接 <递归爬取网站中url的url>',action='store_true')
         parser.add_argument('-B','--burp',help='爆破网站目录 <附加超大payload>',action='store_true')
         parser.add_argument('-D','--domain',help='挖掘网站子域名 <更多线程更多payload>',action='store_true')
         parser.add_argument('-F', '--file', default=None, help='可自定义payload文件')
-        parser.add_argument('-I','--sqlscan',help='网站SQL注入检测',action='store_true')
+        parser.add_argument('-I','--sqlscan',help='网站SQL注入fuzz检测<sqlmapapi爆破>',action='store_true')
         parser.add_argument('--cookies', default=None, help='目标网站的cookies')
         parser.add_argument('--threads', default=20, help='脚本启动线程数 <50>', type=int)
         args = parser.parse_args()
@@ -62,6 +62,7 @@ class Scanner():
         :param url: 待检测的URL
         :return: bool值
         '''
+        url = url.split('#')[0]
         if re.match('(http|https)://(.*?)\.(.*)',url):     # 匹配以http|https开头的网站
             return
         elif re.match('(.*?)\.(.*)',url):                  # 匹配xxx.xxx...规则的网站
@@ -112,7 +113,7 @@ class Scanner():
             func_sqli.Sql(self.opt['url'],self.opt['crazy'])
         else:
             # print("Nothing to do...")
-            pass
+            sys.exit()
 
 
 
