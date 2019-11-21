@@ -8,6 +8,8 @@ import os,sys
 class Report:
     def __init__(self,reports,dirname,filename,suc_msg,err_msg):
         self.reports = reports
+        dirname = dirname.split('//')[1]
+        dirname = dirname.split('?')[0]
         self.dirname = dirname.replace(':','_')
         self.filename = filename
         self.suc_msg = suc_msg
