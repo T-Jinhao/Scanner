@@ -3,14 +3,13 @@
 #author:Jinhao
 
 import os,sys
-
+from urllib.parse import urlparse
 
 class Report:
     def __init__(self,reports,dirname,filename,suc_msg,err_msg):
         self.reports = reports
-        dirname = dirname.split('//')[1]
-        dirname = dirname.split('?')[0]
-        self.dirname = dirname.replace(':','_')
+        dir = urlparse(dirname).netloc
+        self.dirname = dir.replace(':','_')
         self.filename = filename
         self.suc_msg = suc_msg
         self.err_msg = err_msg
