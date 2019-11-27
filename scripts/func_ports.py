@@ -46,7 +46,7 @@ class Ports():
         print('[ 准备就绪，开始扫描 ]')
         report = self.run(ports)
         if report:
-            reports.Report(report, self.host, 'port_report.txt', '主机端口扫描报告已存放于', '并没有扫描出主机开放端口')
+            reports.Report(report, 'http://'+self.host, 'port_report.txt', '主机端口扫描报告已存放于', '并没有扫描出主机开放端口')
         else:
             print("[ 并没有扫描出主机开放端口 ]")
         print('-' * 40 + 'PortsScan<<<<<' + '\n')
