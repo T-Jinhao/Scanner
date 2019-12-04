@@ -29,7 +29,8 @@ class Login:
         print('[ tips:有很多payload文件保存在./dict/login目录下 ]')
         args = self.get_args()
         if not args:
-            return
+            print('[ 未识别到登录框 ]')
+            print('-' * 40 + 'Login_fuzz<<<<<')
         data = {}
         for x in args:
             if not args[x]:
@@ -142,6 +143,7 @@ class Login:
         with ThreadPoolExecutor(max_workers=self.threads) as pool:
             results = pool.map(self.fuzz,exp)
             for result in results:
+                print(result['len'])
                 if result['flag'] == 1:
                     print(result['msg'])
                     report.append(result['msg'])
@@ -156,13 +158,14 @@ class Login:
         '''
         try:
             res = requests.post(self.url,data=data,headers=headers,timeout=5).content
-            if len(res) != self.len:
-                msg = {'flag':1,'msg':data}
+            length = len(res)
+            if length != self.len:
+                msg = {'flag':1,'msg':data,'len':length}
                 return msg
             else:
-                msg = {'flag': 0}
+                msg = {'flag': 0,'len':length}
                 return msg
         except:
-            msg = {'flag':0}
+            msg = {'flag':0,'len':0}
             return msg
 
