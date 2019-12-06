@@ -31,6 +31,7 @@ class Login:
         if not args:
             print('[ 未识别到登录框 ]')
             print('-' * 40 + 'Login_fuzz<<<<<')
+            return
         data = {}
         for x in args:
             if not args[x]:
@@ -53,6 +54,7 @@ class Login:
         else:
             print('[ 没有探测出网站密码 ]')
         print('-'*40+'Login_fuzz<<<<<')
+        return
 
     def get_args(self):
         '''
