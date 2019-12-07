@@ -3,7 +3,7 @@
 #author:Jinhao
 
 
-import redis,os,threading,time
+import time,redis
 from lib.func_celery import *
 
 
@@ -14,10 +14,6 @@ class RC:
         self.start()
 
     def start(self):
-        # self.start_redis()
-        thread = threading.Thread(target=self.start_celery)
-        thread.start()
-        time.sleep(10)                       # 预留充分启动celery时间
         self.run(self.url)
 
 
@@ -32,19 +28,10 @@ class RC:
         return
 
 
-    def start_celery(self):
-        '''
-        启动celery服务
-        :return:
-        '''
-        path = os.path.dirname(__file__)
-        os.chdir(path)                                          # 切换工作目录
-        cmd = 'celery -A func_celery worker --pool=eventlet'    # 指定工作者
-        os.system(cmd)
 
 
     def run(self,url):
-        result = spider.delay(url)
+        result = domain.delay(url)
         print('start')
         while not result.ready():
             time.sleep(1)
