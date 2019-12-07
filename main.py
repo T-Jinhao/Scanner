@@ -4,7 +4,7 @@
 
 import argparse,sys,os
 import re
-import requests
+import threading,time
 from urllib import parse
 from urllib.parse import urlparse
 import socket
@@ -93,6 +93,14 @@ class Scanner():
                 print("[ {0} : {1} ]".format(i,self.opt[i]))
         print('-'*40+'<<<<<base_report'+'\n')
 
+    def start_celery(self):
+        '''
+        启动celery服务
+        :return:
+        '''
+        cmd = 'celery -A lib.func_celery worker --pool=eventlet'    # 指定工作者
+        os.system(cmd)
+
 
     def run(self):
         '''
@@ -103,8 +111,11 @@ class Scanner():
             self.opt['threads'] = 50
         self.base_report()
         if self.opt['celery']:
+            thread = threading.Thread(target=self.start_celery)
+            thread.start()
+            time.sleep(10)  # 预留充分启动celery时间
             celery_run.RC(self.opt['url'])
-            sys.exit()    # 一站式管理
+            return
         if self.opt['spider']:
             func_spider.Spider(self.opt['url'],self.opt['cookies'],self.opt['threads'],self.opt['crazy'])
         if self.opt['ports']:
