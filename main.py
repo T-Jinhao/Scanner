@@ -8,7 +8,8 @@ import requests
 from urllib import parse
 from urllib.parse import urlparse
 import socket
-from scripts import func_sqli,func_hosts,func_domain,func_ports,func_burp,func_spider,func_login
+from lib import func_sqli,func_hosts,func_domain,func_ports,func_burp,func_spider,func_login
+from lib import celery_run
 
 class Scanner():
     def __init__(self):
@@ -37,6 +38,7 @@ class Scanner():
         parser.add_argument('-D','--domain',help='挖掘网站子域名[-F,-X,--threads]<更多线程更多payload>',action='store_true')
         parser.add_argument('-F', '--file', default=None, help='可自定义payload文件')
         parser.add_argument('-I','--sqlscan',help='网站SQL注入fuzz检测[-X]<sqlmapapi爆破>',action='store_true')
+        parser.add_argument('--celery',help='使用celery分布管理',action='store_true')
         parser.add_argument('--cookies', default=None, help='目标网站的cookies')
         parser.add_argument('--threads', default=20, help='脚本启动线程数 <50>', type=int)
         args = parser.parse_args()
@@ -100,6 +102,9 @@ class Scanner():
         if self.opt['crazy'] and self.opt['threads'] < 50:
             self.opt['threads'] = 50
         self.base_report()
+        if self.opt['celery']:
+            celery_run.RC(self.opt['url'])
+            sys.exit()    # 一站式管理
         if self.opt['spider']:
             func_spider.Spider(self.opt['url'],self.opt['cookies'],self.opt['threads'],self.opt['crazy'])
         if self.opt['ports']:
