@@ -10,9 +10,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 
 class Spider():
-    def __init__(self,url,cookies,threads,flag):
+    def __init__(self,url,cookies):
         self.url = url
-        self.flag = flag
         self.headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"}
         self.cookies = cookies
         self.start()
@@ -31,12 +30,7 @@ class Spider():
         else:
             print("[ 并没有在{}扫描到网站链接 ]".format(self.url))
         print("-" * 40 + "<<<<<spider" + "\n")
-        while self.flag:
-            with ThreadPoolExecutor(max_workers=5) as pool:
-                results = pool.map(self.crazy,web)
-                for result in results:
-                    print(result)
-            self.flag = 0
+        return web
 
 
 
@@ -116,5 +110,28 @@ class Spider():
         except:
             print("[ 并没有扫描到{}链接 ]".format(flag))
         F.close()
-        # self.flag = 0
         return
+
+
+class celery_spider:
+    '''
+    celery调用模块
+    返回新的url进行递归扫描
+    '''
+    def __init__(self,url,cookies):
+        self.url =url
+        self.cookies = cookies
+        self.run()
+
+    def run(self):
+        res = Spider(self.url,self.cookies)
+        new_url = self.same_check(res)
+        return new_url
+
+    def same_check(self,res):
+        '''
+        url相似度的检测
+        :param res:爬取的url集
+        :return: 同源的url
+        '''
+        return res
