@@ -1,3 +1,6 @@
 requests
 urllib
 bs4
+celery
+eventlet
+redis
