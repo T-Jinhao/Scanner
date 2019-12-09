@@ -41,8 +41,8 @@ class Scanner():
         parser.add_argument('--celery',help='使用celery分布管理',action='store_true')
         parser.add_argument('--cookies', default=None, help='目标网站的cookies')
         parser.add_argument('--threads', default=20, help='脚本启动线程数 <50>', type=int)
-        args = parser.parse_args()
-        for x, y in args._get_kwargs():
+        self.args = parser.parse_args()
+        for x, y in self.args._get_kwargs():
             ter_opt[x] = y    # 保存为键值对
         return ter_opt
 
@@ -98,7 +98,7 @@ class Scanner():
         启动celery服务
         :return:
         '''
-        cmd = 'celery -A lib.func_celery worker --pool=eventlet'    # 指定工作者
+        cmd = 'celery -A lib.func_celery worker --pool=eventlet -l info'    # 指定工作者
         os.system(cmd)
 
 
@@ -114,7 +114,7 @@ class Scanner():
             thread = threading.Thread(target=self.start_celery)
             thread.start()
             time.sleep(10)  # 预留充分启动celery时间
-            celery_run.RC(self.opt['url'])
+            celery_run.RC(self.args)
             return
         if self.opt['spider']:
             func_spider.Spider(self.opt['url'],self.opt['cookies'],self.opt['threads'],self.opt['crazy'])
