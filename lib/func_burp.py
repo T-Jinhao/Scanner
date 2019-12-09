@@ -20,7 +20,7 @@ class Burp():
         }
         self.cookies = cookies
         self.threads = threads
-        self.start(url)
+        self.start(self.url)
 
     def start(self,url):
         print('>>>>>burp' + '-' * 40)
@@ -240,4 +240,21 @@ class Burp():
         except:
             m = {'flag':0,'msg':'[Timeout : {}]'.format(url)}
         return m
+
+
+class celery_burp:
+    '''
+    celery调用模块
+    '''
+    def __init__(self,url,file,cookies,flag):
+        self.url = url
+        self.file = file
+        self.cookies = cookies
+        self.flag =flag
+        self.run()
+
+    def run(self):
+        x = Burp(self.url,self.file,self.cookies,10,self.flag)    # 线程有所减少
+        return
+
 

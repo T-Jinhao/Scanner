@@ -152,4 +152,12 @@ class Domain:
         m = {'flag' : 0}
         return m
 
+class celery_domain:
+    def __init__(self,url,file):
+        self.url = url
+        self.file = file
+        self.run()
 
+    def run(self):
+        x = Domain(self.url,self.file,20,False)
+        return

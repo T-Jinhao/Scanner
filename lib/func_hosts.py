@@ -8,22 +8,22 @@ from concurrent.futures import ThreadPoolExecutor
 from reports import reports
 
 class Hosts:
-    def __init__(self,host,threads,flag):
+    def __init__(self,host,threads):
         self.host = host
         self.threads = threads
-        self.flag = flag
         self.start()
 
     def start(self):
         print('>>>>>hosts'+'-'*40)
-        print('[ 开始扫描存活主机 ]')
+        print('[ 开始扫描开放主机 ]')
         url = self.c_hosts()
         report = self.run(url)
         if report:
             reports.Report(report, self.host, 'c_hosts_report.txt', '主机c段扫描报告已存放于', '并没有扫描出存活主机')
         else:
-            print("[ 并没有扫描出存活主机 ]")
+            print("[ 并没有扫描出开放主机 ]")
         print('-'*40+'hosts<<<<<')
+        return report
 
 
     def c_hosts(self):
@@ -66,9 +66,11 @@ class Hosts:
         sock.settimeout(5)
         result = sock.connect_ex((url,80))
         if result == 0:
-            msg = "[ {} : 已开启 ]".format(url)
+            msg = "[ {} : 80端口已开启 ]".format(url)
             m = {'msg':msg,'flag':1}
         else:
             m = {'flag':0}
         return m
+
+
 

@@ -2,12 +2,11 @@
 # -*- encoding:utf8 -*-
 #author:Jinhao
 
-import redis
-import os,sys
+
 import socket
 from urllib.parse import urlparse
 from celery import Celery
-from lib import func_sqli,func_hosts,func_domain,func_ports,func_burp,func_spider,func_login
+from lib import func_sqli,func_hosts,func_domain,func_ports,func_burp,func_spider
 
 '''
 celery任务分配
@@ -16,14 +15,10 @@ celery任务分配
 app = Celery('task',backend='redis://localhost:6379/0',broker='redis://localhost:6379/0')
 
 @app.task(name='tasks.spider.func_celery')
-def spider(url):
-    func_spider.Spider(url,'',20,0)
+def spider(url,cookies):
+    func_spider.celery_spider(url,cookies)
     return
 
-@app.task(name='tasks.login.func_celery')
-def login(url):
-    func_login.Login(url,'',20,0)
-    return
 
 @app.task(name='tasks.sqli.func_celery')
 def sqli(url):
@@ -38,12 +33,12 @@ def hosts(url):
     except:
         name = 'www.{}'.format(urlparse(url).netloc)
         host = socket.gethostbyname(name)
-    func_hosts.Hosts(host,20,True)
+    func_hosts.Hosts(host,20)
     return
 
 @app.task(name='tasks.burp.func_celery')
-def burp(url):
-    func_burp.Burp(url,'','',20,True)
+def burp(url,file,cookies,flag):
+    func_burp.celery_burp(url,file,cookies,flag)
     return
 
 @app.task(name='tasks.ports.func_celery')
@@ -54,11 +49,11 @@ def ports(url):
     except:
         name = 'www.{}'.format(urlparse(url).netloc)
         host = socket.gethostbyname(name)
-    func_ports.Ports(host,20,True)
+    func_ports.Ports(host,20,False)
     return
 
-@app.task
-def domain(url):
-    func_domain.Domain(url,'',20,True)
+@app.task(name='tasks.domain.func_celery')
+def domain(url,file):
+    func_domain.celery_domain(url,file)
     return
 
