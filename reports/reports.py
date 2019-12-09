@@ -2,14 +2,18 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
-import os,sys
+import os,sys,re
 from urllib.parse import urlparse
 
 class Report:
     def __init__(self,reports,dirname,filename,suc_msg,err_msg):
         self.reports = reports
-        dir = urlparse(dirname).netloc
-        self.dirname = dir.replace(':','_')
+        ipsite = re.compile("[\d]{1,3}.[\d]{1,3}.[\d]{1,3}.[\d]{1,3}")
+        if ipsite.match(dirname):
+            self.dirname = dirname
+        else:
+            dir = urlparse(dirname).netloc
+            self.dirname = dir.replace(':','_')
         self.filename = filename
         self.suc_msg = suc_msg
         self.err_msg = err_msg
