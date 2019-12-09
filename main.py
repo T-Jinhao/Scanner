@@ -32,7 +32,7 @@ class Scanner():
         parser.add_argument('-X', '--crazy', help='以极致模式启动功能，比较耗时', action='store_true')
         parser.add_argument('-P', '--ports', help='探测目标主机开放端口[-X]<支持自定义端口范围>', action='store_true')
         parser.add_argument('-H','--hosts',help='探测存活主机',action='store_true')
-        parser.add_argument('-S','--spider',help='爬取网站上的网页链接 [--cookie,--threads,-X]<递归爬取网站中url的url>',action='store_true')
+        parser.add_argument('-S','--spider',help='爬取网站上的网页链接 [--cookie]',action='store_true')
         parser.add_argument('-L','--login',help='测试网站密码缺陷[-F]<测试弱密码>',action='store_true')
         parser.add_argument('-B','--burp',help='爆破网站目录[-F,-X]<附加超大payload>',action='store_true')
         parser.add_argument('-D','--domain',help='挖掘网站子域名[-F,-X,--threads]<更多线程更多payload>',action='store_true')
@@ -98,7 +98,7 @@ class Scanner():
         启动celery服务
         :return:
         '''
-        cmd = 'celery -A lib.func_celery worker --pool=eventlet -l info'    # 指定工作者
+        cmd = 'celery -A lib.func_celery worker --pool=eventlet -l DEBUG'    # 指定工作者
         os.system(cmd)
 
 
@@ -113,15 +113,15 @@ class Scanner():
         if self.opt['celery']:
             thread = threading.Thread(target=self.start_celery)
             thread.start()
-            time.sleep(10)  # 预留充分启动celery时间
+            time.sleep(15)  # 等待充分启动celery
             celery_run.RC(self.args)
             return
         if self.opt['spider']:
-            func_spider.Spider(self.opt['url'],self.opt['cookies'],self.opt['threads'],self.opt['crazy'])
+            func_spider.Spider(self.opt['url'],self.opt['cookies'])
         if self.opt['ports']:
             func_ports.Ports(self.opt['host'], self.opt['threads'], self.opt['crazy'])
         if self.opt['hosts']:
-            func_hosts.Hosts(self.opt['host'],self.opt['threads'],self.opt['crazy'])
+            func_hosts.Hosts(self.opt['host'],self.opt['threads'])
         if self.opt['login']:
             func_login.Login(self.opt['url'],self.opt['file'],self.opt['threads'],self.opt['crazy'])
         if self.opt['burp']:
