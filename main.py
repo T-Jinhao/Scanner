@@ -32,7 +32,7 @@ class Scanner():
         parser.add_argument('-X', '--crazy', help='以极致模式启动功能，比较耗时', action='store_true')
         parser.add_argument('-P', '--ports', help='探测目标主机开放端口[-X]<支持自定义端口范围>', action='store_true')
         parser.add_argument('-H','--hosts',help='探测存活主机',action='store_true')
-        parser.add_argument('-S','--spider',help='爬取网站上的网页链接 [--cookie]',action='store_true')
+        parser.add_argument('-S','--spider',help='爬取网站上的网页链接 [--cookie]<分解路径测试>',action='store_true')
         parser.add_argument('-L','--login',help='测试网站密码缺陷[-F]<测试弱密码>',action='store_true')
         parser.add_argument('-B','--burp',help='爆破网站目录[-F,-X]<附加超大payload>',action='store_true')
         parser.add_argument('-D','--domain',help='挖掘网站子域名[-F,-X,--threads]<更多线程更多payload>',action='store_true')
@@ -40,7 +40,7 @@ class Scanner():
         parser.add_argument('-I','--sqlscan',help='网站SQL注入fuzz检测[-X]<sqlmapapi爆破>',action='store_true')
         parser.add_argument('--celery',help='使用celery分布管理',action='store_true')
         parser.add_argument('--cookies', default=None, help='目标网站的cookies')
-        parser.add_argument('--threads', default=20, help='脚本启动线程数 <50>', type=int)
+        parser.add_argument('--threads', default=5, help='脚本启动线程数 <20>', type=int)
         self.args = parser.parse_args()
         for x, y in self.args._get_kwargs():
             ter_opt[x] = y    # 保存为键值对
@@ -107,8 +107,8 @@ class Scanner():
         调用模块
         :return:
         '''
-        if self.opt['crazy'] and self.opt['threads'] < 50:
-            self.opt['threads'] = 50
+        if self.opt['crazy'] and self.opt['threads'] < 20:
+            self.opt['threads'] = 20
         self.base_report()
         if self.opt['celery']:
             thread = threading.Thread(target=self.start_celery)
@@ -117,7 +117,7 @@ class Scanner():
             celery_run.RC(self.args)
             return
         if self.opt['spider']:
-            func_spider.Spider(self.opt['url'],self.opt['cookies'])
+            func_spider.Spider(self.opt['url'],self.opt['cookies'],self.opt['crazy'])
         if self.opt['ports']:
             func_ports.Ports(self.opt['host'], self.opt['threads'], self.opt['crazy'])
         if self.opt['hosts']:

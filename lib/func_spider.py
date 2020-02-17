@@ -3,17 +3,19 @@
 #author:Jinhao
 
 import requests,sys
-import re,os
+import re,os,time
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor
 
+wrong_web_list = ['javascript:void(0)',None,'###','#']
 
 class Spider():
-    def __init__(self,url,cookies):
+    def __init__(self,url,cookies,crazy):
         self.url = url
         self.headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"}
         self.cookies = cookies
+        self.crazy = crazy
         self.start()
 
 
@@ -26,25 +28,37 @@ class Spider():
         else:
             print("[ 并没有在{}扫描到图片链接 ]".format(self.url))
         if web:
-            self.spider_report(self.url, web, 'web')
+            if self.crazy:  # url分解访问
+                web += self.crazyRun(web)
+            ret = self.statusCheck(web)   # 筛选能访问的链接
+            self.spider_report(self.url, ret, 'web')
         else:
             print("[ 并没有在{}扫描到网站链接 ]".format(self.url))
         print("-" * 40 + "<<<<<spider" + "\n")
-        return web
+        return
 
 
 
-    def crazy(self,url):
+    def crazyRun(self,urls):
         '''
-        crazy模式
-        :param url:
+        递归各相对路径，尝试找出可疑的302等页面
+        :param urls:
         :return:
         '''
-        url = self.url_check(url)        # 规范化url
-        img,web = self.spider(url)
-        self.spider_report(url,img,web)
-        self.flag = 0  # 调用一次即停止
-        return
+        paths = []
+        http = re.compile('http')
+        for u in urls:
+            if http.match(u):  # 属于完整链接
+                pass
+            else:
+                u = u.lstrip('.')  # 除去左端点号
+                u = u.lstrip('/')  # 除去左端/号
+                for p in range(u.count('/')):
+                    x = u.rsplit('/', p + 1)[0]
+                    if x not in paths:
+                        paths.append(x)
+        print(paths)
+        return paths
 
 
     def url_check(self,url):
@@ -77,7 +91,8 @@ class Spider():
                 img_sites.append(x)
             for j in web_links:
                 y = j.get('href')          # 提取href后的链接
-                web_sites.append(y)
+                if y not in wrong_web_list:  # 除去杂乱的链接
+                    web_sites.append(y)
             if not img_sites:
                 img_sites = ''
             if not web_sites:
@@ -112,6 +127,33 @@ class Spider():
         F.close()
         return
 
+    def statusCheck(self,urls):
+        '''
+        测试链接是否可用
+        :param urls: 爬取到的url
+        :return:
+        '''
+        Gurls = []
+        http = re.compile('http')
+        for u in list(set(urls)):
+            if http.match(u):   # 属于完整链接
+                url = u
+            else:
+                u = u.lstrip('.')   # 除去左端点号
+                u = u.lstrip('/')   # 除去左端/号
+                url = self.url.rstrip('/') + '/' + u
+            print('测试链接：{0}'.format(url))
+            try:
+                res = requests.get(url, headers=self.headers, cookies=self.cookies,timeout=5)
+                print(res.status_code)
+                Gurls.append(url)
+            except:
+                pass
+                # print('访问失败')
+            time.sleep(0.5)   # 防止过于频繁导致网站崩溃
+        return Gurls
+
+
 
 class celery_spider:
     '''
@@ -124,7 +166,7 @@ class celery_spider:
         self.run()
 
     def run(self):
-        res = Spider(self.url,self.cookies)
+        res = Spider(self.url,self.cookies,'1')
         new_url = self.same_check(res)
         return new_url
 
