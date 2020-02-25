@@ -146,7 +146,8 @@ class Spider():
             try:
                 res = requests.get(url, headers=self.headers, cookies=self.cookies,timeout=5)
                 print(res.status_code)
-                Gurls.append(url)
+                if res.status_code != 404:
+                    Gurls.append(url)
             except:
                 pass
                 # print('访问失败')
