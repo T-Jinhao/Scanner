@@ -13,7 +13,7 @@ class Burp():
     def __init__(self,url,file,cookies,threads,flag):
         self.url = self.url_parse(url)
         self.flag = flag
-        self .file = file
+        self.file = file
         self.scan_mode = 0
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
