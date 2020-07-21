@@ -98,7 +98,7 @@ class Ports():
         :return:
         '''
         reports = []
-        with ThreadPoolExecutor(max_workers=500) as pool:
+        with ThreadPoolExecutor(max_workers=800) as pool:
             results = pool.map(self.scan,port)
             for result in results:
                 if result['flag']:
@@ -114,7 +114,7 @@ class Ports():
         :return:
         '''
         sock = socket(AF_INET, SOCK_STREAM)
-        sock.settimeout(5)
+        sock.settimeout(3)
         result = sock.connect_ex((self.host, port))
         if result == 0:
             if port in port_dict:
