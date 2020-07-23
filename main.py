@@ -102,6 +102,13 @@ class Scanner():
         os.system(cmd)
 
 
+    def parseCookie(self, cookie):
+        cookies = {}  # 初始化cookies字典变量
+        for x in cookie.split(';'):  # 按照字符：进行划分读取
+            name, value = x.strip().split('=', 1)
+            cookies[name] = value  # 为字典cookies添加内容
+        return cookies
+
     def run(self):
         '''
         调用模块
@@ -117,7 +124,7 @@ class Scanner():
             celery_run.RC(self.args)
             return
         if self.opt['spider']:
-            func_spider.Spider(self.opt['url'],self.opt['cookies'],self.opt['crazy'])
+            func_spider.Spider(self.opt['url'],self.parseCookie(self.opt['cookies']),self.opt['crazy'])
         if self.opt['ports']:
             func_ports.Ports(self.opt['host'], self.opt['threads'], self.opt['crazy'])
         if self.opt['hosts']:
@@ -125,7 +132,7 @@ class Scanner():
         if self.opt['login']:
             func_login.Login(self.opt['url'],self.opt['file'],self.opt['threads'],self.opt['crazy'])
         if self.opt['burp']:
-            func_burp.Burp(self.opt['url'],self.opt['file'],self.opt['cookies'],self.opt['threads'],self.opt['crazy'])
+            func_burp.Burp(self.opt['url'],self.opt['file'],self.parseCookie(self.opt['cookies']),self.opt['threads'],self.opt['crazy'])
         if self.opt['domain']:
             func_domain.Domain(self.opt['url'],self.opt['file'],self.opt['threads'],self.opt['crazy'])
         if self.opt['sqlscan']:
