@@ -103,6 +103,8 @@ class Scanner():
 
 
     def parseCookie(self, cookie):
+        if cookie == None:
+            return
         cookies = {}  # 初始化cookies字典变量
         for x in cookie.split(';'):  # 按照字符：进行划分读取
             name, value = x.strip().split('=', 1)

@@ -11,8 +11,17 @@ def test(**kwargs):
         b[key] = value
     print(b['name'])
 
+def ggg():
+    a = "aaa.com/"
+    b = "https://aaa.com/"
+    c = "http://aaa.com/aa/bb/"
+    print(a.strip('http://'))
+    print(b.strip('http://').strip('https://'))
+    print(c.strip('http://'))
+
 if __name__ == '__main__':
-    test(name='aaa',file='xxx')
+    # test(name='aaa',file='xxx')
+    ggg()
 
 
 
