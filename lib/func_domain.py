@@ -3,7 +3,8 @@
 #author:Jinhao
 
 import requests
-import os,sys,re
+import os,re
+import dns.resolver
 from urllib.parse import urlparse
 from reports import reports
 from concurrent.futures import ThreadPoolExecutor
@@ -128,6 +129,17 @@ class Domain:
         return report
 
 
+    def getDomainType(self, url):
+        '''
+        获取域名解析记录类型
+        :param url:
+        :return:
+        '''
+        domain = url.replace('http://', '')
+        ans = dns.resolver.query(domain)
+        res = ans.response.answer
+        res_type = str(type(res[0][0])).split('.')[3]
+        return res_type
 
 
     def scan(self,url):
@@ -142,7 +154,8 @@ class Domain:
         try:
             res = requests.post(url,headers=headers,timeout=10)
             if res.status_code == 200 or res.status_code == 302 or res.status_code == 500 or res.status_code ==502:
-                msg = "{0} : {1}".format(res.status_code, url)
+                res_type = self.getDomainType(url)
+                msg = "{0} : {1} : {2}".format(res.status_code, res_type, url)
                 m = {'msg': msg, 'flag': 1}
                 return m
         except:
