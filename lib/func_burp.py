@@ -209,7 +209,7 @@ class Burp():
             res = requests.post(url,cookies=self.cookies,headers=self.headers,timeout=10)
             status = res.status_code
             if status == 200 or status == 302 or status == 500 or status == 502:
-                msg = "{0} : {1}".format(status,url)
+                msg = "{0} : {1} : {2}".format(status, len(res.content), url)
                 m = {'msg':msg,'flag':1}
                 return m
         except:
@@ -233,7 +233,7 @@ class Burp():
                 if msg in res.text:
                     bm.append(msg)
             if len(bm)>5:                        # 若报错信息超过一定数量可视为文章自带内容
-                msg = "{0} : {1}".format(res.status_code, url)
+                msg = "{0} : {1} : {2}".format(res.status_code, len(res.content), url)
                 m = {'flag':1,'msg':msg}
             else:
                 m = {'flag':0,'msg':bm}
