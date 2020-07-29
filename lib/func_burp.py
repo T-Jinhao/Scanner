@@ -209,7 +209,7 @@ class Burp():
             res = requests.post(url,cookies=self.cookies,headers=self.headers,timeout=10)
             status = res.status_code
             if status == 200 or status == 302 or status == 500 or status == 502:
-                msg = "{0} : {1} : {2}".format(status, len(res.content), url)
+                msg = "{0} : {1} : {2}".format(status, res.headers.get('Content-Length'), url)
                 m = {'msg':msg,'flag':1}
                 return m
         except:
