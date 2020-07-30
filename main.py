@@ -9,7 +9,7 @@ from urllib import parse
 from urllib.parse import urlparse
 import socket
 from lib import func_sqli,func_hosts,func_domain,func_ports,func_burp,func_spider,func_login
-from lib import celery_run
+from lib import celery_run,func_base
 
 class Scanner():
     def __init__(self):
@@ -91,6 +91,13 @@ class Scanner():
         for i in self.opt:
             if self.opt[i]:
                 print("[ {0} : {1} ]".format(i,self.opt[i]))
+        print("\nIP域名绑定情况")
+        try:
+            mes = func_base.IPcontent(self.opt['host']).run()
+            for x in mes:
+                print("{} : {}".format(x[0], x[1]))
+        except:
+            pass
         print('-'*40+'<<<<<base_report'+'\n')
 
     def start_celery(self):
