@@ -91,7 +91,7 @@ class Scanner():
         for i in self.opt:
             if self.opt[i]:
                 print("[ {0} : {1} ]".format(i,self.opt[i]))
-        print("\nIP域名绑定情况")
+        print("\nIP域名绑定情况 : {}".format(self.opt['host']))
         try:
             mes = func_base.IPcontent(self.opt['host']).run()
             for x in mes:
