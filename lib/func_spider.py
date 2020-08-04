@@ -4,7 +4,7 @@
 
 import requests,sys
 import re,os,time
-from bs4 import BeautifulSoupK
+from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from urllib.parse import urljoin
 
