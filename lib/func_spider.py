@@ -4,9 +4,9 @@
 
 import requests,sys
 import re,os,time
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoupK
 from urllib.parse import urlparse
-from concurrent.futures import ThreadPoolExecutor
+from urllib.parse import urljoin
 
 wrong_web_list = ['javascript:void(0)',None,'###','#']
 
@@ -70,7 +70,7 @@ class Spider():
         if re.match("(http|https)://.*",url):
             return url
         else:
-            u = "http://{}".format(url)
+            u = urljoin(self.url, url)
             return u
 
 
