@@ -22,7 +22,7 @@ class Spider():
     def start(self):
         print(">>>>>spider" + "-" * 40)
         print("[ 开始爬取网页链接：{}]".format(self.url))
-        img, web = self.spider(self.url)
+        img, web, js = self.spider(self.url)
         if img:
             self.spider_report(self.url, img, 'img')
         else:
@@ -34,9 +34,13 @@ class Spider():
             self.spider_report(self.url, ret, 'web')
         else:
             print("[ 并没有在{}扫描到网站链接 ]".format(self.url))
+        if js and self.crazy:    # 寻找js文件内的中文字符
+            print('-'*10 + 'js文件分析' + '-'*10)
+            for x in js:
+                print(x)
+                print(self.findstr(x))
         print("-" * 40 + "<<<<<spider" + "\n")
         return
-
 
 
     def crazyRun(self,urls):
@@ -84,23 +88,32 @@ class Spider():
             res = requests.post(url,headers=self.headers,cookies=self.cookies,timeout=10)
             img_sites = []      # 图片链接
             web_sites = []      # 网站链接
+            js_sites = []        # js脚本链接
             soup = BeautifulSoup(res.text,'html.parser')
             img_links = soup.find_all('img')
             web_links = soup.find_all('a')
+            js_links = soup.find_all('script')
             for i in img_links:
                 x = i.get('src')           # 提取src后的链接
-                img_sites.append(x)
+                img_sites.append(self.url_check(url, x))
             for j in web_links:
                 y = j.get('href')          # 提取href后的链接
                 if y not in wrong_web_list:  # 除去杂乱的链接
                     web_sites.append(self.url_check(url, y))   # 处理获取到的url
+            for k in js_links:
+                z = k.get('src')
+                if z != None:
+                    js_sites.append(self.url_check(url, z))
             if not img_sites:
                 img_sites = ''
             if not web_sites:
                 web_sites = ''
-            return img_sites,web_sites
+            if not js_sites:
+                js_sites = ''
+            return img_sites,web_sites,js_sites
 
-        except:
+        except Exception as e:
+            print(e)
             print("网站访问出现点问题了...")
             sys.exit(1)
 
@@ -147,6 +160,21 @@ class Spider():
                 # print('访问失败')
             time.sleep(0.5)   # 防止过于频繁导致网站崩溃
         return Gurls
+
+    def findstr(self, url):
+        '''
+        找出js文件内的中文字符
+        :return:
+        '''
+        compile = re.compile(u"[\u4e00-\u9fa5]")
+        try:
+            res = requests.get(url, timeout=5, headers=self.headers)
+            content = str(res.content.decode('utf-8'))
+            ret = compile.findall(content)
+            ret = ''.join(ret)
+        except:
+            return
+        return ret
 
 
 
