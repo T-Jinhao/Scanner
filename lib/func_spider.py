@@ -61,16 +61,17 @@ class Spider():
         return paths
 
 
-    def url_check(self,url):
+    def url_check(self, url, u):
         '''
-        检测url完整性
-        :param url:
+        检测url完整性，返回绝对地址
+        :param url: 当前扫描的页面url
+        :param u: 获取到的url
         :return:
         '''
-        if re.match("(http|https)://.*",url):
-            return url
-        else:
-            u = urljoin(self.url, url)
+        if re.match("(http|https)://.*",u):  # 匹配绝对地址
+            return u
+        else:     # 拼凑相对地址，转换成绝对地址
+            u = urljoin(url, u)
             return u
 
 
@@ -92,7 +93,7 @@ class Spider():
             for j in web_links:
                 y = j.get('href')          # 提取href后的链接
                 if y not in wrong_web_list:  # 除去杂乱的链接
-                    web_sites.append(y)
+                    web_sites.append(self.url_check(url, y))   # 处理获取到的url
             if not img_sites:
                 img_sites = ''
             if not web_sites:
@@ -134,19 +135,12 @@ class Spider():
         :return:
         '''
         Gurls = []
-        http = re.compile('http')
-        for u in list(set(urls)):
-            if http.match(u):   # 属于完整链接
-                url = u
-            else:
-                u = u.lstrip('.')   # 除去左端点号
-                u = u.lstrip('/')   # 除去左端/号
-                url = self.url.rstrip('/') + '/' + u
+        for url in list(set(urls)):
             print('测试链接：{0}'.format(url))
             try:
-                res = requests.get(url, headers=self.headers, cookies=self.cookies,timeout=5)
-                print(res.status_code)
-                if res.status_code != 404:
+                res = requests.get(url, headers=self.headers, cookies=self.cookies, timeout=5)
+                print(res.status_code, len(res.content))
+                if res.status_code != 404 and len(res.content) != 0:
                     Gurls.append(url)
             except:
                 pass
