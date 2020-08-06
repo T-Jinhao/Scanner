@@ -2,7 +2,7 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
-import requests,sys
+import sys
 import re,os,time
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
@@ -11,10 +11,9 @@ from urllib.parse import urljoin
 wrong_web_list = ['javascript:void(0)',None,'###','#']
 
 class Spider():
-    def __init__(self,url,cookies,crazy):
+    def __init__(self, url, REQ, crazy):
         self.url = url
-        self.headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"}
-        self.cookies = cookies
+        self.REQ = REQ
         self.crazy = crazy
         self.start()
 
@@ -85,7 +84,7 @@ class Spider():
         :return:网站相关链接
         '''
         try:
-            res = requests.post(url,headers=self.headers,cookies=self.cookies,timeout=10)
+            res = self.REQ.autoAccess(url)
             img_sites = []      # 图片链接
             web_sites = []      # 网站链接
             js_sites = []        # js脚本链接
@@ -151,7 +150,7 @@ class Spider():
         for url in list(set(urls)):
             print('测试链接：{0}'.format(url))
             try:
-                res = requests.get(url, headers=self.headers, cookies=self.cookies, timeout=5)
+                res = self.REQ.httpAccess(url)
                 print(res.status_code, len(res.content))
                 if res.status_code != 404 and len(res.content) != 0:
                     Gurls.append(url)
@@ -168,7 +167,7 @@ class Spider():
         '''
         compile = re.compile(u"[\u4e00-\u9fa5]")
         try:
-            res = requests.get(url, timeout=5, headers=self.headers)
+            res = self.REQ.httpAccess(url)
             content = str(res.content.decode('utf-8'))
             ret = compile.findall(content)
             ret = ''.join(ret)

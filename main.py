@@ -48,7 +48,8 @@ class Scanner():
         self.host = self.getHostname()  # 获取domain
         self.ip_report = func_base.IPcontent(self.host).run()
         print('>>>>>base_report'+'-'*40)
-        # print(self.args)
+        print('输入URL', self.args.url)
+        print('解析host', self.host)
         print("\nIP域名绑定情况 : {}".format(self.host))
         try:
             for x in self.ip_report:
@@ -75,6 +76,7 @@ class Scanner():
         self.threads = O.threadSetting(self.args.threads, self.args.crazy)
         self.payload_file = O.fileRead(self.args.file)
 
+        # 设置基础请求体
         timeout = O.timeoutSetting(self.args.timeout)
         cookies = O.checkCookies(self.args.cookies)
         self.REQ = _requests.URL(
@@ -89,14 +91,16 @@ class Scanner():
         调用模块
         :return:
         '''
-        if self.args.celery:   # 使用celery分发任务
+        # 使用celery分发任务
+        if self.args.celery:
             thread = threading.Thread(target=self.start_celery)
             thread.start()
             time.sleep(15)  # 等待充分启动celery
             celery_run.RC(self.args)
             return
+
         if self.args.spider:
-            func_spider.Spider(self.opt['url'],self.parseCookie(self.opt['cookies']),self.opt['crazy'])
+            func_spider.Spider(self.args.url, self.REQ,self.args.crazy)
         if self.args.ports:
             func_ports.Ports(self.opt['host'], self.opt['threads'], self.opt['crazy'])
         if self.args.hosts:
@@ -146,6 +150,7 @@ def main():
     x.url_check()  # 检查输入url
     x.base_report()  # 输出基础报告
     x.prepare()    # 准备工作
+    x.run()
 
 if __name__ == "__main__":
     main()
