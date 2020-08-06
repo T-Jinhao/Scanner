@@ -29,12 +29,9 @@ port_dict = {
 }
 
 class Ports():
-    def __init__(self,host,threads,flag):
+    def __init__(self,host,flag):
         self.host = host
-        self.threads = threads
         self.flag = flag
-        self.start()
-
 
     def start(self):
         print('>>>>>PortsScan' + '-' * 40)

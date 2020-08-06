@@ -15,8 +15,6 @@ class Spider():
         self.url = url
         self.REQ = REQ
         self.crazy = crazy
-        self.start()
-
 
     def start(self):
         print(">>>>>spider" + "-" * 40)

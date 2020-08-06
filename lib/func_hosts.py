@@ -11,7 +11,6 @@ class Hosts:
     def __init__(self,host,threads):
         self.host = host
         self.threads = threads
-        self.start()
 
     def start(self):
         print('>>>>>hosts'+'-'*40)
@@ -47,7 +46,7 @@ class Hosts:
         :return:
         '''
         reports = []
-        with ThreadPoolExecutor(max_workers=self.threads) as pool:
+        with ThreadPoolExecutor(max_workers=255) as pool:
             results = pool.map(self.scan,url)
             for result in results:
                 if result['flag'] == 1:
