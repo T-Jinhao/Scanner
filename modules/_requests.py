@@ -49,3 +49,41 @@ class URL:
         except Exception as e:
             print(e)
             return
+
+    def autoPostAccess(self, url, data):
+        if url.startswith('http://'):
+            ret = self.httpPostAccess(url)
+        elif url.startswith('https://'):
+            ret = self.httpsPostAccess(url)
+        else:
+            ret = self.httpPostAccess('http://'+url)
+        return ret
+
+    def httpPostAccess(self, url, data):
+        try:
+            res = requests.post(
+                url,
+                headers=self.headers,
+                cookies=self.cookies,
+                timeout=self.timeout,
+                data=data
+            )
+            return res
+        except Exception as e:
+            print(e)
+            return
+
+    def httpsPostAccess(self, url, data):
+        try:
+            res = requests.post(
+                url,
+                headers=self.headers,
+                cookies=self.cookies,
+                verify=self.verify,
+                timeout=self.timeout,
+                data=data
+            )
+            return res
+        except Exception as e:
+            print(e)
+            return

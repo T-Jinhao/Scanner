@@ -106,7 +106,7 @@ class Scanner():
         if self.args.hosts:
             func_hosts.Hosts(self.host,self.args.threads).start()
         if self.args.login:
-            func_login.Login(self.opt['url'],self.opt['file'],self.opt['threads'],self.opt['crazy'])
+            func_login.Login(self.args.url, self.REQ, self.payload_file, self.threads, self.args.crazy).start()
         if self.args.burp:
             func_burp.Burp(self.opt['url'],self.opt['file'],self.parseCookie(self.opt['cookies']),self.opt['threads'],self.opt['crazy'])
         if self.args.domain:

