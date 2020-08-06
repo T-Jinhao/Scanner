@@ -18,15 +18,37 @@ class O:
         return cookies
 
     def fileRead(self, file):
+        '''
+        导入payload文件
+        :param file:
+        :return:
+        '''
         if file == None:
             return
+        payload = []
+        F = open(file, 'r')
+        for x in F:
+            payload.append(x.replace('\n', ''))
+        payload = list(set(payload))  # payload去重
+        return payload
 
     def threadSetting(self, threadN, flag):
+        '''
+        设置线程数
+        :param threadN: 线程数
+        :param flag: 标志位
+        :return:
+        '''
         if flag and threadN < 20:
             return 20
         return threadN
 
     def timeoutSetting(self, timeout):
+        '''
+        超时设置
+        :param timeout:
+        :return:
+        '''
         if timeout <= 0:
             timeout = 3
         return timeout
