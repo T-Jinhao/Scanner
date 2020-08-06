@@ -112,7 +112,7 @@ class Scanner():
         if self.args.domain:
             func_domain.Domain(self.args.url, self.REQ, self.payload,self.threads, self.args.crazy).start()
         if self.args.sqlscan:
-            func_sqli.Sql(self.opt['url'],self.opt['crazy'])
+            func_sqli.Sql(self.args.url, self.args.crazy)
         else:
             # print("Nothing to do...")
             sys.exit()
