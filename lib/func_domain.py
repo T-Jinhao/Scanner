@@ -10,14 +10,18 @@ from reports import reports
 from concurrent.futures import ThreadPoolExecutor
 
 class Domain:
-    def __init__(self,url,file,threads,flag):
+    def __init__(self,url,payload,threads,timeout,flag):
         self.domain = self.url_check(url)
-        self.file = file
+        self.payload = payload
         self.threads = threads
+        self.timeout = timeout
         self.flag = flag
-        self.start(url)
+        self.url = url
+        self.headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
+        }
 
-    def start(self,url):
+    def start(self):
         print('>>>>>domain' + '-' * 40)
         if self.domain:
             check = input("当前域名 {} 是否正确解析？[正确则回车，否则输入正确的域名]\n".format(self.domain))  # 防止出错
@@ -25,18 +29,18 @@ class Domain:
                 self.domain = check
             print("[ 开始爆破域名: {} ]".format(self.domain))
             report = self.chinaz_search()
-            payload = self.load_payload(self.file, self.flag)
+            payload = self.load_payload(self.payload, self.flag)
             if payload:
                 print('[ payload导入完成 ]')
                 report += self.run(self.domain, payload, self.threads)
             else:
                 print('[ payload导入失败 ]')
             if report:
-                reports.Report(report, url, 'domain_report.txt', '网站子域名挖掘报告已存放于', '未能挖掘出网站子域名')
+                reports.Report(report, self.url, 'domain_report.txt', '网站子域名挖掘报告已存放于', '未能挖掘出网站子域名')
             else:
                 print("[ 未能挖掘出网站子域名 ]")
         else:
-            print("[ {}不支持子域名挖掘 ]".format(url))
+            print("[ {}不支持子域名挖掘 ]".format(self.url))
         print('-' * 40 + 'domain<<<<<' + '\n')
         return
 
@@ -63,7 +67,7 @@ class Domain:
         '''
         report = []
         url = "https://tool.chinaz.com/subdomain/?domain={}".format(self.domain)
-        res = requests.get(url,timeout=10)
+        res = res = requests.get(url, headers=self.headers, timeout=self.timeout)
         domain = re.compile('[\w]+\.{}'.format(self.domain))    # 正则提取子域名
         domains = domain.finditer(res.text)
         for d in domains:
@@ -148,11 +152,8 @@ class Domain:
         :param url:
         :return:
         '''
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
-        }
         try:
-            res = requests.post(url,headers=headers,timeout=10)
+            res = requests.post(url,headers=self.headers, timeout=self.timeout)   # 高并发，单独创建对象
             if res.status_code == 200 or res.status_code == 302 or res.status_code == 500 or res.status_code ==502:
                 res_type = self.getDomainType(url)
                 msg = "{0} : {1} : {2}".format(res.status_code, res_type, url)

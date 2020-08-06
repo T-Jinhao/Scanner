@@ -4,18 +4,22 @@
 
 import os
 import re
+import requests
 from reports import reports
 from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor
 
 class Burp():
-    def __init__(self,url,REQ,payload,threads,flag):
+    def __init__(self,url,payload,threads,timeout,flag):
         self.url = self.url_parse(url)
-        self.REQ = REQ
         self.flag = flag
         self.payload = payload
         self.scan_mode = 0
         self.threads = threads
+        self.timeout = timeout
+        self.headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
+        }
 
     def start(self):
         url = self.url
@@ -99,7 +103,7 @@ class Burp():
         for i in ['/index.php','/index.asp','/index.aspx','/index.mdb']:
             URL = "{0}{1}".format(url,i)
             try:
-                res = self.REQ.autoAccess(URL)
+                res = requests.get(url, headers=self.headers, timeout=self.timeout)
                 if res.status_code == 200:
                     m = self.web_indetify(URL)
                     return m
@@ -195,7 +199,7 @@ class Burp():
         :return:
         '''
         try:
-            res = self.REQ.autoAccess(url)
+            res = res = requests.get(url, headers=self.headers, timeout=self.timeout)
             status = res.status_code
             if status == 200 or status == 302 or status == 500 or status == 502:
                 msg = "{0} : {1} : {2}".format(status, res.headers.get('Content-Length'), url)
@@ -217,7 +221,7 @@ class Burp():
         bm = []
         bad_msg = ['404','页面不存在','不可访问','page can\'t be found','无法加载模块']    # 用于检测页面自定义报错的信息
         try:
-            res = self.REQ.autoAccess(url)
+            res = res = requests.get(url, headers=self.headers, timeout=self.timeout)
             for msg in bad_msg:
                 if msg in res.text:
                     bm.append(msg)
