@@ -10,52 +10,37 @@ from main import *
 
 
 class RC:
-    def __init__(self,args):
-        self.opt = {}
-        for x, y in args._get_kwargs():
-            self.opt[x] = y
-        self.url_check(self.opt['url'])
-        self.start()
+    def __init__(self, args, REQ, payload, threads, timeout, host=''):
+        self.args = args
+        self.REQ = REQ
+        self.payload = payload
+        self.threads = threads
+        self.timeout = timeout
+        self.host = host
 
-
-    def url_check(self,url):
-        '''
-        很随意的URL合理性检测
-        :param url: 待检测的URL
-        :return: bool值
-        '''
-        url = url.split('#')[0]
-        if re.match('(http|https)://(.*?)\.(.*)',url):     # 匹配以http|https开头的网站
-            return
-        elif re.match('(.*?)\.(.*)',url):                  # 匹配xxx.xxx...规则的网站
-            self.opt['url'] = "http://"+url                # 添加协议头
-            return
-        else:
-            print("URL格式出错!")
-            sys.exit(1)
 
     def start(self):
         '''
         略有不同的调用方法
         :return:
         '''
-        if self.opt['spider']:
-            ress = spider.delay(self.opt['url'],self.opt['cookies'])
+        if self.args.spider:
+            ress = spider.delay(self.args.url, self.REQ)
             self.status(ress)
-        if self.opt['ports']:
-            resp = spider.delay(self.opt['url'])
+        if self.args.ports:
+            resp = spider.delay(self.host)
             self.status(resp)
-        if self.opt['hosts']:
-            resh = hosts.delay(self.opt['url'])
+        if self.args.host:
+            resh = hosts.delay(self.host)
             self.status(resh)
-        if self.opt['burp']:
-            result = burp.delay(self.opt['url'],self.opt['file'],self.opt['cookies'],self.opt['crazy'])
+        if self.args.burp:
+            result = burp.delay(self.args.url,self.payload,self.args.crazy)
             self.status(result)
-        if self.opt['domain']:
-            resd = domain.delay(self.opt['url'],self.opt['file'])
+        if self.args.domain:
+            resd = domain.delay(self.args.url,self.payload)
             self.status(resd)
-        if self.opt['sqlscan']:
-            resi = sqli.delay(self.opt['url'])
+        if self.args.sqlscan:
+            resi = sqli.delay(self.args.url)
             self.status(resi)
         else:
             # will add other things

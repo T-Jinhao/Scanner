@@ -235,15 +235,13 @@ class celery_burp:
     '''
     celery调用模块
     '''
-    def __init__(self,url,file,cookies,flag):
+    def __init__(self,url,payload,flag):
         self.url = url
-        self.file = file
-        self.cookies = cookies
+        self.payload = payload
         self.flag =flag
-        self.run()
 
     def run(self):
-        x = Burp(self.url,self.file,self.cookies,10,self.flag)    # 线程有所减少
+        x = Burp(self.url,self.payload,10,5,self.flag).start()    # 线程有所减少
         return
 
 

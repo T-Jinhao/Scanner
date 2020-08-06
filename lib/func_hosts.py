@@ -8,9 +8,8 @@ from concurrent.futures import ThreadPoolExecutor
 from reports import reports
 
 class Hosts:
-    def __init__(self,host,threads):
+    def __init__(self,host):
         self.host = host
-        self.threads = threads
 
     def start(self):
         print('>>>>>hosts'+'-'*40)

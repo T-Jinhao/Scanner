@@ -96,7 +96,15 @@ class Scanner():
             thread = threading.Thread(target=self.start_celery)
             thread.start()
             time.sleep(15)  # 等待充分启动celery
-            celery_run.RC(self.args)
+            c = celery_run.RC(
+                args=self.args,
+                REQ=self.REQ,
+                payload=self.payload,
+                threads=self.threads,
+                timeout=self.timeout,
+                host=self.host
+            )
+            c.start()
             return
 
         if self.args.spider:
@@ -104,7 +112,7 @@ class Scanner():
         if self.args.ports:
             func_ports.Ports(self.host, self.args.crazy).start()
         if self.args.hosts:
-            func_hosts.Hosts(self.host,self.args.threads).start()
+            func_hosts.Hosts(self.host).start()
         if self.args.login:
             func_login.Login(self.args.url, self.REQ, self.payload, self.threads, self.args.crazy).start()
         if self.args.burp:

@@ -15,45 +15,33 @@ celery任务分配
 app = Celery('task',backend='redis://localhost:6379/0',broker='redis://localhost:6379/0')
 
 @app.task(name='tasks.spider.func_celery')
-def spider(url,cookies):
-    func_spider.celery_spider(url,cookies)
+def spider(url,REQ):
+    func_spider.celery_spider(url,REQ).run()
     return
 
 
 @app.task(name='tasks.sqli.func_celery')
 def sqli(url):
-    func_sqli.Sql(url,True)
+    func_sqli.Sql(url,True).start()
     return
 
 @app.task(name='tasks.hosts.func_celery')
-def hosts(url):
-    try:
-        name = urlparse(url).hostname
-        host = socket.gethostbyname(name)
-    except:
-        name = 'www.{}'.format(urlparse(url).netloc)
-        host = socket.gethostbyname(name)
-    func_hosts.Hosts(host,20)
+def hosts(host):
+    func_hosts.Hosts(host).start()
     return
 
 @app.task(name='tasks.burp.func_celery')
-def burp(url,file,cookies,flag):
-    func_burp.celery_burp(url,file,cookies,flag)
+def burp(url,payload,flag):
+    func_burp.celery_burp(url,payload,flag).run()
     return
 
 @app.task(name='tasks.ports.func_celery')
-def ports(url):
-    try:
-        name = urlparse(url).hostname
-        host = socket.gethostbyname(name)
-    except:
-        name = 'www.{}'.format(urlparse(url).netloc)
-        host = socket.gethostbyname(name)
-    func_ports.Ports(host,20,False)
+def ports(host):
+    func_ports.Ports(host,False).start()
     return
 
 @app.task(name='tasks.domain.func_celery')
-def domain(url,file):
-    func_domain.celery_domain(url,file)
+def domain(url,payload):
+    func_domain.celery_domain(url,payload).run()
     return
 

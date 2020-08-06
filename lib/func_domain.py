@@ -159,11 +159,10 @@ class Domain:
         return m
 
 class celery_domain:
-    def __init__(self,url,file):
+    def __init__(self,url,payload):
         self.url = url
-        self.file = file
-        self.run()
+        self.payload = payload
 
     def run(self):
-        x = Domain(self.url,self.file,20,False)
+        x = Domain(self.url,self.payload,20,5,False).start()
         return

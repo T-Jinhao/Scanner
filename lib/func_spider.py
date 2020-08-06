@@ -180,13 +180,12 @@ class celery_spider:
     celery调用模块
     返回新的url进行递归扫描
     '''
-    def __init__(self,url,cookies):
+    def __init__(self,url,REQ):
         self.url =url
-        self.cookies = cookies
-        self.run()
+        self.REQ = REQ
 
     def run(self):
-        res = Spider(self.url,self.cookies,'1')
+        res = Spider(self.url, self.REQ, '1')
         new_url = self.same_check(res)
         return new_url
 
