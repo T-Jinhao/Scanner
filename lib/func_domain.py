@@ -29,7 +29,7 @@ class Domain:
                 self.domain = check
             print("[ 开始爆破域名: {} ]".format(self.domain))
             report = self.chinaz_search()
-            payload = self.load_payload(self.payload, self.flag)
+            payload = self.load_payload(self.flag)
             if payload:
                 print('[ payload导入完成 ]')
                 report += self.run(self.domain, payload, self.threads)
