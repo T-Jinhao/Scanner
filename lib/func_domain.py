@@ -77,36 +77,28 @@ class Domain:
         return report
 
 
-    def load_payload(self,file,flag):
+    def load_payload(self,flag):
         '''
         读取payload
-        :param file: 外部payload，可为空
         :param flag: crazy标识
         :return:
         '''
         payload = []
         path = os.path.dirname(__file__)
-        if file:
-            try:
-                F = open(file,'r')
-                for x in F:
-                    payload.append(x.replace('\n',''))
-                return payload
-            except:
-                return
+        if self.payload:   # 已设置好payload
+            return self.payload
 
-        else:
-            file = 'dict.txt'
+        file = 'dict.txt'
+        filepath = "{0}/{1}/{2}".format(path, r'../dict/domain', file)
+        F = open(filepath, 'r')
+        for x in F:
+            payload.append(x.replace('\n', ''))
+        if flag:
+            file = 'domain.txt'
             filepath = "{0}/{1}/{2}".format(path, r'../dict/domain', file)
             F = open(filepath, 'r')
             for x in F:
                 payload.append(x.replace('\n', ''))
-            if flag:
-                file = 'domain.txt'
-                filepath = "{0}/{1}/{2}".format(path, r'../dict/domain', file)
-                F = open(filepath, 'r')
-                for x in F:
-                    payload.append(x.replace('\n', ''))
 
         payload = list(set(payload))   # payload去重
         return payload

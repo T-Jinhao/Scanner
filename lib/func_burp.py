@@ -46,9 +46,6 @@ class Burp():
         return
 
 
-
-
-
     def url_parse(self,url):
         '''
         去除url中的params和query部分
@@ -92,8 +89,6 @@ class Burp():
             return s.group(2)
 
 
-
-
     def web_auto_indetify(self,url):
         '''
         自动添加path并识别网页类型
@@ -133,25 +128,26 @@ class Burp():
         path = os.path.dirname(__file__)
         if self.payload:   # 已设置payload
             return self.payload
-        else:
-            file = 'dicc.txt'
-            payloadpath = "{0}/{1}/{2}".format(path, r'../dict/burp', file)
-            F = open(payloadpath, "r")
-            for x in F:
-                try:
-                    t = '/' + x.replace('\n','')
-                    payloads.append(t)
-                except:
-                    pass
-            F.close()
-            if filename != '' and self.flag:         # 此模块需要启动极致模式
-                filepath = "{0}/{1}/{2}".format(path,r'../dict/burp',filename)
-                f = open(filepath,'r')
-                for x in f:
-                    payloads.append(x.replace('\n',''))
-                    # print(x.replace('\n',''))
-                f.close()
-            payloads = list(set(payloads))
+
+        file = 'dicc.txt'
+        payloadpath = "{0}/{1}/{2}".format(path, r'../dict/burp', file)
+        F = open(payloadpath, "r")
+        for x in F:
+            try:
+                t = '/' + x.replace('\n','')
+                payloads.append(t)
+            except:
+                pass
+        F.close()
+
+        if filename != '' and self.flag:         # 此模块需要启动极致模式
+            filepath = "{0}/{1}/{2}".format(path,r'../dict/burp',filename)
+            f = open(filepath,'r')
+            for x in f:
+                payloads.append(x.replace('\n',''))
+                # print(x.replace('\n',''))
+            f.close()
+        payloads = list(set(payloads))
         return payloads
 
     def scan_mode_indetify(self):
