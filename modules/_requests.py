@@ -50,16 +50,16 @@ class URL:
             print(e)
             return
 
-    def autoPostAccess(self, url, data):
+    def autoPostAccess(self, url, data={}):
         if url.startswith('http://'):
-            ret = self.httpPostAccess(url)
+            ret = self.httpPostAccess(url, data)
         elif url.startswith('https://'):
-            ret = self.httpsPostAccess(url)
+            ret = self.httpsPostAccess(url, data)
         else:
-            ret = self.httpPostAccess('http://'+url)
+            ret = self.httpPostAccess('http://'+url, data)
         return ret
 
-    def httpPostAccess(self, url, data):
+    def httpPostAccess(self, url, data={}):
         try:
             res = requests.post(
                 url,
@@ -73,7 +73,7 @@ class URL:
             print(e)
             return
 
-    def httpsPostAccess(self, url, data):
+    def httpsPostAccess(self, url, data={}):
         try:
             res = requests.post(
                 url,

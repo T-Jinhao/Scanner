@@ -2,27 +2,23 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
-import os,sys
-import requests,re
+import os
+import re
 from reports import reports
 from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor
-import time
 
 class Burp():
-    def __init__(self,url,file,cookies,threads,flag):
+    def __init__(self,url,REQ,payload,threads,flag):
         self.url = self.url_parse(url)
+        self.REQ = REQ
         self.flag = flag
-        self.file = file
+        self.payload = payload
         self.scan_mode = 0
-        self.headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
-        }
-        self.cookies = cookies
         self.threads = threads
-        self.start(self.url)
 
-    def start(self,url):
+    def start(self):
+        url = self.url
         print('>>>>>burp' + '-' * 40)
         print("[ 开始分析网站：{} ]".format(self.url))
         web_type = self.web_indetify(url)
@@ -103,7 +99,7 @@ class Burp():
         for i in ['/index.php','/index.asp','/index.aspx','/index.mdb']:
             URL = "{0}{1}".format(url,i)
             try:
-                res = requests.post(URL,cookies=self.cookies,headers=self.headers,timeout=5)
+                res = self.REQ.autoAccess(URL)
                 if res.status_code == 200:
                     m = self.web_indetify(URL)
                     return m
@@ -131,15 +127,8 @@ class Burp():
             filename = ''
 
         path = os.path.dirname(__file__)
-        if self.file:
-            F = open(self.file,'r')
-            for x in F:
-                try:
-                    t = x.replace('\n','')
-                    payloads.append(t)
-                except:
-                    # print('文件读取失败')
-                    return
+        if self.payload:   # 已设置payload
+            return self.payload
         else:
             file = 'dicc.txt'
             payloadpath = "{0}/{1}/{2}".format(path, r'../dict/burp', file)
@@ -206,7 +195,7 @@ class Burp():
         :return:
         '''
         try:
-            res = requests.post(url,cookies=self.cookies,headers=self.headers,timeout=10)
+            res = self.REQ.autoAccess(url)
             status = res.status_code
             if status == 200 or status == 302 or status == 500 or status == 502:
                 msg = "{0} : {1} : {2}".format(status, res.headers.get('Content-Length'), url)
@@ -228,7 +217,7 @@ class Burp():
         bm = []
         bad_msg = ['404','页面不存在','不可访问','page can\'t be found','无法加载模块']    # 用于检测页面自定义报错的信息
         try:
-            res = requests.post(url,cookies=self.cookies,headers=self.headers,timeout=10)
+            res = self.REQ.autoAccess(url)
             for msg in bad_msg:
                 if msg in res.text:
                     bm.append(msg)

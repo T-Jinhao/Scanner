@@ -74,7 +74,7 @@ class Scanner():
         '''
         O = check.O()  # 创建检查对象
         self.threads = O.threadSetting(self.args.threads, self.args.crazy)
-        self.payload_file = O.fileRead(self.args.file)
+        self.payload = O.fileRead(self.args.file)
 
         # 设置基础请求体
         timeout = O.timeoutSetting(self.args.timeout)
@@ -106,9 +106,9 @@ class Scanner():
         if self.args.hosts:
             func_hosts.Hosts(self.host,self.args.threads).start()
         if self.args.login:
-            func_login.Login(self.args.url, self.REQ, self.payload_file, self.threads, self.args.crazy).start()
+            func_login.Login(self.args.url, self.REQ, self.payload, self.threads, self.args.crazy).start()
         if self.args.burp:
-            func_burp.Burp(self.opt['url'],self.opt['file'],self.parseCookie(self.opt['cookies']),self.opt['threads'],self.opt['crazy'])
+            func_burp.Burp(self.args.url, self.REQ, self.payload, self.threads, self.args.crazy).start()
         if self.args.domain:
             func_domain.Domain(self.opt['url'],self.opt['file'],self.opt['threads'],self.opt['crazy'])
         if self.args.sqlscan:
