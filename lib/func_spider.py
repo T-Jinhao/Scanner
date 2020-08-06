@@ -38,7 +38,7 @@ class Spider():
             print('-'*10 + 'js文件分析' + '-'*10)
             for x in js:
                 print(x)
-                print(self.findstr(x))
+                print(self.findstr(x))    # 正则js文件中的中文
         print("-" * 40 + "<<<<<spider" + "\n")
         return
 

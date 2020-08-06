@@ -108,24 +108,24 @@ class Abstraction(Web, UDF, XP_cmdshell):
         if self.webBackdoorUrl and (not isStackingAvailable() or kb.udfFail):
             infoMsg = "calling OS shell. To quit type "
             infoMsg += "'x' or 'q' and press ENTER"
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
         else:
             if Backend.isDbms(DBMS.PGSQL) and self.checkCopyExec():
                 infoMsg = "going to use 'COPY ... FROM PROGRAM ...' "
                 infoMsg += "command execution"
-                logger.info(infoMsg)
+                logger.args(infoMsg)
 
             elif Backend.getIdentifiedDbms() in (DBMS.MYSQL, DBMS.PGSQL):
                 infoMsg = "going to use injected user-defined functions "
                 infoMsg += "'sys_eval' and 'sys_exec' for operating system "
                 infoMsg += "command execution"
-                logger.info(infoMsg)
+                logger.args(infoMsg)
 
             elif Backend.isDbms(DBMS.MSSQL):
                 infoMsg = "going to use extended procedure 'xp_cmdshell' for "
                 infoMsg += "operating system command execution"
-                logger.info(infoMsg)
+                logger.args(infoMsg)
 
             else:
                 errMsg = "feature not yet implemented for the back-end DBMS"
@@ -133,7 +133,7 @@ class Abstraction(Web, UDF, XP_cmdshell):
 
             infoMsg = "calling %s OS shell. To quit type " % (Backend.getOs() or "Windows")
             infoMsg += "'x' or 'q' and press ENTER"
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
         autoCompletion(AUTOCOMPLETE_TYPE.OS, OS.WINDOWS if Backend.isOs(OS.WINDOWS) else OS.LINUX)
 

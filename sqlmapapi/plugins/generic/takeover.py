@@ -48,7 +48,7 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
             web = False
         elif not isStackingAvailable() and Backend.isDbms(DBMS.MYSQL):
             infoMsg = "going to use a web backdoor for command execution"
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
             web = True
         else:
@@ -70,7 +70,7 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
             web = False
         elif not isStackingAvailable() and Backend.isDbms(DBMS.MYSQL):
             infoMsg = "going to use a web backdoor for command prompt"
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
             web = True
         else:
@@ -86,7 +86,7 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
         except SqlmapFilePathException:
             if not web:
                 infoMsg = "falling back to web backdoor method..."
-                logger.info(infoMsg)
+                logger.args(infoMsg)
 
                 web = True
                 kb.udfFail = True
@@ -238,7 +238,7 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
                 infoMsg = "falling back to web backdoor to establish the tunnel"
             else:
                 infoMsg = "going to use a web backdoor to establish the tunnel"
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
             self.initEnv(web=web, forceInit=fallbackToWeb)
 
@@ -344,7 +344,7 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
         infoMsg = "going to exploit the Microsoft SQL Server %s " % Backend.getVersion()
         infoMsg += "'sp_replwritetovarbin' stored procedure heap-based "
         infoMsg += "buffer overflow (MS09-004)"
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         msg = "this technique is likely to DoS the DBMS process, are you "
         msg += "sure that you want to carry with the exploit? [y/N] "
@@ -392,7 +392,7 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
             regVal = conf.regVal
 
         infoMsg = "reading Windows registry path '%s\\%s' " % (regKey, regVal)
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         return self.readRegKey(regKey, regVal, True)
 
@@ -440,7 +440,7 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
         infoMsg += "with data '%s'. " % regData
         infoMsg += "This will work only if the user running the database "
         infoMsg += "process has privileges to modify the Windows registry."
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         self.addRegKey(regKey, regVal, regType, regData)
 
@@ -476,6 +476,6 @@ class Takeover(Abstraction, Metasploit, ICMPsh, Registry):
         infoMsg = "deleting Windows registry path '%s\\%s'. " % (regKey, regVal)
         infoMsg += "This will work only if the user running the database "
         infoMsg += "process has privileges to modify the Windows registry."
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         self.delRegKey(regKey, regVal)

@@ -150,7 +150,7 @@ def runThreads(numThreads, threadFunction, cleanupFunction=None, forwardExceptio
         if numThreads > 1:
             if startThreadMsg:
                 infoMsg = "starting %d threads" % numThreads
-                logger.info(infoMsg)
+                logger.args(infoMsg)
         else:
             threadFunction()
             return
@@ -186,7 +186,7 @@ def runThreads(numThreads, threadFunction, cleanupFunction=None, forwardExceptio
         kb.threadException = True
 
         if numThreads > 1:
-            logger.info("waiting for threads to finish%s" % (" (Ctrl+C was pressed)" if isinstance(ex, KeyboardInterrupt) else ""))
+            logger.args("waiting for threads to finish%s" % (" (Ctrl+C was pressed)" if isinstance(ex, KeyboardInterrupt) else ""))
         try:
             while (threading.activeCount() > 1):
                 pass

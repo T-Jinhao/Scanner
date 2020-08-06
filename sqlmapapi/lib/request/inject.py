@@ -188,7 +188,7 @@ def _goInferenceProxy(expression, fromUser=False, batch=False, unpack=True, char
         infoMsg += "sqlmap will now unpack it into distinct queries "
         infoMsg += "to be able to retrieve the output even if we "
         infoMsg += "are going blind"
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
     # If we have been here from SQL query/shell we have to check if
     # the SQL query might return multiple entries and in such case
@@ -241,7 +241,7 @@ def _goInferenceProxy(expression, fromUser=False, batch=False, unpack=True, char
 
                                 infoMsg = "sqlmap is now going to retrieve the "
                                 infoMsg += "first %d query output entries" % stopLimit
-                                logger.info(infoMsg)
+                                logger.args(infoMsg)
 
                             elif choice in ('#', 'S'):
                                 message = "how many? "

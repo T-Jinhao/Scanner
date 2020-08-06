@@ -35,7 +35,7 @@ class Enumeration(GenericEnumeration):
             infoMsg += " for current user"
             conf.user = self.getCurrentUser()
 
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         # Set containing the list of DBMS administrators
         areAdmins = set()
@@ -57,7 +57,7 @@ class Enumeration(GenericEnumeration):
 
             if not values and not query2:
                 infoMsg = "trying with table 'USER_ROLE_PRIVS'"
-                logger.info(infoMsg)
+                logger.args(infoMsg)
 
                 return self.getRoles(query2=True)
 
@@ -102,7 +102,7 @@ class Enumeration(GenericEnumeration):
 
                 infoMsg = "fetching number of roles "
                 infoMsg += "for user '%s'" % user
-                logger.info(infoMsg)
+                logger.args(infoMsg)
 
                 if unescapedUser:
                     queryUser = unescapedUser
@@ -118,7 +118,7 @@ class Enumeration(GenericEnumeration):
                 if not isNumPosStrValue(count):
                     if count != 0 and not query2:
                         infoMsg = "trying with table 'USER_SYS_PRIVS'"
-                        logger.info(infoMsg)
+                        logger.args(infoMsg)
 
                         return self.getPrivileges(query2=True)
 
@@ -128,7 +128,7 @@ class Enumeration(GenericEnumeration):
                     continue
 
                 infoMsg = "fetching roles for user '%s'" % user
-                logger.info(infoMsg)
+                logger.args(infoMsg)
 
                 roles = set()
 

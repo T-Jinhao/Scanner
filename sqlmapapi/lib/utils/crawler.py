@@ -158,11 +158,11 @@ def crawl(target):
                                 threadData.shared.value.add(item)
                         if conf.crawlDepth > 1:
                             threadData.shared.unprocessed.update(items)
-                    logger.info("%s links found" % ("no" if not items else len(items)))
+                    logger.args("%s links found" % ("no" if not items else len(items)))
 
         if not conf.bulkFile:
             infoMsg = "starting crawler for target URL '%s'" % target
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
         for i in xrange(conf.crawlDepth):
             threadData.shared.count = 0
@@ -170,7 +170,7 @@ def crawl(target):
             numThreads = min(conf.threads, len(threadData.shared.unprocessed))
 
             if not conf.bulkFile:
-                logger.info("searching for links with depth %d" % (i + 1))
+                logger.args("searching for links with depth %d" % (i + 1))
 
             runThreads(numThreads, crawlThread, threadChoice=(i > 0))
             clearConsoleLine(True)
@@ -232,7 +232,7 @@ def storeResultsToFile(results):
         os.close(handle)
 
         infoMsg = "writing crawling results to a temporary file '%s' " % filename
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         with openFile(filename, "w+b") as f:
             if conf.forms:

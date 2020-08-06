@@ -69,7 +69,7 @@ class Databases(object):
 
     def getCurrentDb(self):
         infoMsg = "fetching current database"
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         query = queries[Backend.getIdentifiedDbms()].current_db.query
 
@@ -108,7 +108,7 @@ class Databases(object):
             infoMsg = "fetching database names"
 
         if infoMsg:
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
         rootQuery = queries[Backend.getIdentifiedDbms()].dbs
 
@@ -124,7 +124,7 @@ class Databases(object):
 
         if not kb.data.cachedDbs and isInferenceAvailable() and not conf.direct:
             infoMsg = "fetching number of databases"
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
             if Backend.isDbms(DBMS.MYSQL) and not kb.data.has_information_schema:
                 query = rootQuery.blind.count2
@@ -174,7 +174,7 @@ class Databases(object):
 
         if not kb.data.cachedDbs:
             infoMsg = "falling back to current database"
-            logger.info(infoMsg)
+            logger.args(infoMsg)
             self.getCurrentDb()
 
             if kb.data.currentDb:
@@ -263,7 +263,7 @@ class Databases(object):
 
         infoMsg = "fetching tables for database"
         infoMsg += "%s: '%s'" % ("s" if len(dbs) > 1 else "", ", ".join(unsafeSQLIdentificatorNaming(unArrayizeValue(db)) for db in sorted(dbs)))
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         rootQuery = queries[Backend.getIdentifiedDbms()].tables
 
@@ -280,7 +280,7 @@ class Databases(object):
 
                         if conf.excludeSysDbs:
                             infoMsg = "skipping system database%s '%s'" % ("s" if len(self.excludeDbsList) > 1 else "", ", ".join(unsafeSQLIdentificatorNaming(db) for db in self.excludeDbsList))
-                            logger.info(infoMsg)
+                            logger.args(infoMsg)
                             query += " IN (%s)" % ','.join("'%s'" % unsafeSQLIdentificatorNaming(db) for db in sorted(dbs) if db not in self.excludeDbsList)
                         else:
                             query += " IN (%s)" % ','.join("'%s'" % unsafeSQLIdentificatorNaming(db) for db in sorted(dbs))
@@ -316,7 +316,7 @@ class Databases(object):
                                 if not isNoneValue(comment):
                                     infoMsg = "retrieved comment '%s' for table '%s' " % (comment, unsafeSQLIdentificatorNaming(table))
                                     infoMsg += "in database '%s'" % unsafeSQLIdentificatorNaming(db)
-                                    logger.info(infoMsg)
+                                    logger.args(infoMsg)
                             else:
                                 warnMsg = "on %s it is not " % Backend.getIdentifiedDbms()
                                 warnMsg += "possible to get table comments"
@@ -331,7 +331,7 @@ class Databases(object):
             for db in dbs:
                 if conf.excludeSysDbs and db in self.excludeDbsList:
                     infoMsg = "skipping system database '%s'" % unsafeSQLIdentificatorNaming(db)
-                    logger.info(infoMsg)
+                    logger.args(infoMsg)
                     continue
 
                 if conf.exclude and re.search(conf.exclude, db, re.I) is not None:
@@ -341,7 +341,7 @@ class Databases(object):
 
                 infoMsg = "fetching number of tables for "
                 infoMsg += "database '%s'" % unsafeSQLIdentificatorNaming(db)
-                logger.info(infoMsg)
+                logger.args(infoMsg)
 
                 if Backend.getIdentifiedDbms() in (DBMS.SQLITE, DBMS.FIREBIRD, DBMS.MAXDB, DBMS.ACCESS):
                     query = rootQuery.blind.count
@@ -398,7 +398,7 @@ class Databases(object):
                                 if not isNoneValue(comment):
                                     infoMsg = "retrieved comment '%s' for table '%s' " % (comment, unsafeSQLIdentificatorNaming(table))
                                     infoMsg += "in database '%s'" % unsafeSQLIdentificatorNaming(db)
-                                    logger.info(infoMsg)
+                                    logger.args(infoMsg)
                             else:
                                 warnMsg = "on %s it is not " % Backend.getIdentifiedDbms()
                                 warnMsg += "possible to get table comments"
@@ -562,7 +562,7 @@ class Databases(object):
                    kb.data.cachedColumns[conf.db]:
                     infoMsg = "fetched tables' columns on "
                     infoMsg += "database '%s'" % unsafeSQLIdentificatorNaming(conf.db)
-                    logger.info(infoMsg)
+                    logger.args(infoMsg)
 
                     return {conf.db: kb.data.cachedColumns[conf.db]}
 
@@ -605,7 +605,7 @@ class Databases(object):
                 else:
                     infoMsg += "for table '%s' " % unsafeSQLIdentificatorNaming(tbl)
                     infoMsg += "in database '%s'" % unsafeSQLIdentificatorNaming(conf.db)
-                    logger.info(infoMsg)
+                    logger.args(infoMsg)
 
                     values = None
                     if Backend.isDbms(DBMS.MSSQL) and isTechniqueAvailable(PAYLOAD.TECHNIQUE.UNION):
@@ -668,7 +668,7 @@ class Databases(object):
                                         comment = unArrayizeValue(inject.getValue(query, blind=False, time=False))
                                         if not isNoneValue(comment):
                                             infoMsg = "retrieved comment '%s' for column '%s'" % (comment, name)
-                                            logger.info(infoMsg)
+                                            logger.args(infoMsg)
                                     else:
                                         warnMsg = "on %s it is not " % Backend.getIdentifiedDbms()
                                         warnMsg += "possible to get column comments"
@@ -704,7 +704,7 @@ class Databases(object):
                    kb.data.cachedColumns[conf.db]:
                     infoMsg = "fetched tables' columns on "
                     infoMsg += "database '%s'" % unsafeSQLIdentificatorNaming(conf.db)
-                    logger.info(infoMsg)
+                    logger.args(infoMsg)
 
                     return {conf.db: kb.data.cachedColumns[conf.db]}
 
@@ -764,7 +764,7 @@ class Databases(object):
                 else:
                     infoMsg += "for table '%s' " % unsafeSQLIdentificatorNaming(tbl)
                     infoMsg += "in database '%s'" % unsafeSQLIdentificatorNaming(conf.db)
-                    logger.info(infoMsg)
+                    logger.args(infoMsg)
 
                     count = inject.getValue(query, union=False, error=False, expected=EXPECTED.INT, charsetType=CHARSET_TYPE.DIGITS)
 
@@ -829,7 +829,7 @@ class Databases(object):
                                 comment = unArrayizeValue(inject.getValue(query, union=False, error=False))
                                 if not isNoneValue(comment):
                                     infoMsg = "retrieved comment '%s' for column '%s'" % (comment, column)
-                                    logger.info(infoMsg)
+                                    logger.args(infoMsg)
                             else:
                                 warnMsg = "on %s it is not " % Backend.getIdentifiedDbms()
                                 warnMsg += "possible to get column comments"
@@ -888,7 +888,7 @@ class Databases(object):
     @stackedmethod
     def getSchema(self):
         infoMsg = "enumerating database management system schema"
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         try:
             pushValue(conf.db)
@@ -902,7 +902,7 @@ class Databases(object):
 
             infoMsg = "fetched tables: "
             infoMsg += ", ".join(["%s" % ", ".join("%s%s%s" % (unsafeSQLIdentificatorNaming(db), ".." if Backend.isDbms(DBMS.MSSQL) or Backend.isDbms(DBMS.SYBASE) else '.', unsafeSQLIdentificatorNaming(_)) for _ in tbl) for db, tbl in kb.data.cachedTables.items()])
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
             for db, tables in kb.data.cachedTables.items():
                 for tbl in tables:
@@ -977,7 +977,7 @@ class Databases(object):
 
     def getStatements(self):
         infoMsg = "fetching SQL statements"
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         rootQuery = queries[Backend.getIdentifiedDbms()].statements
 
@@ -1002,7 +1002,7 @@ class Databases(object):
 
         if not kb.data.cachedStatements and isInferenceAvailable() and not conf.direct:
             infoMsg = "fetching number of statements"
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
             query = rootQuery.blind.count
             count = inject.getValue(query, union=False, error=False, expected=EXPECTED.INT, charsetType=CHARSET_TYPE.DIGITS)

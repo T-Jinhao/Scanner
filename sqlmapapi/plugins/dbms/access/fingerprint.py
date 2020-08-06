@@ -44,7 +44,7 @@ class Fingerprint(GenericFingerprint):
 
     def _sysTablesCheck(self):
         infoMsg = "executing system table(s) existence fingerprint"
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         # Microsoft Access table reference updated on 01/2010
         sysTables = {
@@ -88,7 +88,7 @@ class Fingerprint(GenericFingerprint):
         retVal = None
 
         infoMsg = "searching for database directory"
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         randStr = randomStr()
         inject.checkBooleanExpression("EXISTS(SELECT * FROM %s.%s WHERE [RANDNUM]=[RANDNUM])" % (randStr, randStr))
@@ -154,13 +154,13 @@ class Fingerprint(GenericFingerprint):
             return True
 
         infoMsg = "testing %s" % DBMS.ACCESS
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         result = inject.checkBooleanExpression("VAL(CVAR(1))=1")
 
         if result:
             infoMsg = "confirming %s" % DBMS.ACCESS
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
             result = inject.checkBooleanExpression("IIF(ATN(2)>0,1,0) BETWEEN 2 AND 0")
 
@@ -175,7 +175,7 @@ class Fingerprint(GenericFingerprint):
                 return True
 
             infoMsg = "actively fingerprinting %s" % DBMS.ACCESS
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
             version = self._sysTablesCheck()
 

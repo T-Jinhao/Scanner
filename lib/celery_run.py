@@ -3,7 +3,8 @@
 #author:Jinhao
 
 
-import time,redis,sys
+import time
+import redis
 from lib.func_celery import *
 from main import *
 

@@ -22,7 +22,7 @@ class Enumeration(GenericEnumeration):
 
         if kb.data.banner is None:
             infoMsg = "fetching banner"
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
             query = queries[DBMS.H2].banner.query
             kb.data.banner = unArrayizeValue(inject.getValue(query, safeCharEncode=True))

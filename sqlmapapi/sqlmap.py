@@ -192,7 +192,7 @@ def main():
                                         target = "http://%s" % target
 
                                     infoMsg = "starting crawler for target URL '%s' (%d/%d)" % (target, i + 1, len(targets))
-                                    logger.info(infoMsg)
+                                    logger.args(infoMsg)
 
                                     crawl(target)
                                 except Exception as ex:

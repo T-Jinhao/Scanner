@@ -34,7 +34,7 @@ class Filesystem(GenericFilesystem):
         for remoteFile in remoteFile.split(','):
             if not kb.bruteMode:
                 infoMsg = "fetching file: '%s'" % remoteFile
-                logger.info(infoMsg)
+                logger.args(infoMsg)
 
             kb.fileReadMode = True
             fileContent = inject.getValue("SELECT RAWTOHEX(OSREADFILE('%s')) FROM DUAL" % remoteFile, charsetType=CHARSET_TYPE.HEXADECIMAL)

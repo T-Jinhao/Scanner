@@ -70,12 +70,12 @@ class Search(object):
             if dbConsider == "1":
                 infoMsg += "s LIKE"
             infoMsg += " '%s'" % unsafeSQLIdentificatorNaming(db)
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
             if conf.excludeSysDbs:
                 exclDbsQuery = "".join(" AND '%s' != %s" % (unsafeSQLIdentificatorNaming(db), dbCond) for db in self.excludeDbsList)
                 infoMsg = "skipping system database%s '%s'" % ("s" if len(self.excludeDbsList) > 1 else "", ", ".join(db for db in self.excludeDbsList))
-                logger.info(infoMsg)
+                logger.args(infoMsg)
             else:
                 exclDbsQuery = ""
 
@@ -103,7 +103,7 @@ class Search(object):
                 if dbConsider == "1":
                     infoMsg += "s LIKE"
                 infoMsg += " '%s'" % unsafeSQLIdentificatorNaming(db)
-                logger.info(infoMsg)
+                logger.args(infoMsg)
 
                 if Backend.isDbms(DBMS.MYSQL) and not kb.data.has_information_schema:
                     query = rootQuery.blind.count2
@@ -189,11 +189,11 @@ class Search(object):
             elif conf.excludeSysDbs:
                 whereDbsQuery = "".join(" AND '%s' != %s" % (unsafeSQLIdentificatorNaming(db), dbCond) for db in self.excludeDbsList)
                 msg = "skipping system database%s '%s'" % ("s" if len(self.excludeDbsList) > 1 else "", ", ".join(db for db in self.excludeDbsList))
-                logger.info(msg)
+                logger.args(msg)
             else:
                 whereDbsQuery = ""
 
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
             tblQuery = "%s%s" % (tblCond, tblCondParam)
             tblQuery = tblQuery % unsafeSQLIdentificatorNaming(tbl)
@@ -234,7 +234,7 @@ class Search(object):
                         if tblConsider == "1":
                             infoMsg += "s LIKE"
                         infoMsg += " '%s'" % unsafeSQLIdentificatorNaming(tbl)
-                        logger.info(infoMsg)
+                        logger.args(infoMsg)
 
                         query = rootQuery.blind.count
                         query = query % (tblQuery + whereDbsQuery)
@@ -283,7 +283,7 @@ class Search(object):
                     if tblConsider == "1":
                         infoMsg += "s LIKE"
                     infoMsg += " '%s' in database '%s'" % (unsafeSQLIdentificatorNaming(tbl), unsafeSQLIdentificatorNaming(db))
-                    logger.info(infoMsg)
+                    logger.args(infoMsg)
 
                     query = rootQuery.blind.count2
                     if Backend.getIdentifiedDbms() not in (DBMS.SQLITE, DBMS.FIREBIRD):
@@ -420,11 +420,11 @@ class Search(object):
             elif conf.excludeSysDbs:
                 whereDbsQuery = "".join(" AND %s != '%s'" % (dbCond, unsafeSQLIdentificatorNaming(db)) for db in self.excludeDbsList)
                 msg = "skipping system database%s '%s'" % ("s" if len(self.excludeDbsList) > 1 else "", ", ".join(unsafeSQLIdentificatorNaming(db) for db in self.excludeDbsList))
-                logger.info(msg)
+                logger.args(msg)
             else:
                 infoMsgDb = " across all databases"
 
-            logger.info("%s%s%s" % (infoMsg, infoMsgTbl, infoMsgDb))
+            logger.args("%s%s%s" % (infoMsg, infoMsgTbl, infoMsgDb))
 
             colQuery = "%s%s" % (colCond, colCondParam)
             colQuery = colQuery % unsafeSQLIdentificatorNaming(column)
@@ -483,7 +483,7 @@ class Search(object):
                     if colConsider == "1":
                         infoMsg += "s LIKE"
                     infoMsg += " '%s'" % unsafeSQLIdentificatorNaming(column)
-                    logger.info("%s%s%s" % (infoMsg, infoMsgTbl, infoMsgDb))
+                    logger.args("%s%s%s" % (infoMsg, infoMsgTbl, infoMsgDb))
 
                     query = rootQuery.blind.count
                     query = query % (colQuery + whereDbsQuery + whereTblsQuery)
@@ -534,7 +534,7 @@ class Search(object):
                         if colConsider == "1":
                             infoMsg += "s LIKE"
                         infoMsg += " '%s' in database '%s'" % (unsafeSQLIdentificatorNaming(column), unsafeSQLIdentificatorNaming(db))
-                        logger.info(infoMsg)
+                        logger.args(infoMsg)
 
                         query = rootQuery.blind.count2
                         query = query % unsafeSQLIdentificatorNaming(db)

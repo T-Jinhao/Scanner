@@ -107,4 +107,4 @@ def checkDependencies():
 
     if len(missing_libraries) == 0:
         infoMsg = "all dependencies are installed"
-        logger.info(infoMsg)
+        logger.args(infoMsg)

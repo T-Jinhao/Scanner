@@ -15,7 +15,7 @@ from lib.core.exception import SqlmapNotVulnerableException
 from lib.techniques.dns.use import dnsUse
 
 def dnsTest(payload):
-    logger.info("testing for data retrieval through DNS channel")
+    logger.args("testing for data retrieval through DNS channel")
 
     randInt = randomInt()
     kb.dnsTest = dnsUse(payload, "SELECT %d%s" % (randInt, FROM_DUMMY_TABLE.get(Backend.getIdentifiedDbms(), ""))) == str(randInt)
@@ -30,4 +30,4 @@ def dnsTest(payload):
             raise SqlmapNotVulnerableException(errMsg)
     else:
         infoMsg = "data retrieval through DNS channel was successful"
-        logger.info(infoMsg)
+        logger.args(infoMsg)

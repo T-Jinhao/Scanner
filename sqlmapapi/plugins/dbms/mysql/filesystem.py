@@ -33,7 +33,7 @@ class Filesystem(GenericFilesystem):
     def nonStackedReadFile(self, rFile):
         if not kb.bruteMode:
             infoMsg = "fetching file: '%s'" % rFile
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
         result = inject.getValue("HEX(LOAD_FILE('%s'))" % rFile, charsetType=CHARSET_TYPE.HEXADECIMAL)
 
@@ -42,7 +42,7 @@ class Filesystem(GenericFilesystem):
     def stackedReadFile(self, remoteFile):
         if not kb.bruteMode:
             infoMsg = "fetching file: '%s'" % remoteFile
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
         self.createSupportTbl(self.fileTblName, self.tblField, "longtext")
         self.getRemoteTempPath()

@@ -85,7 +85,7 @@ class Filesystem(GenericFilesystem):
     def stackedReadFile(self, remoteFile):
         if not kb.bruteMode:
             infoMsg = "fetching file: '%s'" % remoteFile
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
         result = []
         txtTbl = self.fileTblName
@@ -170,7 +170,7 @@ class Filesystem(GenericFilesystem):
     def _stackedWriteFilePS(self, tmpPath, localFileContent, remoteFile, fileType):
         infoMsg = "using PowerShell to write the %s file content " % fileType
         infoMsg += "to file '%s'" % remoteFile
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         encodedFileContent = encodeBase64(localFileContent, binary=False)
         encodedBase64File = "tmpf%s.txt" % randomStr(lowercase=True)
@@ -209,7 +209,7 @@ class Filesystem(GenericFilesystem):
     def _stackedWriteFileDebugExe(self, tmpPath, localFile, localFileContent, remoteFile, fileType):
         infoMsg = "using debug.exe to write the %s " % fileType
         infoMsg += "file content to file '%s', please wait.." % remoteFile
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         remoteFileName = ntpath.basename(remoteFile)
         sFile = "%s\\%s" % (tmpPath, remoteFileName)
@@ -271,7 +271,7 @@ class Filesystem(GenericFilesystem):
     def _stackedWriteFileVbs(self, tmpPath, localFileContent, remoteFile, fileType):
         infoMsg = "using a custom visual basic script to write the "
         infoMsg += "%s file content to file '%s', please wait.." % (fileType, remoteFile)
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         randVbs = "tmps%s.vbs" % randomStr(lowercase=True)
         randFile = "tmpf%s.txt" % randomStr(lowercase=True)
@@ -354,7 +354,7 @@ class Filesystem(GenericFilesystem):
     def _stackedWriteFileCertutilExe(self, tmpPath, localFile, localFileContent, remoteFile, fileType):
         infoMsg = "using certutil.exe to write the %s " % fileType
         infoMsg += "file content to file '%s', please wait.." % remoteFile
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         chunkMaxSize = 500
 

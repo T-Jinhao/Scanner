@@ -35,7 +35,7 @@ from thirdparty.six.moves import zip as _zip
 class Enumeration(GenericEnumeration):
     def getUsers(self):
         infoMsg = "fetching database users"
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         rootQuery = queries[DBMS.SYBASE].users
 
@@ -91,7 +91,7 @@ class Enumeration(GenericEnumeration):
             return kb.data.cachedDbs
 
         infoMsg = "fetching database names"
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         rootQuery = queries[DBMS.SYBASE].dbs
         query = rootQuery.inband.query
@@ -134,7 +134,7 @@ class Enumeration(GenericEnumeration):
 
         infoMsg = "fetching tables for database"
         infoMsg += "%s: %s" % ("s" if len(dbs) > 1 else "", ", ".join(db if isinstance(db, six.string_types) else db[0] for db in sorted(dbs)))
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         if any(isTechniqueAvailable(_) for _ in (PAYLOAD.TECHNIQUE.UNION, PAYLOAD.TECHNIQUE.ERROR, PAYLOAD.TECHNIQUE.QUERY)) or conf.direct:
             blinds = [False, True]
@@ -260,7 +260,7 @@ class Enumeration(GenericEnumeration):
                kb.data.cachedColumns[conf.db]:
                 infoMsg = "fetched tables' columns on "
                 infoMsg += "database '%s'" % unsafeSQLIdentificatorNaming(conf.db)
-                logger.info(infoMsg)
+                logger.args(infoMsg)
 
                 return {conf.db: kb.data.cachedColumns[conf.db]}
 
@@ -273,7 +273,7 @@ class Enumeration(GenericEnumeration):
             infoMsg = "fetching columns "
             infoMsg += "for table '%s' " % unsafeSQLIdentificatorNaming(tbl)
             infoMsg += "on database '%s'" % unsafeSQLIdentificatorNaming(conf.db)
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
             for blind in blinds:
                 query = rootQuery.inband.query % (conf.db, conf.db, conf.db, conf.db, conf.db, conf.db, conf.db, unsafeSQLIdentificatorNaming(tbl))

@@ -30,7 +30,7 @@ def purge(directory):
         return
 
     infoMsg = "purging content of directory '%s'..." % directory
-    logger.info(infoMsg)
+    logger.args(infoMsg)
 
     filepaths = []
     dirpaths = []

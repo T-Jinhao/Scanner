@@ -42,7 +42,7 @@ def update():
         logger.warn(warnMsg)
 
         if VERSION == getLatestRevision():
-            logger.info("already at the latest revision '%s'" % getRevisionNumber())
+            logger.args("already at the latest revision '%s'" % getRevisionNumber())
             return
 
         message = "do you want to try to fetch the latest 'zipball' from repository and extract it (experimental) ? [y/N]"
@@ -83,7 +83,7 @@ def update():
                         if os.path.isfile(filepath):
                             with openFile(filepath, "rb") as f:
                                 version = re.search(r"(?m)^VERSION\s*=\s*['\"]([^'\"]+)", f.read()).group(1)
-                                logger.info("updated to the latest version '%s#dev'" % version)
+                                logger.args("updated to the latest version '%s#dev'" % version)
                                 success = True
                     except Exception as ex:
                         logger.error("update could not be completed ('%s')" % getSafeExString(ex))
@@ -98,7 +98,7 @@ def update():
     else:
         infoMsg = "updating sqlmap to the latest development revision from the "
         infoMsg += "GitHub repository"
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         debugMsg = "sqlmap will try to update itself using 'git' command"
         logger.debug(debugMsg)
@@ -118,7 +118,7 @@ def update():
             output = getText(output)
 
         if success:
-            logger.info("%s the latest revision '%s'" % ("already at" if "Already" in output else "updated to", getRevisionNumber()))
+            logger.args("%s the latest revision '%s'" % ("already at" if "Already" in output else "updated to", getRevisionNumber()))
         else:
             if "Not a git repository" in output:
                 errMsg = "not a valid git repository. Please checkout the 'sqlmapproject/sqlmap' repository "
@@ -138,4 +138,4 @@ def update():
             infoMsg = "for Linux platform it's recommended "
             infoMsg += "to install a standard 'git' package (e.g.: 'sudo apt-get install git')"
 
-        logger.info(infoMsg)
+        logger.args(infoMsg)

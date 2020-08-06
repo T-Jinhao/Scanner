@@ -651,7 +651,7 @@ class Dump(object):
 
         if conf.dumpFormat == DUMP_FORMAT.SQLITE:
             rtable.endTransaction()
-            logger.info("table '%s.%s' dumped to sqlite3 database '%s'" % (db, table, replication.dbpath))
+            logger.args("table '%s.%s' dumped to sqlite3 database '%s'" % (db, table, replication.dbpath))
 
         elif conf.dumpFormat in (DUMP_FORMAT.CSV, DUMP_FORMAT.HTML):
             if conf.dumpFormat == DUMP_FORMAT.HTML:
@@ -662,7 +662,7 @@ class Dump(object):
 
             msg = "table '%s.%s' dumped to %s file '%s'" % (db, table, conf.dumpFormat, dumpFileName)
             if not warnFile:
-                logger.info(msg)
+                logger.args(msg)
             else:
                 logger.warn(msg)
 

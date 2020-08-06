@@ -144,11 +144,11 @@ class SmartRedirectHandler(_urllib.request.HTTPRedirectHandler):
 
                 # Dirty hack for http://bugs.python.org/issue15701
                 try:
-                    result.info()
+                    result.args()
                 except AttributeError:
                     def _(self):
                         return getattr(self, "hdrs") or {}
-                    result.info = types.MethodType(_, result)
+                    result.args = types.MethodType(_, result)
 
                 if not hasattr(result, "read"):
                     def _(self, length=None):

@@ -431,7 +431,7 @@ def _setHashDB():
         if conf.flushSession:
             try:
                 os.remove(conf.hashDBFile)
-                logger.info("flushing session file")
+                logger.args("flushing session file")
             except OSError as ex:
                 errMsg = "unable to flush the session file ('%s')" % getSafeExString(ex)
                 raise SqlmapFilePathException(errMsg)
@@ -515,7 +515,7 @@ def _resumeDBMS():
                 Backend.setVersionList(dbmsVersion)
     else:
         infoMsg = "resuming back-end DBMS '%s' " % dbms
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         Backend.setDbms(dbms)
         Backend.setVersionList(dbmsVersion)
@@ -534,7 +534,7 @@ def _resumeOS():
 
     if os and os != 'None':
         infoMsg = "resuming back-end DBMS operating system '%s' " % os
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         if conf.os and conf.os.lower() != os.lower():
             message = "you provided '%s' as back-end DBMS operating " % conf.os
@@ -584,7 +584,7 @@ def _setResultsFile():
         if not found:
             conf.resultsFP.writelines("Target URL,Place,Parameter,Technique(s),Note(s)%s" % os.linesep)
 
-        logger.info("using '%s' as the CSV results file in multiple targets mode" % conf.resultsFile)
+        logger.args("using '%s' as the CSV results file in multiple targets mode" % conf.resultsFile)
 
 def _createFilesDir():
     """

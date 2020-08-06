@@ -201,7 +201,7 @@ class Connect(object):
         retVal = b""
 
         if not kb.dnsMode and conn:
-            headers = conn.info()
+            headers = conn.args()
             if kb.pageCompress and headers and hasattr(headers, "getheader") and (headers.getheader(HTTP_HEADER.CONTENT_ENCODING, "").lower() in ("gzip", "deflate") or "text" not in headers.getheader(HTTP_HEADER.CONTENT_TYPE, "").lower()):
                 retVal = conn.read(MAX_CONNECTION_TOTAL_SIZE)
                 if len(retVal) == MAX_CONNECTION_TOTAL_SIZE:
@@ -541,7 +541,7 @@ class Connect(object):
 
                 if conn:
                     code = (code or conn.code) if conn.code == kb.originalCode else conn.code  # do not override redirection code (for comparison purposes)
-                    responseHeaders = conn.info()
+                    responseHeaders = conn.args()
                     responseHeaders[URI_HTTP_HEADER] = conn.geturl()
                     patchHeaders(responseHeaders)
                     kb.serverHeader = responseHeaders.get(HTTP_HEADER.SERVER, kb.serverHeader)
@@ -617,7 +617,7 @@ class Connect(object):
 
             try:
                 page = ex.read() if not skipRead else None
-                responseHeaders = ex.info()
+                responseHeaders = ex.args()
                 responseHeaders[URI_HTTP_HEADER] = ex.geturl()
                 patchHeaders(responseHeaders)
                 page = decodePage(page, responseHeaders.get(HTTP_HEADER.CONTENT_ENCODING), responseHeaders.get(HTTP_HEADER.CONTENT_TYPE))

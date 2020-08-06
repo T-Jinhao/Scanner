@@ -48,7 +48,7 @@ class UDF(object):
         return readInput(message, default='N', boolean=True)
 
     def _checkExistUdf(self, udf):
-        logger.info("checking if UDF '%s' already exist" % udf)
+        logger.args("checking if UDF '%s' already exist" % udf)
 
         query = agent.forgeCaseStatement(queries[Backend.getIdentifiedDbms()].check_udf.query % (udf, udf))
         return inject.getValue(query, resumeValue=False, expected=EXPECTED.BOOL, charsetType=CHARSET_TYPE.BINARY)
@@ -244,7 +244,7 @@ class UDF(object):
                 udfCount = int(udfCount)
 
                 if udfCount <= 0:
-                    logger.info("nothing to inject then")
+                    logger.args("nothing to inject then")
                     return
                 else:
                     break

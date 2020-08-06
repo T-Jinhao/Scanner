@@ -44,7 +44,7 @@ class Enumeration(GenericEnumeration):
             return kb.data.cachedDbs
 
         infoMsg = "fetching database names"
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         rootQuery = queries[DBMS.MAXDB].dbs
         query = rootQuery.inband.query
@@ -77,7 +77,7 @@ class Enumeration(GenericEnumeration):
 
         infoMsg = "fetching tables for database"
         infoMsg += "%s: %s" % ("s" if len(dbs) > 1 else "", ", ".join(db if isinstance(db, six.string_types) else db[0] for db in sorted(dbs)))
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         rootQuery = queries[DBMS.MAXDB].tables
 
@@ -189,7 +189,7 @@ class Enumeration(GenericEnumeration):
             if conf.db is not None and len(kb.data.cachedColumns) > 0 and conf.db in kb.data.cachedColumns and tbl in kb.data.cachedColumns[conf.db]:
                 infoMsg = "fetched tables' columns on "
                 infoMsg += "database '%s'" % unsafeSQLIdentificatorNaming(conf.db)
-                logger.info(infoMsg)
+                logger.args(infoMsg)
 
                 return {conf.db: kb.data.cachedColumns[conf.db]}
 
@@ -202,7 +202,7 @@ class Enumeration(GenericEnumeration):
             infoMsg = "fetching columns "
             infoMsg += "for table '%s' " % unsafeSQLIdentificatorNaming(tbl)
             infoMsg += "on database '%s'" % unsafeSQLIdentificatorNaming(conf.db)
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
             query = rootQuery.inband.query % (unsafeSQLIdentificatorNaming(tbl), ("'%s'" % unsafeSQLIdentificatorNaming(conf.db)) if unsafeSQLIdentificatorNaming(conf.db) != "USER" else 'USER')
             retVal = pivotDumpTable("(%s) AS %s" % (query, kb.aliasName), ['%s.columnname' % kb.aliasName, '%s.datatype' % kb.aliasName, '%s.len' % kb.aliasName], blind=True)

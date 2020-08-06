@@ -114,13 +114,13 @@ class Fingerprint(GenericFingerprint):
             return True
 
         infoMsg = "testing %s" % DBMS.FIREBIRD
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         result = inject.checkBooleanExpression("(SELECT COUNT(*) FROM RDB$DATABASE WHERE [RANDNUM]=[RANDNUM])>0")
 
         if result:
             infoMsg = "confirming %s" % DBMS.FIREBIRD
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
             result = inject.checkBooleanExpression("EXISTS(SELECT CURRENT_USER FROM RDB$DATABASE)")
 
@@ -133,7 +133,7 @@ class Fingerprint(GenericFingerprint):
             setDbms(DBMS.FIREBIRD)
 
             infoMsg = "actively fingerprinting %s" % DBMS.FIREBIRD
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
             version = self._sysTablesCheck()
 

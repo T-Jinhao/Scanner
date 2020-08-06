@@ -73,7 +73,7 @@ class Takeover(GenericTakeover):
 
     def udfCreateFromSharedLib(self, udf, inpRet):
         if udf in self.udfToCreate:
-            logger.info("creating UDF '%s' from the binary UDF file" % udf)
+            logger.args("creating UDF '%s' from the binary UDF file" % udf)
 
             inp = ", ".join(i for i in inpRet["input"])
             ret = inpRet["return"]

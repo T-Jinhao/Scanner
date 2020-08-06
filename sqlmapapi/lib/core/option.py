@@ -262,7 +262,7 @@ def _setMultipleTargets():
         infoMsg = "sqlmap parsed %d " % (updatedTargetsCount - initialTargetsCount)
         infoMsg += "(parameter unique) requests from the "
         infoMsg += "targets list ready to be tested"
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
 def _adjustLoggingFormatter():
     """
@@ -302,7 +302,7 @@ def _setRequestFromFile():
                 raise SqlmapFilePathException(errMsg)
 
             infoMsg = "parsing HTTP request from '%s'" % requestFile
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
             for target in parseRequestFile(requestFile):
                 url = target[0]
@@ -326,7 +326,7 @@ def _setRequestFromFile():
             raise SqlmapFilePathException(errMsg)
 
         infoMsg = "parsing second-order HTTP request from '%s'" % conf.secondReq
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         target = next(parseRequestFile(conf.secondReq, False))
         kb.secondReq = target
@@ -383,7 +383,7 @@ def _doSearch():
                 infoMsg += "%d " % len(kb.targets)
 
             infoMsg += "of them are testable targets"
-            logger.info(infoMsg)
+            logger.args(infoMsg)
             break
 
         else:
@@ -404,7 +404,7 @@ def _setBulkMultipleTargets():
     conf.bulkFile = safeExpandUser(conf.bulkFile)
 
     infoMsg = "parsing multiple targets list from '%s'" % conf.bulkFile
-    logger.info(infoMsg)
+    logger.args(infoMsg)
 
     if not checkFile(conf.bulkFile, False):
         errMsg = "the specified bulk file "
@@ -430,7 +430,7 @@ def _findPageForms():
 
     found = False
     infoMsg = "searching for forms"
-    logger.info(infoMsg)
+    logger.args(infoMsg)
 
     if not any((conf.bulkFile, conf.googleDork)):
         page, _, _ = Request.queryPage(content=True, ignoreSecondOrder=True)
@@ -579,7 +579,7 @@ def _setMetasploit():
                 if msfEnvPathExists:
                     infoMsg = "Metasploit Framework has been found "
                     infoMsg += "installed in the '%s' path" % envPath
-                    logger.info(infoMsg)
+                    logger.args(infoMsg)
 
                     conf.msfPath = envPath
 
@@ -690,7 +690,7 @@ def _listTamperingFunctions():
 
     if conf.listTampers:
         infoMsg = "listing available tamper scripts\n"
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         for script in sorted(glob.glob(os.path.join(paths.SQLMAP_TAMPER_PATH, "*.py"))):
             content = openFile(script, "rb").read()
@@ -738,7 +738,7 @@ def _setTamperingFunctions():
             dirname = os.path.abspath(dirname)
 
             infoMsg = "loading tamper module '%s'" % filename[:-3]
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
             if not os.path.exists(os.path.join(dirname, "__init__.py")):
                 errMsg = "make sure that there is an empty file '__init__.py' "
@@ -836,7 +836,7 @@ def _setPreprocessFunctions():
             dirname = os.path.abspath(dirname)
 
             infoMsg = "loading preprocess module '%s'" % filename[:-3]
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
             if not os.path.exists(os.path.join(dirname, "__init__.py")):
                 errMsg = "make sure that there is an empty file '__init__.py' "
@@ -973,7 +973,7 @@ def _setHTTPHandlers():
             conf.proxyList = conf.proxyList[1:]
 
             infoMsg = "loading proxy '%s' from a supplied proxy list file" % conf.proxy
-            logger.info(infoMsg)
+            logger.args(infoMsg)
 
         elif not conf.proxy:
             if conf.hostname in ("localhost", "127.0.0.1") or conf.ignoreProxy:
@@ -1344,7 +1344,7 @@ def _setHTTPUserAgent():
 
         infoMsg = "fetched random HTTP User-Agent header value '%s' from " % userAgent
         infoMsg += "file '%s'" % paths.USER_AGENTS
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         conf.httpHeaders.append((HTTP_HEADER.USER_AGENT, userAgent))
 
@@ -2016,7 +2016,7 @@ def _useWizardInterface():
     if not conf.wizard:
         return
 
-    logger.info("starting wizard interface")
+    logger.args("starting wizard interface")
 
     while not conf.url:
         message = "Please enter full target URL (-u): "
@@ -2093,7 +2093,7 @@ def _saveConfig():
     saveConfig(conf, conf.saveConfig)
 
     infoMsg = "saved command line options to the configuration file '%s'" % conf.saveConfig
-    logger.info(infoMsg)
+    logger.args(infoMsg)
 
 def setVerbosity():
     """
@@ -2215,7 +2215,7 @@ def _mergeOptions(inputOptions, overrideOptions):
 def _setTrafficOutputFP():
     if conf.trafficFile:
         infoMsg = "setting file for logging HTTP traffic"
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
         conf.trafficFP = openFile(conf.trafficFile, "w+")
 
@@ -2230,7 +2230,7 @@ def _setDNSServer():
         return
 
     infoMsg = "setting up DNS server instance"
-    logger.info(infoMsg)
+    logger.args(infoMsg)
 
     isAdmin = runningAsAdmin()
 
@@ -2269,7 +2269,7 @@ def _setTorProxySettings():
 
 def _setTorHttpProxySettings():
     infoMsg = "setting Tor HTTP proxy settings"
-    logger.info(infoMsg)
+    logger.args(infoMsg)
 
     port = findLocalPort(DEFAULT_TOR_HTTP_PORTS if not conf.torPort else (conf.torPort,))
 
@@ -2291,7 +2291,7 @@ def _setTorHttpProxySettings():
 
 def _setTorSocksProxySettings():
     infoMsg = "setting Tor SOCKS proxy settings"
-    logger.info(infoMsg)
+    logger.args(infoMsg)
 
     port = findLocalPort(DEFAULT_TOR_SOCKS_PORTS if not conf.torPort else (conf.torPort,))
 
@@ -2323,7 +2323,7 @@ def _checkTor():
         return
 
     infoMsg = "checking Tor connection"
-    logger.info(infoMsg)
+    logger.args(infoMsg)
 
     try:
         page, _, _ = Request.getPage(url="https://check.torproject.org/", raise404=False)
@@ -2335,7 +2335,7 @@ def _checkTor():
         raise SqlmapConnectionException(errMsg)
     else:
         infoMsg = "Tor is properly being used"
-        logger.info(infoMsg)
+        logger.args(infoMsg)
 
 def _basicOptionValidation():
     if conf.limitStart is not None and not (isinstance(conf.limitStart, int) and conf.limitStart > 0):
