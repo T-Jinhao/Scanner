@@ -93,17 +93,17 @@ def bisection(payload, expression, length=None, charsetType=None, firstChar=None
             if retVal and conf.hexConvert:
                 partialValue = retVal
                 infoMsg = "resuming partial value: %s" % safecharencode(partialValue)
-                logger.args(infoMsg)
+                logger.info(infoMsg)
         elif PARTIAL_VALUE_MARKER in retVal:
             retVal = retVal.replace(PARTIAL_VALUE_MARKER, "")
 
             if retVal and not conf.hexConvert:
                 partialValue = retVal
                 infoMsg = "resuming partial value: %s" % safecharencode(partialValue)
-                logger.args(infoMsg)
+                logger.info(infoMsg)
         else:
             infoMsg = "resumed: %s" % safecharencode(retVal)
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             return 0, retVal
 
@@ -671,7 +671,7 @@ def bisection(payload, expression, length=None, charsetType=None, firstChar=None
 
         if (conf.verbose in (1, 2) and showEta) or conf.verbose >= 3:
             infoMsg = "retrieved: %s" % filterControlChars(finalValue)
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
     if kb.threadException:
         raise SqlmapThreadException("something unexpected happened inside the threads")
@@ -689,7 +689,7 @@ def queryOutputLength(expression, payload):
     """
 
     infoMsg = "retrieving the length of query output"
-    logger.args(infoMsg)
+    logger.info(infoMsg)
 
     start = time.time()
 

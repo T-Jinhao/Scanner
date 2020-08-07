@@ -66,7 +66,7 @@ class Filesystem(object):
             localFileSize = 0
 
         if fileRead and Backend.isDbms(DBMS.PGSQL):
-            logger.args("length of read file '%s' cannot be checked on PostgreSQL" % remoteFile)
+            logger.info("length of read file '%s' cannot be checked on PostgreSQL" % remoteFile)
             sameFile = True
         else:
             logger.debug("checking the length of the remote file '%s'" % remoteFile)
@@ -89,7 +89,7 @@ class Filesystem(object):
                     infoMsg = "the remote file '%s' is smaller (%d B) than " % (remoteFile, remoteFileSize)
                     infoMsg += "file '%s' (%d B)" % (localFile, localFileSize)
 
-                logger.args(infoMsg)
+                logger.info(infoMsg)
             else:
                 sameFile = False
                 warnMsg = "it looks like the file has not been written (usually "

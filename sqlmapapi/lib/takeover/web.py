@@ -302,7 +302,7 @@ class Web(object):
             # Upload the file stager with the LIMIT 0, 1 INTO DUMPFILE method
             infoMsg = "trying to upload the file stager on '%s' " % directory
             infoMsg += "via LIMIT 'LINES TERMINATED BY' method"
-            logger.args(infoMsg)
+            logger.info(infoMsg)
             self._webFileInject(stagerContent, stagerName, directory)
 
             for match in re.finditer('/', directory):
@@ -327,7 +327,7 @@ class Web(object):
                 if isTechniqueAvailable(PAYLOAD.TECHNIQUE.UNION):
                     infoMsg = "trying to upload the file stager on '%s' " % directory
                     infoMsg += "via UNION method"
-                    logger.args(infoMsg)
+                    logger.info(infoMsg)
 
                     stagerName = "tmpu%s.%s" % (randomStr(lowercase=True), self.webPlatform)
                     self.webStagerFilePath = posixpath.join(ntToPosixSlashes(directory), stagerName)
@@ -371,7 +371,7 @@ class Web(object):
 
             infoMsg = "the file stager has been successfully uploaded "
             infoMsg += "on '%s' - %s" % (directory, self.webStagerUrl)
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             if self.webPlatform == WEB_PLATFORM.ASP:
                 match = re.search(r'input type=hidden name=scriptsdir value="([^"]+)"', uplPage)
@@ -428,6 +428,6 @@ class Web(object):
 
             infoMsg += "uploaded on '%s' - " % self.webDirectory
             infoMsg += self.webBackdoorUrl
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             break

@@ -81,7 +81,7 @@ class Miscellaneous(object):
             return
 
         infoMsg = "detecting back-end DBMS version from its banner"
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         if Backend.isDbms(DBMS.MYSQL):
             first, last = 1, 6
@@ -132,7 +132,7 @@ class Miscellaneous(object):
         """
 
         if web and self.webBackdoorFilePath:
-            logger.args("cleaning up the web files uploaded")
+            logger.info("cleaning up the web files uploaded")
 
             self.delRemoteFile(self.webStagerFilePath)
             self.delRemoteFile(self.webBackdoorFilePath)
@@ -155,7 +155,7 @@ class Miscellaneous(object):
         if onlyFileTbl:
             logger.debug("cleaning up the database management system")
         else:
-            logger.args("cleaning up the database management system")
+            logger.info("cleaning up the database management system")
 
         logger.debug("removing support tables")
         inject.goStacked("DROP TABLE %s" % self.fileTblName, silent=True)
@@ -183,7 +183,7 @@ class Miscellaneous(object):
                     logger.debug("removing UDF '%s'" % udf)
                     inject.goStacked(dropStr, silent=True)
 
-            logger.args("database management system cleanup finished")
+            logger.info("database management system cleanup finished")
 
             warnMsg = "remember that UDF %s files " % libtype
 

@@ -71,7 +71,7 @@ class Fingerprint(GenericFingerprint):
             return True
 
         infoMsg = "testing %s" % DBMS.SYBASE
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         if conf.direct:
             result = True
@@ -80,7 +80,7 @@ class Fingerprint(GenericFingerprint):
 
         if result:
             infoMsg = "confirming %s" % DBMS.SYBASE
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             result = inject.checkBooleanExpression("suser_id()=suser_id()")
 
@@ -98,7 +98,7 @@ class Fingerprint(GenericFingerprint):
                 return True
 
             infoMsg = "actively fingerprinting %s" % DBMS.SYBASE
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             result = unArrayizeValue(inject.getValue("SUBSTRING(@@VERSION,1,1)"))
 

@@ -62,7 +62,7 @@ def direct(query, content=True):
             conf.dbmsConnector.connect()
     elif output:
         infoMsg = "resumed: %s..." % getUnicode(output, UNICODE_ENCODING)[:20]
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
     threadData.lastQueryDuration = calculateDeltaSeconds(start)
 

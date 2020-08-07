@@ -163,7 +163,7 @@ class Entries(object):
                     infoMsg += " of column(s) '%s'" % colNames
                 infoMsg += " for table '%s'" % unsafeSQLIdentificatorNaming(tbl)
                 infoMsg += " in database '%s'" % unsafeSQLIdentificatorNaming(conf.db)
-                logger.args(infoMsg)
+                logger.info(infoMsg)
 
                 for column in colList:
                     _ = agent.preprocessField(tbl, column)
@@ -283,7 +283,7 @@ class Entries(object):
                         infoMsg += "column(s) '%s' " % colNames
                     infoMsg += "entries for table '%s' " % unsafeSQLIdentificatorNaming(tbl)
                     infoMsg += "in database '%s'" % unsafeSQLIdentificatorNaming(conf.db)
-                    logger.args(infoMsg)
+                    logger.info(infoMsg)
 
                     if Backend.getIdentifiedDbms() in (DBMS.ORACLE, DBMS.DB2):
                         query = rootQuery.blind.count % (tbl.upper() if not conf.db else ("%s.%s" % (conf.db.upper(), tbl.upper())))
@@ -476,7 +476,7 @@ class Entries(object):
             raise SqlmapUnsupportedFeatureException(errMsg)
 
         infoMsg = "sqlmap will dump entries of all tables from all databases now"
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         conf.tbl = None
         conf.col = None
@@ -493,7 +493,7 @@ class Entries(object):
                 for table in tables:
                     if conf.exclude and re.search(conf.exclude, table, re.I) is not None:
                         infoMsg = "skipping table '%s'" % unsafeSQLIdentificatorNaming(table)
-                        logger.args(infoMsg)
+                        logger.info(infoMsg)
                         continue
 
                     try:
@@ -504,7 +504,7 @@ class Entries(object):
                         self.dumpTable()
                     except SqlmapNoneDataException:
                         infoMsg = "skipping table '%s'" % unsafeSQLIdentificatorNaming(table)
-                        logger.args(infoMsg)
+                        logger.info(infoMsg)
 
     def dumpFoundColumn(self, dbs, foundCols, colConsider):
         message = "do you want to dump found column(s) entries? [Y/n] "

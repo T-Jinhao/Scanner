@@ -74,13 +74,13 @@ class Fingerprint(GenericFingerprint):
             return True
 
         infoMsg = "testing %s" % DBMS.SQLITE
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         result = inject.checkBooleanExpression("LAST_INSERT_ROWID()=LAST_INSERT_ROWID()")
 
         if result:
             infoMsg = "confirming %s" % DBMS.SQLITE
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             result = inject.checkBooleanExpression("SQLITE_VERSION()=SQLITE_VERSION()")
 
@@ -91,7 +91,7 @@ class Fingerprint(GenericFingerprint):
                 return False
             else:
                 infoMsg = "actively fingerprinting %s" % DBMS.SQLITE
-                logger.args(infoMsg)
+                logger.info(infoMsg)
 
                 result = inject.checkBooleanExpression("RANDOMBLOB(-1)>0")
                 version = '3' if result else '2'

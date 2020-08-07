@@ -96,7 +96,7 @@ def vulnTest():
 
     clearConsoleLine()
     if retVal:
-        logger.args("vuln test final result: PASSED")
+        logger.info("vuln test final result: PASSED")
     else:
         logger.error("vuln test final result: FAILED")
 
@@ -208,7 +208,7 @@ def smokeTest():
 
     clearConsoleLine()
     if retVal:
-        logger.args("smoke test final result: PASSED")
+        logger.info("smoke test final result: PASSED")
     else:
         logger.error("smoke test final result: FAILED")
 
@@ -293,7 +293,7 @@ def liveTest():
         setVerbosity()
 
         msg = "running live test case: %s (%d/%d)" % (name, count, length)
-        logger.args(msg)
+        logger.info(msg)
 
         initCase(switches, count)
 
@@ -309,7 +309,7 @@ def liveTest():
             setVerbosity()
 
         if result is True:
-            logger.args("test passed")
+            logger.info("test passed")
             cleanCase()
         else:
             errMsg = "test failed"
@@ -347,7 +347,7 @@ def liveTest():
     dataToStdout("\n")
 
     if retVal:
-        logger.args("live test final result: PASSED")
+        logger.info("live test final result: PASSED")
     else:
         logger.error("live test final result: FAILED")
 

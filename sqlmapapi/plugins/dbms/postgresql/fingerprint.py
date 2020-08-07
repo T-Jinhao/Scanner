@@ -73,13 +73,13 @@ class Fingerprint(GenericFingerprint):
             return True
 
         infoMsg = "testing %s" % DBMS.PGSQL
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         result = inject.checkBooleanExpression("QUOTE_IDENT(NULL) IS NULL")
 
         if result:
             infoMsg = "confirming %s" % DBMS.PGSQL
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             result = inject.checkBooleanExpression("COALESCE([RANDNUM], NULL)=[RANDNUM]")
 
@@ -97,7 +97,7 @@ class Fingerprint(GenericFingerprint):
                 return True
 
             infoMsg = "actively fingerprinting %s" % DBMS.PGSQL
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             if inject.checkBooleanExpression("SHA256(NULL) IS NULL"):
                 Backend.setVersion(">= 11.0")
@@ -160,7 +160,7 @@ class Fingerprint(GenericFingerprint):
             return
 
         infoMsg = "fingerprinting the back-end DBMS operating system"
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         self.createSupportTbl(self.fileTblName, self.tblField, "character(10000)")
         inject.goStacked("INSERT INTO %s(%s) VALUES (%s)" % (self.fileTblName, self.tblField, "VERSION()"))
@@ -182,6 +182,6 @@ class Fingerprint(GenericFingerprint):
             Backend.setOs(OS.LINUX)
 
         infoMsg = "the back-end DBMS operating system is %s" % Backend.getOs()
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         self.cleanup(onlyFileTbl=True)

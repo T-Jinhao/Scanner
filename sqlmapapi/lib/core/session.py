@@ -35,7 +35,7 @@ def setDbms(dbms):
     if kb.resolutionDbms:
         hashDBWrite(HASHDB_KEYS.DBMS, kb.resolutionDbms)
 
-    logger.args("the back-end DBMS is %s" % Backend.getDbms())
+    logger.info("the back-end DBMS is %s" % Backend.getDbms())
 
 def setOs():
     """
@@ -74,6 +74,6 @@ def setOs():
         infoMsg += " Service Pack %d" % kb.osSP
 
     if infoMsg:
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
     hashDBWrite(HASHDB_KEYS.OS, Backend.getOs())

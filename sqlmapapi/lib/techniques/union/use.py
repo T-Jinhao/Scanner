@@ -263,7 +263,7 @@ def unionUse(expression, unpack=True, dump=False):
 
                     infoMsg = "used SQL query returns "
                     infoMsg += "%d %s" % (stopLimit, "entries" if stopLimit > 1 else "entry")
-                    logger.args(infoMsg)
+                    logger.info(infoMsg)
 
             elif count and (not isinstance(count, six.string_types) or not count.isdigit()):
                 warnMsg = "it was not possible to count the number "

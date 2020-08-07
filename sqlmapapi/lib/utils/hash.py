@@ -613,7 +613,7 @@ def storeHashesToFile(attack_dict):
         os.close(handle)
 
         infoMsg = "writing hashes to a temporary file '%s' " % filename
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         with openFile(filename, "w+") as f:
             for item in items:
@@ -703,7 +703,7 @@ def attackDumpedTable():
         if attack_dict:
             infoMsg = "recognized possible password hashes in column%s " % ("s" if len(col_passwords) > 1 else "")
             infoMsg += "'%s'" % ", ".join(col for col in col_passwords)
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             storeHashesToFile(attack_dict)
 
@@ -933,7 +933,7 @@ def dictionaryAttack(attack_dict):
             if regex and regex not in hash_regexes:
                 hash_regexes.append(regex)
                 infoMsg = "using hash method '%s'" % __functions__[regex].__name__
-                logger.args(infoMsg)
+                logger.info(infoMsg)
 
     for hash_regex in hash_regexes:
         keys = set()
@@ -996,7 +996,7 @@ def dictionaryAttack(attack_dict):
                                 infoMsg = "resuming password '%s' for hash '%s'" % (resumed, hash_)
                                 if user and not user.startswith(DUMMY_USER_PREFIX):
                                     infoMsg += " for user '%s'" % user
-                                logger.args(infoMsg)
+                                logger.info(infoMsg)
                                 resumes.append((user, hash_, resumed))
                             keys.add(hash_)
 
@@ -1027,15 +1027,15 @@ def dictionaryAttack(attack_dict):
                         dictPath = readInput(message)
                         if dictPath:
                             dictPaths = [dictPath]
-                            logger.args("using custom dictionary")
+                            logger.info("using custom dictionary")
                     elif choice == '3':
                         message = "what's the list file location?\n"
                         listPath = readInput(message)
                         checkFile(listPath)
                         dictPaths = getFileItems(listPath)
-                        logger.args("using custom list of dictionaries")
+                        logger.info("using custom list of dictionaries")
                     else:
-                        logger.args("using default dictionary")
+                        logger.info("using default dictionary")
 
                     dictPaths = [_ for _ in dictPaths if _]
 
@@ -1063,7 +1063,7 @@ def dictionaryAttack(attack_dict):
                 suffix_list += COMMON_PASSWORD_SUFFIXES
 
         infoMsg = "starting dictionary-based cracking (%s)" % __functions__[hash_regex].__name__
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         for item in attack_info:
             ((user, _), _) = item
@@ -1079,7 +1079,7 @@ def dictionaryAttack(attack_dict):
                 if suffix:
                     clearConsoleLine()
                     infoMsg = "using suffix '%s'" % suffix
-                    logger.args(infoMsg)
+                    logger.info(infoMsg)
 
                 retVal = None
                 processes = []
@@ -1164,7 +1164,7 @@ def dictionaryAttack(attack_dict):
                     if suffix:
                         clearConsoleLine()
                         infoMsg = "using suffix '%s'" % suffix
-                        logger.args(infoMsg)
+                        logger.info(infoMsg)
 
                     retVal = None
                     processes = []

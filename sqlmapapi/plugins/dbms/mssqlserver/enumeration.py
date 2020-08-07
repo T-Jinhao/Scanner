@@ -87,7 +87,7 @@ class Enumeration(GenericEnumeration):
 
         infoMsg = "fetching tables for database"
         infoMsg += "%s: %s" % ("s" if len(dbs) > 1 else "", ", ".join(db if isinstance(db, six.string_types) else db[0] for db in sorted(dbs)))
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         rootQuery = queries[DBMS.MSSQL].tables
 
@@ -128,7 +128,7 @@ class Enumeration(GenericEnumeration):
 
                 infoMsg = "fetching number of tables for "
                 infoMsg += "database '%s'" % db
-                logger.args(infoMsg)
+                logger.info(infoMsg)
 
                 for query in (rootQuery.blind.count, rootQuery.blind.count2, rootQuery.blind.count3):
                     _ = query.replace("%s", db)
@@ -198,7 +198,7 @@ class Enumeration(GenericEnumeration):
             if tblConsider == "1":
                 infoMsg += "s LIKE"
             infoMsg += " '%s'" % unsafeSQLIdentificatorNaming(tbl)
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             tblQuery = "%s%s" % (tblCond, tblCondParam)
             tblQuery = tblQuery % unsafeSQLIdentificatorNaming(tbl)
@@ -235,7 +235,7 @@ class Enumeration(GenericEnumeration):
                     if tblConsider == "1":
                         infoMsg += "s LIKE"
                     infoMsg += " '%s' in database '%s'" % (unsafeSQLIdentificatorNaming(tbl), unsafeSQLIdentificatorNaming(db))
-                    logger.args(infoMsg)
+                    logger.info(infoMsg)
 
                     query = rootQuery.blind.count
                     query = query.replace("%s", db)
@@ -335,7 +335,7 @@ class Enumeration(GenericEnumeration):
             else:
                 infoMsgDb = " across all databases"
 
-            logger.args("%s%s%s" % (infoMsg, infoMsgTbl, infoMsgDb))
+            logger.info("%s%s%s" % (infoMsg, infoMsgTbl, infoMsgDb))
 
             colQuery = "%s%s" % (colCond, colCondParam)
             colQuery = colQuery % unsafeSQLIdentificatorNaming(column)
@@ -393,7 +393,7 @@ class Enumeration(GenericEnumeration):
                     if colConsider == "1":
                         infoMsg += "s LIKE"
                     infoMsg += " '%s' in database '%s'" % (column, db)
-                    logger.args("%s%s" % (infoMsg, infoMsgTbl))
+                    logger.info("%s%s" % (infoMsg, infoMsgTbl))
 
                     query = rootQuery.blind.count
                     query = query % (db, db, db, db, db, db)

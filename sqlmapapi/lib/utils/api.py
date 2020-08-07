@@ -672,8 +672,8 @@ def server(host=RESTAPI_DEFAULT_ADDRESS, port=RESTAPI_DEFAULT_PORT, adapter=REST
             s.bind((host, 0))
             port = s.getsockname()[1]
 
-    logger.args("Running REST-JSON API server at '%s:%d'.." % (host, port))
-    logger.args("Admin (secret) token: %s" % DataStore.admin_token)
+    logger.info("Running REST-JSON API server at '%s:%d'.." % (host, port))
+    logger.info("Admin (secret) token: %s" % DataStore.admin_token)
     logger.debug("IPC database: '%s'" % Database.filepath)
 
     # Initialize IPC database
@@ -744,7 +744,7 @@ def client(host=RESTAPI_DEFAULT_ADDRESS, port=RESTAPI_DEFAULT_PORT, username=Non
     logger.debug(dbgMsg)
 
     addr = "http://%s:%d" % (host, port)
-    logger.args("Starting REST-JSON API client to '%s'..." % addr)
+    logger.info("Starting REST-JSON API client to '%s'..." % addr)
 
     try:
         _client(addr)
@@ -760,7 +760,7 @@ def client(host=RESTAPI_DEFAULT_ADDRESS, port=RESTAPI_DEFAULT_PORT, username=Non
     autoCompletion(AUTOCOMPLETE_TYPE.API, commands=commands)
 
     taskid = None
-    logger.args("Type 'help' or '?' for list of available commands")
+    logger.info("Type 'help' or '?' for list of available commands")
 
     while True:
         try:
@@ -824,14 +824,14 @@ def client(host=RESTAPI_DEFAULT_ADDRESS, port=RESTAPI_DEFAULT_PORT, username=Non
                 logger.error("Failed to create new task")
                 continue
             taskid = res["taskid"]
-            logger.args("New task ID is '%s'" % taskid)
+            logger.info("New task ID is '%s'" % taskid)
 
             raw = _client("%s/scan/%s/start" % (addr, taskid), cmdLineOptions)
             res = dejsonize(raw)
             if not res["success"]:
                 logger.error("Failed to start scan")
                 continue
-            logger.args("Scanning started")
+            logger.info("Scanning started")
 
         elif command.startswith("use"):
             taskid = (command.split()[1] if ' ' in command else "").strip("'\"")
@@ -843,7 +843,7 @@ def client(host=RESTAPI_DEFAULT_ADDRESS, port=RESTAPI_DEFAULT_PORT, username=Non
                 logger.error("Invalid task ID '%s'" % taskid)
                 taskid = None
                 continue
-            logger.args("Switching to task ID '%s' " % taskid)
+            logger.info("Switching to task ID '%s' " % taskid)
 
         elif command in ("list", "flush"):
             raw = _client("%s/admin/%s" % (addr, command))

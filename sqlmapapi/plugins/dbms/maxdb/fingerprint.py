@@ -25,7 +25,7 @@ class Fingerprint(GenericFingerprint):
 
     def _versionCheck(self):
         infoMsg = "executing %s SYSINFO version check" % DBMS.MAXDB
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         query = agent.prefixQuery("/* NoValue */")
         query = agent.suffixQuery(query)
@@ -100,13 +100,13 @@ class Fingerprint(GenericFingerprint):
             return True
 
         infoMsg = "testing %s" % DBMS.MAXDB
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         result = inject.checkBooleanExpression("ALPHA(NULL) IS NULL")
 
         if result:
             infoMsg = "confirming %s" % DBMS.MAXDB
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             result = inject.checkBooleanExpression("MAPCHAR(NULL,1,DEFAULTMAP) IS NULL")
 

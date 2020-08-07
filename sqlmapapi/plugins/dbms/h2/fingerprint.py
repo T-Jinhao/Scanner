@@ -66,13 +66,13 @@ class Fingerprint(GenericFingerprint):
             return True
 
         infoMsg = "testing %s" % DBMS.H2
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         result = inject.checkBooleanExpression("ZERO() IS 0")
 
         if result:
             infoMsg = "confirming %s" % DBMS.H2
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             result = inject.checkBooleanExpression("ROUNDMAGIC(PI())>=3")
 

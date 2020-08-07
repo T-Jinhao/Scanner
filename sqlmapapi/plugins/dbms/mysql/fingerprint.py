@@ -30,7 +30,7 @@ class Fingerprint(GenericFingerprint):
 
     def _commentCheck(self):
         infoMsg = "executing %s comment injection fingerprint" % DBMS.MYSQL
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         result = inject.checkBooleanExpression("[RANDNUM]=[RANDNUM]/* NoValue */")
 
@@ -163,13 +163,13 @@ class Fingerprint(GenericFingerprint):
             return True
 
         infoMsg = "testing %s" % DBMS.MYSQL
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         result = inject.checkBooleanExpression("QUARTER(NULL) IS NULL")
 
         if result:
             infoMsg = "confirming %s" % DBMS.MYSQL
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             result = inject.checkBooleanExpression("SESSION_USER() LIKE USER()")
 
@@ -203,7 +203,7 @@ class Fingerprint(GenericFingerprint):
                     return True
 
                 infoMsg = "actively fingerprinting %s" % DBMS.MYSQL
-                logger.args(infoMsg)
+                logger.info(infoMsg)
 
                 # Check if it is MySQL >= 5.7
                 if inject.checkBooleanExpression("ISNULL(JSON_QUOTE(NULL))"):
@@ -288,7 +288,7 @@ class Fingerprint(GenericFingerprint):
             return
 
         infoMsg = "fingerprinting the back-end DBMS operating system"
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         result = inject.checkBooleanExpression("'W'=UPPER(MID(@@version_compile_os,1,1))")
 
@@ -299,7 +299,7 @@ class Fingerprint(GenericFingerprint):
 
         if Backend.getOs():
             infoMsg = "the back-end DBMS operating system is %s" % Backend.getOs()
-            logger.args(infoMsg)
+            logger.info(infoMsg)
         else:
             self.userChooseDbmsOs()
 

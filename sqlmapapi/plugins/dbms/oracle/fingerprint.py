@@ -68,7 +68,7 @@ class Fingerprint(GenericFingerprint):
             return True
 
         infoMsg = "testing %s" % DBMS.ORACLE
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         # NOTE: SELECT LENGTH(SYSDATE)=LENGTH(SYSDATE) FROM DUAL does
         # not work connecting directly to the Oracle database
@@ -79,7 +79,7 @@ class Fingerprint(GenericFingerprint):
 
         if result:
             infoMsg = "confirming %s" % DBMS.ORACLE
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             # NOTE: SELECT NVL(RAWTOHEX([RANDNUM1]),[RANDNUM1])=RAWTOHEX([RANDNUM1]) FROM DUAL does
             # not work connecting directly to the Oracle database
@@ -102,7 +102,7 @@ class Fingerprint(GenericFingerprint):
                 return True
 
             infoMsg = "actively fingerprinting %s" % DBMS.ORACLE
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             # Reference: https://en.wikipedia.org/wiki/Oracle_Database
             for version in ("18c", "12c", "11g", "10g", "9i", "8i", "7"):

@@ -26,7 +26,7 @@ class Filesystem(GenericFilesystem):
     def stackedReadFile(self, remoteFile):
         if not kb.bruteMode:
             infoMsg = "fetching file: '%s'" % remoteFile
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
         self.initEnv()
 

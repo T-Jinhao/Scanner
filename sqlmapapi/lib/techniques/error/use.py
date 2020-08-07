@@ -71,7 +71,7 @@ def _oneShotErrorUse(expression, field=None, chunkTest=False):
 
     if retVal and PARTIAL_VALUE_MARKER in retVal:
         partialValue = retVal = retVal.replace(PARTIAL_VALUE_MARKER, "")
-        logger.args("resuming partial value: '%s'" % _formatPartialContent(partialValue))
+        logger.info("resuming partial value: '%s'" % _formatPartialContent(partialValue))
         offset += len(partialValue)
 
     threadData.resumed = retVal is not None and not partialValue
@@ -342,7 +342,7 @@ def errorUse(expression, dump=False):
 
                     infoMsg = "used SQL query returns "
                     infoMsg += "%d %s" % (stopLimit, "entries" if stopLimit > 1 else "entry")
-                    logger.args(infoMsg)
+                    logger.info(infoMsg)
 
             elif count and not count.isdigit():
                 warnMsg = "it was not possible to count the number "

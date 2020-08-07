@@ -294,7 +294,7 @@ def start():
 
     if kb.targets and len(kb.targets) > 1:
         infoMsg = "sqlmap got a total of %d targets" % len(kb.targets)
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
     hostCount = 0
     initialHeaders = list(conf.httpHeaders)
@@ -303,7 +303,7 @@ def start():
         try:
             if conf.checkInternet:
                 infoMsg = "checking for Internet connection"
-                logger.args(infoMsg)
+                logger.info(infoMsg)
 
                 if not checkInternet():
                     warnMsg = "[%s] [WARNING] no connection detected" % time.strftime("%X")
@@ -359,7 +359,7 @@ def start():
 
             if not testSqlInj:
                 infoMsg = "skipping '%s'" % targetUrl
-                logger.args(infoMsg)
+                logger.info(infoMsg)
                 continue
 
             if conf.multipleTargets:
@@ -415,7 +415,7 @@ def start():
                         break
 
                     infoMsg = "testing URL '%s'" % targetUrl
-                    logger.args(infoMsg)
+                    logger.info(infoMsg)
 
             setupTargetEnv()
 
@@ -503,7 +503,7 @@ def start():
                             testSqlInj = False
 
                             infoMsg = "skipping previously processed %sparameter '%s'" % ("%s " % paramType if paramType != parameter else "", parameter)
-                            logger.args(infoMsg)
+                            logger.info(infoMsg)
 
                         elif any(_ in conf.testParameter for _ in (parameter, removePostHintPrefix(parameter))):
                             pass
@@ -512,32 +512,32 @@ def start():
                             testSqlInj = False
 
                             infoMsg = "skipping randomizing %sparameter '%s'" % ("%s " % paramType if paramType != parameter else "", parameter)
-                            logger.args(infoMsg)
+                            logger.info(infoMsg)
 
                         elif parameter in conf.skip or kb.postHint and parameter.split(' ')[-1] in conf.skip:
                             testSqlInj = False
 
                             infoMsg = "skipping %sparameter '%s'" % ("%s " % paramType if paramType != parameter else "", parameter)
-                            logger.args(infoMsg)
+                            logger.info(infoMsg)
 
                         elif conf.paramExclude and (re.search(conf.paramExclude, parameter, re.I) or kb.postHint and re.search(conf.paramExclude, parameter.split(' ')[-1], re.I)):
                             testSqlInj = False
 
                             infoMsg = "skipping %sparameter '%s'" % ("%s " % paramType if paramType != parameter else "", parameter)
-                            logger.args(infoMsg)
+                            logger.info(infoMsg)
 
                         elif conf.csrfToken and re.search(conf.csrfToken, parameter, re.I):
                             testSqlInj = False
 
                             infoMsg = "skipping anti-CSRF token parameter '%s'" % parameter
-                            logger.args(infoMsg)
+                            logger.info(infoMsg)
 
                         # Ignore session-like parameters for --level < 4
                         elif conf.level < 4 and (parameter.upper() in IGNORE_PARAMETERS or any(_ in parameter.lower() for _ in CSRF_TOKEN_PARAMETER_INFIXES) or parameter.upper().startswith(GOOGLE_ANALYTICS_COOKIE_PREFIX)):
                             testSqlInj = False
 
                             infoMsg = "ignoring %sparameter '%s'" % ("%s " % paramType if paramType != parameter else "", parameter)
-                            logger.args(infoMsg)
+                            logger.info(infoMsg)
 
                         elif PAYLOAD.TECHNIQUE.BOOLEAN in conf.technique or conf.skipStatic:
                             check = checkDynParam(place, parameter, value)
@@ -548,12 +548,12 @@ def start():
 
                                 if conf.skipStatic:
                                     infoMsg = "skipping static %sparameter '%s'" % ("%s " % paramType if paramType != parameter else "", parameter)
-                                    logger.args(infoMsg)
+                                    logger.info(infoMsg)
 
                                     testSqlInj = False
                             else:
                                 infoMsg = "%sparameter '%s' appears to be dynamic" % ("%s " % paramType if paramType != parameter else "", parameter)
-                                logger.args(infoMsg)
+                                logger.info(infoMsg)
 
                         kb.testedParams.add(paramKey)
 
@@ -568,11 +568,11 @@ def start():
                                 if check != HEURISTIC_TEST.POSITIVE:
                                     if conf.smart or (kb.ignoreCasted and check == HEURISTIC_TEST.CASTED):
                                         infoMsg = "skipping %sparameter '%s'" % ("%s " % paramType if paramType != parameter else "", parameter)
-                                        logger.args(infoMsg)
+                                        logger.info(infoMsg)
                                         continue
 
                                 infoMsg = "testing for SQL injection on %sparameter '%s'" % ("%s " % paramType if paramType != parameter else "", parameter)
-                                logger.args(infoMsg)
+                                logger.info(infoMsg)
 
                                 injection = checkSqlInjection(place, parameter, value)
                                 proceed = not kb.endDetection
@@ -734,12 +734,12 @@ def start():
                 logger.warn(warnMsg)
 
     if kb.dataOutputFlag and not conf.multipleTargets:
-        logger.args("fetched data logged to text files under '%s'" % conf.outputPath)
+        logger.info("fetched data logged to text files under '%s'" % conf.outputPath)
 
     if conf.multipleTargets:
         if conf.resultsFile:
             infoMsg = "you can find results of scanning in multiple targets "
             infoMsg += "mode inside the CSV file '%s'" % conf.resultsFile
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
     return True

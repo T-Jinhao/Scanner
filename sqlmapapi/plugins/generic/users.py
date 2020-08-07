@@ -62,7 +62,7 @@ class Users(object):
 
     def getCurrentUser(self):
         infoMsg = "fetching current user"
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         query = queries[Backend.getIdentifiedDbms()].current_user.query
 
@@ -73,7 +73,7 @@ class Users(object):
 
     def isDba(self, user=None):
         infoMsg = "testing if current user is DBA"
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         if Backend.isDbms(DBMS.MYSQL):
             self.getCurrentUser()
@@ -90,7 +90,7 @@ class Users(object):
 
     def getUsers(self):
         infoMsg = "fetching database users"
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         rootQuery = queries[Backend.getIdentifiedDbms()].users
 
@@ -113,7 +113,7 @@ class Users(object):
 
         if not kb.data.cachedUsers and isInferenceAvailable() and not conf.direct:
             infoMsg = "fetching number of database users"
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             if condition:
                 query = rootQuery.blind.count2
@@ -158,7 +158,7 @@ class Users(object):
             infoMsg += " for current user"
             conf.user = self.getCurrentUser()
 
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         if conf.user and Backend.getIdentifiedDbms() in (DBMS.ORACLE, DBMS.DB2):
             conf.user = conf.user.upper()
@@ -265,7 +265,7 @@ class Users(object):
                     else:
                         infoMsg = "fetching number of password hashes "
                         infoMsg += "for user '%s'" % user
-                        logger.args(infoMsg)
+                        logger.info(infoMsg)
 
                         if Backend.isDbms(DBMS.MSSQL) and Backend.isVersionWithin(("2005", "2008")):
                             query = rootQuery.blind.count2 % user
@@ -289,7 +289,7 @@ class Users(object):
                             continue
 
                     infoMsg = "fetching password hashes for user '%s'" % user
-                    logger.args(infoMsg)
+                    logger.info(infoMsg)
 
                     passwords = []
 
@@ -367,7 +367,7 @@ class Users(object):
             infoMsg += " for current user"
             conf.user = self.getCurrentUser()
 
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         if conf.user and Backend.getIdentifiedDbms() in (DBMS.ORACLE, DBMS.DB2):
             conf.user = conf.user.upper()
@@ -412,7 +412,7 @@ class Users(object):
 
             if not values and Backend.isDbms(DBMS.ORACLE) and not query2:
                 infoMsg = "trying with table 'USER_SYS_PRIVS'"
-                logger.args(infoMsg)
+                logger.info(infoMsg)
 
                 return self.getPrivileges(query2=True)
 
@@ -511,7 +511,7 @@ class Users(object):
                 else:
                     infoMsg = "fetching number of privileges "
                     infoMsg += "for user '%s'" % outuser
-                    logger.args(infoMsg)
+                    logger.info(infoMsg)
 
                     if Backend.isDbms(DBMS.MYSQL) and not kb.data.has_information_schema:
                         query = rootQuery.blind.count2 % user
@@ -527,7 +527,7 @@ class Users(object):
                     if not isNumPosStrValue(count):
                         if not retrievedUsers and Backend.isDbms(DBMS.ORACLE) and not query2:
                             infoMsg = "trying with table 'USER_SYS_PRIVS'"
-                            logger.args(infoMsg)
+                            logger.info(infoMsg)
 
                             return self.getPrivileges(query2=True)
 
@@ -537,7 +537,7 @@ class Users(object):
                         continue
 
                 infoMsg = "fetching privileges for user '%s'" % outuser
-                logger.args(infoMsg)
+                logger.info(infoMsg)
 
                 privileges = set()
 

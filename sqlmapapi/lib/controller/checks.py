@@ -354,7 +354,7 @@ def checkSqlInjection(place, parameter, value):
                             continue
 
             infoMsg = "testing '%s'" % title
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             # Force back-end DBMS according to the current test DBMS value
             # for proper payload unescaping
@@ -570,7 +570,7 @@ def checkSqlInjection(place, parameter, value):
                                                     injectable = True
 
                                                     infoMsg = "%sparameter '%s' appears to be '%s' injectable (with --string=\"%s\")" % ("%s " % paramType if paramType != parameter else "", parameter, title, repr(conf.string).lstrip('u').strip("'"))
-                                                    logger.args(infoMsg)
+                                                    logger.info(infoMsg)
 
                                                     break
 
@@ -580,7 +580,7 @@ def checkSqlInjection(place, parameter, value):
                                         conf.code = trueCode
 
                                         infoMsg = "%sparameter '%s' appears to be '%s' injectable (with --code=%d)" % ("%s " % paramType if paramType != parameter else "", parameter, title, conf.code)
-                                        logger.args(infoMsg)
+                                        logger.info(infoMsg)
                                     else:
                                         trueSet = set(extractTextTagContent(trueRawResponse))
                                         trueSet |= set(__ for _ in trueSet for __ in _.split())
@@ -605,7 +605,7 @@ def checkSqlInjection(place, parameter, value):
                                             conf.string = candidate
 
                                             infoMsg = "%sparameter '%s' appears to be '%s' injectable (with --string=\"%s\")" % ("%s " % paramType if paramType != parameter else "", parameter, title, repr(conf.string).lstrip('u').strip("'"))
-                                            logger.args(infoMsg)
+                                            logger.info(infoMsg)
 
                                         if not any((conf.string, conf.notString)):
                                             candidates = filterNone(_.strip() if _.strip() in falseRawResponse and _.strip() not in trueRawResponse else None for _ in (falseSet - trueSet))
@@ -619,7 +619,7 @@ def checkSqlInjection(place, parameter, value):
                                                 conf.notString = candidate
 
                                                 infoMsg = "%sparameter '%s' appears to be '%s' injectable (with --not-string=\"%s\")" % ("%s " % paramType if paramType != parameter else "", parameter, title, repr(conf.notString).lstrip('u').strip("'"))
-                                                logger.args(infoMsg)
+                                                logger.info(infoMsg)
 
                                 if not any((conf.string, conf.notString, conf.code)):
                                     infoMsg = "%sparameter '%s' appears to be '%s' injectable " % ("%s " % paramType if paramType != parameter else "", parameter, title)
@@ -641,7 +641,7 @@ def checkSqlInjection(place, parameter, value):
 
                                     if result:
                                         infoMsg = "%sparameter '%s' is '%s' injectable " % ("%s " % paramType if paramType != parameter else "", parameter, title)
-                                        logger.args(infoMsg)
+                                        logger.info(infoMsg)
 
                                         injectable = True
 
@@ -670,7 +670,7 @@ def checkSqlInjection(place, parameter, value):
 
                                 if trueResult:
                                     infoMsg = "%sparameter '%s' appears to be '%s' injectable " % ("%s " % paramType if paramType != parameter else "", parameter, title)
-                                    logger.args(infoMsg)
+                                    logger.info(infoMsg)
 
                                     injectable = True
 
@@ -709,7 +709,7 @@ def checkSqlInjection(place, parameter, value):
 
                             if isinstance(reqPayload, six.string_types):
                                 infoMsg = "%sparameter '%s' is '%s' injectable" % ("%s " % paramType if paramType != parameter else "", parameter, title)
-                                logger.args(infoMsg)
+                                logger.info(infoMsg)
 
                                 injectable = True
 
@@ -784,7 +784,7 @@ def checkSqlInjection(place, parameter, value):
 
                             if conf.alert:
                                 infoMsg = "executing alerting shell command(s) ('%s')" % conf.alert
-                                logger.args(infoMsg)
+                                logger.info(infoMsg)
 
                                 process = subprocess.Popen(conf.alert.encode(sys.getfilesystemencoding() or UNICODE_ENCODING), shell=True)
                                 process.wait()
@@ -892,7 +892,7 @@ def heuristicCheckDbms(injection):
     if retVal:
         infoMsg = "heuristic (extended) test shows that the back-end DBMS "  # Not as important as "parsing" counter-part (because of false-positives)
         infoMsg += "could be '%s' " % retVal
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         kb.heuristicExtendedDbms = retVal
 
@@ -911,7 +911,7 @@ def checkFalsePositives(injection):
 
         infoMsg = "checking if the injection point on %s " % injection.place
         infoMsg += "parameter '%s' is a false positive" % injection.parameter
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         def _():
             return int(randomInt(2)) + 1
@@ -1092,7 +1092,7 @@ def heuristicCheckSqlInjection(place, parameter):
         infoMsg += "be injectable"
         if Backend.getErrorParsedDBMSes():
             infoMsg += " (possible DBMS: '%s')" % Format.getErrorParsedDBMSes()
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
     else:
         infoMsg += "not be injectable"
@@ -1110,12 +1110,12 @@ def heuristicCheckSqlInjection(place, parameter):
 
     if value.lower() in (page or "").lower():
         infoMsg = "heuristic (XSS) test shows that %sparameter '%s' might be vulnerable to cross-site scripting (XSS) attacks" % ("%s " % paramType if paramType != parameter else "", parameter)
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
     for match in re.finditer(FI_ERROR_REGEX, page or ""):
         if randStr1.lower() in match.group(0).lower():
             infoMsg = "heuristic (FI) test shows that %sparameter '%s' might be vulnerable to file inclusion (FI) attacks" % ("%s " % paramType if paramType != parameter else "", parameter)
-            logger.args(infoMsg)
+            logger.info(infoMsg)
             break
 
     kb.heuristicMode = False
@@ -1139,7 +1139,7 @@ def checkDynParam(place, parameter, value):
     paramType = conf.method if conf.method not in (None, HTTPMETHOD.GET, HTTPMETHOD.POST) else place
 
     infoMsg = "testing if %sparameter '%s' is dynamic" % ("%s " % paramType if paramType != parameter else "", parameter)
-    logger.args(infoMsg)
+    logger.info(infoMsg)
 
     try:
         payload = agent.payload(place, parameter, value, getUnicode(randInt))
@@ -1220,7 +1220,7 @@ def checkStability():
     """
 
     infoMsg = "testing if the target URL content is stable"
-    logger.args(infoMsg)
+    logger.info(infoMsg)
 
     firstPage = kb.originalPage  # set inside checkConnection()
 
@@ -1238,7 +1238,7 @@ def checkStability():
     if kb.pageStable:
         if firstPage:
             infoMsg = "target URL content is stable"
-            logger.args(infoMsg)
+            logger.info(infoMsg)
         else:
             errMsg = "there was an error checking the stability of page "
             errMsg += "because of lack of content. Please check the "
@@ -1307,7 +1307,7 @@ def checkString():
 
     infoMsg = "testing if the provided string is within the "
     infoMsg += "target URL page content"
-    logger.args(infoMsg)
+    logger.info(infoMsg)
 
     page, headers, _ = Request.queryPage(content=True)
     rawResponse = "%s%s" % (listToStrValue(headers.headers if headers else ""), page)
@@ -1326,7 +1326,7 @@ def checkRegexp():
 
     infoMsg = "testing if the provided regular expression matches within "
     infoMsg += "the target URL page content"
-    logger.args(infoMsg)
+    logger.info(infoMsg)
 
     page, headers, _ = Request.queryPage(content=True)
     rawResponse = "%s%s" % (listToStrValue(headers.headers if headers else ""), page)
@@ -1364,7 +1364,7 @@ def checkWaf():
 
     infoMsg = "checking if the target is protected by "
     infoMsg += "some kind of WAF/IPS"
-    logger.args(infoMsg)
+    logger.info(infoMsg)
 
     retVal = False
     payload = "%d %s" % (randomInt(), IPS_WAF_CHECK_PAYLOAD)
@@ -1436,7 +1436,7 @@ def checkNullConnection():
 
     else:
         infoMsg = "testing NULL connection to the target URL"
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         pushValue(kb.pageCompress)
         kb.pageCompress = False
@@ -1448,7 +1448,7 @@ def checkNullConnection():
                 kb.nullConnection = NULLCONNECTION.HEAD
 
                 infoMsg = "NULL connection is supported with HEAD method ('Content-Length')"
-                logger.args(infoMsg)
+                logger.info(infoMsg)
             else:
                 page, headers, _ = Request.getPage(auxHeaders={HTTP_HEADER.RANGE: "bytes=-1"})
 
@@ -1456,7 +1456,7 @@ def checkNullConnection():
                     kb.nullConnection = NULLCONNECTION.RANGE
 
                     infoMsg = "NULL connection is supported with GET method ('Range')"
-                    logger.args(infoMsg)
+                    logger.info(infoMsg)
                 else:
                     _, headers, _ = Request.getPage(skipRead=True)
 
@@ -1464,7 +1464,7 @@ def checkNullConnection():
                         kb.nullConnection = NULLCONNECTION.SKIP_READ
 
                         infoMsg = "NULL connection is supported with 'skip-read' method"
-                        logger.args(infoMsg)
+                        logger.info(infoMsg)
 
         except SqlmapConnectionException:
             pass
@@ -1499,7 +1499,7 @@ def checkConnection(suppressOutput=False):
 
     if not suppressOutput and not conf.dummy and not conf.offline:
         infoMsg = "testing connection to the target URL"
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
     try:
         kb.originalPageTime = time.time()

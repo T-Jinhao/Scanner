@@ -54,7 +54,7 @@ def pivotDumpTable(table, colList, count=None, blind=True, alias=None):
 
     if count == 0:
         infoMsg = "table '%s' appears to be empty" % unsafeSQLIdentificatorNaming(table)
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         for column in colList:
             lengths[column] = len(column)
@@ -76,7 +76,7 @@ def pivotDumpTable(table, colList, count=None, blind=True, alias=None):
             if re.search(r"(.+\.)?%s" % re.escape(conf.pivotColumn), _, re.I):
                 infoMsg = "using column '%s' as a pivot " % conf.pivotColumn
                 infoMsg += "for retrieving row data"
-                logger.args(infoMsg)
+                logger.info(infoMsg)
 
                 colList.remove(_)
                 colList.insert(0, _)
@@ -93,7 +93,7 @@ def pivotDumpTable(table, colList, count=None, blind=True, alias=None):
         for column in colList:
             infoMsg = "fetching number of distinct "
             infoMsg += "values for column '%s'" % column.replace(("%s." % alias) if alias else "", "")
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             query = dumpNode.count2 % (column, table)
             query = agent.whereQuery(query)
@@ -105,7 +105,7 @@ def pivotDumpTable(table, colList, count=None, blind=True, alias=None):
                 if value == count:
                     infoMsg = "using column '%s' as a pivot " % column.replace(("%s." % alias) if alias else "", "")
                     infoMsg += "for retrieving row data"
-                    logger.args(infoMsg)
+                    logger.info(infoMsg)
 
                     validPivotValue = True
                     colList.remove(column)

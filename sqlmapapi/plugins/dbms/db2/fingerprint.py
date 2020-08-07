@@ -89,13 +89,13 @@ class Fingerprint(GenericFingerprint):
             return True
 
         logMsg = "testing %s" % DBMS.DB2
-        logger.args(logMsg)
+        logger.info(logMsg)
 
         result = inject.checkBooleanExpression("[RANDNUM]=(SELECT [RANDNUM] FROM SYSIBM.SYSDUMMY1)")
 
         if result:
             logMsg = "confirming %s" % DBMS.DB2
-            logger.args(logMsg)
+            logger.info(logMsg)
 
             version = self._versionCheck()
 
@@ -116,7 +116,7 @@ class Fingerprint(GenericFingerprint):
 
         infoMsg = "fingerprinting the back-end DBMS operating system "
         infoMsg += "version and service pack"
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         query = "(SELECT LENGTH(OS_NAME) FROM SYSIBMADM.ENV_SYS_INFO WHERE OS_NAME LIKE '%WIN%')>0"
         result = inject.checkBooleanExpression(query)
@@ -168,4 +168,4 @@ class Fingerprint(GenericFingerprint):
             if Backend.getOsVersion():
                 infoMsg += " Service Pack %d" % Backend.getOsServicePack()
 
-            logger.args(infoMsg)
+            logger.info(infoMsg)

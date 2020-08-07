@@ -49,7 +49,7 @@ def _addPageTextWords():
     wordsList = []
 
     infoMsg = "adding words used on web page to the check list"
-    logger.args(infoMsg)
+    logger.info(infoMsg)
     pageWords = getPageWordSet(kb.originalPage)
 
     for word in pageWords:
@@ -96,7 +96,7 @@ def tableExists(tableFile, regex=None):
         tableFile = readInput(message) or tableFile
 
     infoMsg = "performing table existence using items from '%s'" % tableFile
-    logger.args(infoMsg)
+    logger.info(infoMsg)
 
     tables = getFileItems(tableFile, lowercase=Backend.getIdentifiedDbms() in (DBMS.ACCESS,), unique=True)
     tables.extend(_addPageTextWords())
@@ -105,7 +105,7 @@ def tableExists(tableFile, regex=None):
     for conf.db in (conf.db.split(',') if conf.db else [conf.db]):
         if conf.db:
             infoMsg = "checking database '%s'" % conf.db
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
         threadData = getCurrentThreadData()
         threadData.shared.count = 0
@@ -218,7 +218,7 @@ def columnExists(columnFile, regex=None):
         columnFile = readInput(message) or columnFile
 
     infoMsg = "checking column existence using items from '%s'" % columnFile
-    logger.args(infoMsg)
+    logger.info(infoMsg)
 
     columns = getFileItems(columnFile, unique=True)
     columns.extend(_addPageTextWords())
@@ -321,7 +321,7 @@ def fileExists(pathFile):
         pathFile = readInput(message) or pathFile
 
     infoMsg = "checking files existence using items from '%s'" % pathFile
-    logger.args(infoMsg)
+    logger.info(infoMsg)
 
     paths = getFileItems(pathFile, unique=True)
 

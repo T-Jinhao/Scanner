@@ -104,11 +104,11 @@ class XP_cmdshell(object):
         pushValue(threadData.disableStdOut)
         threadData.disableStdOut = True
 
-        logger.args("testing if xp_cmdshell extended procedure is usable")
+        logger.info("testing if xp_cmdshell extended procedure is usable")
         output = self.xpCmdshellEvalCmd("echo 1")
 
         if output == "1":
-            logger.args("xp_cmdshell extended procedure is usable")
+            logger.info("xp_cmdshell extended procedure is usable")
         elif isNoneValue(output) and conf.dbmsCred:
             errMsg = "it seems that the temporary directory ('%s') used for " % self.getRemoteTempPath()
             errMsg += "storing console output within the back-end file system "
@@ -120,7 +120,7 @@ class XP_cmdshell(object):
         elif isNoneValue(output):
             logger.error("unable to retrieve xp_cmdshell output")
         else:
-            logger.args("xp_cmdshell extended procedure is usable")
+            logger.info("xp_cmdshell extended procedure is usable")
 
         threadData.disableStdOut = popValue()
 
@@ -246,12 +246,12 @@ class XP_cmdshell(object):
         if not kb.xpCmdshellAvailable:
             infoMsg = "checking if xp_cmdshell extended procedure is "
             infoMsg += "available, please wait.."
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             result = self._xpCmdshellCheck()
 
             if result:
-                logger.args("xp_cmdshell extended procedure is available")
+                logger.info("xp_cmdshell extended procedure is available")
                 kb.xpCmdshellAvailable = True
 
             else:
@@ -263,18 +263,18 @@ class XP_cmdshell(object):
                     self._xpCmdshellConfigure(1)
 
                     if self._xpCmdshellCheck():
-                        logger.args("xp_cmdshell re-enabled successfully")
+                        logger.info("xp_cmdshell re-enabled successfully")
                         kb.xpCmdshellAvailable = True
 
                     else:
                         logger.warn("xp_cmdshell re-enabling failed")
 
-                        logger.args("creating xp_cmdshell with sp_OACreate")
+                        logger.info("creating xp_cmdshell with sp_OACreate")
                         self._xpCmdshellConfigure(0)
                         self._xpCmdshellCreate()
 
                         if self._xpCmdshellCheck():
-                            logger.args("xp_cmdshell created successfully")
+                            logger.info("xp_cmdshell created successfully")
                             kb.xpCmdshellAvailable = True
 
                         else:

@@ -51,13 +51,13 @@ def profile(profileOutputFile=None, dotOutputFile=None, imageOutputFile=None):
         os.remove(imageOutputFile)
 
     infoMsg = "profiling the execution into file '%s'" % profileOutputFile
-    logger.args(infoMsg)
+    logger.info(infoMsg)
 
     # Start sqlmap main function and generate a raw profile file
     cProfile.run("start()", profileOutputFile)
 
     infoMsg = "converting profile data into a dot file '%s'" % dotOutputFile
-    logger.args(infoMsg)
+    logger.info(infoMsg)
 
     # Create dot file by using extra/gprof2dot/gprof2dot.py
     # http://code.google.com/p/jrfonseca/wiki/Gprof2Dot
@@ -70,7 +70,7 @@ def profile(profileOutputFile=None, dotOutputFile=None, imageOutputFile=None):
     dotFilePointer.close()
 
     infoMsg = "converting dot file into a graph image '%s'" % imageOutputFile
-    logger.args(infoMsg)
+    logger.info(infoMsg)
 
     # Create graph image (png) by using pydot (python-pydot)
     # http://code.google.com/p/pydot/
@@ -88,7 +88,7 @@ def profile(profileOutputFile=None, dotOutputFile=None, imageOutputFile=None):
         logger.error(errMsg)
     else:
         infoMsg = "displaying interactive graph with xdot library"
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         # Display interactive Graphviz dot file by using extra/xdot/xdot.py
         # http://code.google.com/p/jrfonseca/wiki/XDot

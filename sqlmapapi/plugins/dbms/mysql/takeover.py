@@ -39,12 +39,12 @@ class Takeover(GenericTakeover):
 
         if banVer >= "5.0.67":
             if self.__plugindir is None:
-                logger.args("retrieving MySQL plugin directory absolute path")
+                logger.info("retrieving MySQL plugin directory absolute path")
                 self.__plugindir = unArrayizeValue(inject.getValue("SELECT @@plugin_dir"))
 
             # On MySQL 5.1 >= 5.1.19 and on any version of MySQL 6.0
             if self.__plugindir is None and banVer >= "5.1.19":
-                logger.args("retrieving MySQL base directory absolute path")
+                logger.info("retrieving MySQL base directory absolute path")
 
                 # Reference: http://dev.mysql.com/doc/refman/5.1/en/server-options.html#option_mysqld_basedir
                 self.__basedir = unArrayizeValue(inject.getValue("SELECT @@basedir"))
@@ -96,7 +96,7 @@ class Takeover(GenericTakeover):
 
     def udfCreateFromSharedLib(self, udf, inpRet):
         if udf in self.udfToCreate:
-            logger.args("creating UDF '%s' from the binary UDF file" % udf)
+            logger.info("creating UDF '%s' from the binary UDF file" % udf)
 
             ret = inpRet["return"]
 

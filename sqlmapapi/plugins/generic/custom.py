@@ -48,7 +48,7 @@ class Custom(object):
 
             if not any(_ in query.upper() for _ in ("OPENROWSET", "INTO")) and (not sqlType or "SELECT" in sqlType):
                 infoMsg = "fetching %s query output: '%s'" % (sqlType if sqlType is not None else "SQL", query)
-                logger.args(infoMsg)
+                logger.info(infoMsg)
 
                 output = inject.getValue(query, fromUser=True)
 
@@ -81,7 +81,7 @@ class Custom(object):
     def sqlShell(self):
         infoMsg = "calling %s shell. To quit type " % Backend.getIdentifiedDbms()
         infoMsg += "'x' or 'q' and press ENTER"
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         autoCompletion(AUTOCOMPLETE_TYPE.SQL)
 
@@ -121,7 +121,7 @@ class Custom(object):
 
     def sqlFile(self):
         infoMsg = "executing SQL statements from given file(s)"
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         for filename in re.split(PARAMETER_SPLITTING_REGEX, conf.sqlFile):
             filename = filename.strip()

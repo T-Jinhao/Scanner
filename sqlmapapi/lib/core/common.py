@@ -780,10 +780,10 @@ def getManualDirectories():
     if conf.webRoot:
         directories = [conf.webRoot]
         infoMsg = "using '%s' as web server document root" % conf.webRoot
-        logger.args(infoMsg)
+        logger.info(infoMsg)
     elif directories:
         infoMsg = "retrieved the web server document root: '%s'" % directories
-        logger.args(infoMsg)
+        logger.info(infoMsg)
     else:
         warnMsg = "unable to automatically retrieve the web server "
         warnMsg += "document root"
@@ -837,7 +837,7 @@ def getManualDirectories():
                             break
 
             infoMsg = "using generated directory list: %s" % ','.join(directories)
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             msg = "use any additional custom directories [Enter for None]: "
             answer = readInput(msg)
@@ -864,7 +864,7 @@ def getAutoDirectories():
     if kb.absFilePaths:
         infoMsg = "retrieved web server absolute paths: "
         infoMsg += "'%s'" % ", ".join(ntToPosixSlashes(path) for path in kb.absFilePaths)
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         for absFilePath in kb.absFilePaths:
             if absFilePath:
@@ -1688,7 +1688,7 @@ def expandAsteriskForColumns(expression):
     if match:
         infoMsg = "you did not provide the fields in your query. "
         infoMsg += "sqlmap will retrieve the column names itself"
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         _ = match.group(2).replace("..", '.').replace(".dbo.", '.')
         db, conf.tbl = _.split('.', 1) if '.' in _ else (None, _)
@@ -1714,7 +1714,7 @@ def expandAsteriskForColumns(expression):
 
             infoMsg = "the query with expanded column name(s) is: "
             infoMsg += "%s" % expression
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
     return expression
 
@@ -2090,7 +2090,7 @@ def showStaticWords(firstPage, secondPage, minLength=3):
     """
 
     infoMsg = "finding static words in longest matching part of dynamic page content"
-    logger.args(infoMsg)
+    logger.info(infoMsg)
 
     firstPage = getFilteredPageContent(firstPage)
     secondPage = getFilteredPageContent(secondPage)
@@ -2115,7 +2115,7 @@ def showStaticWords(firstPage, secondPage, minLength=3):
     else:
         infoMsg += "None"
 
-    logger.args(infoMsg)
+    logger.info(infoMsg)
 
     return commonWords
 
@@ -2671,7 +2671,7 @@ def adjustTimeDelay(lastQueryDuration, lowerStdLimit):
 
             infoMsg = "adjusting time delay to "
             infoMsg += "%d second%s due to good response times" % (conf.timeSec, 's' if conf.timeSec > 1 else '')
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
 def getLastRequestHTTPError():
     """
@@ -3785,7 +3785,7 @@ def createGithubIssue(errMsg, excMsg):
         issueUrl = re.search(r"https://github.com/sqlmapproject/sqlmap/issues/\d+", content or "")
         if issueUrl:
             infoMsg = "created Github issue can been found at the address '%s'" % issueUrl.group(0)
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             try:
                 with openFile(paths.GITHUB_HISTORY, "a+b") as f:
@@ -4801,7 +4801,7 @@ def resetCookieJar(cookieJar):
         try:
             if not cookieJar.filename:
                 infoMsg = "loading cookies from '%s'" % conf.loadCookies
-                logger.args(infoMsg)
+                logger.info(infoMsg)
 
                 content = readCachedFileContent(conf.loadCookies)
                 lines = filterNone(line.strip() for line in content.split("\n") if not line.startswith('#'))
@@ -5145,7 +5145,7 @@ def parseRequestFile(reqFile, checkParams=True):
     content = readCachedFileContent(reqFile)
 
     if conf.scope:
-        logger.args("using regular expression '%s' for filtering targets" % conf.scope)
+        logger.info("using regular expression '%s' for filtering targets" % conf.scope)
 
     for target in _parseBurpLog(content):
         yield target

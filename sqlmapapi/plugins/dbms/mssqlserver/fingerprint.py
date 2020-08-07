@@ -75,7 +75,7 @@ class Fingerprint(GenericFingerprint):
             return True
 
         infoMsg = "testing %s" % DBMS.MSSQL
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         # NOTE: SELECT LEN(@@VERSION)=LEN(@@VERSION) FROM DUAL does not
         # work connecting directly to the Microsoft SQL Server database
@@ -86,7 +86,7 @@ class Fingerprint(GenericFingerprint):
 
         if result:
             infoMsg = "confirming %s" % DBMS.MSSQL
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             for version, check in (
                 ("2000", "HOST_NAME()=HOST_NAME()"),
@@ -130,7 +130,7 @@ class Fingerprint(GenericFingerprint):
 
         infoMsg = "fingerprinting the back-end DBMS operating system "
         infoMsg += "version and service pack"
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         infoMsg = "the back-end DBMS operating system is %s" % Backend.getOs()
 
@@ -194,6 +194,6 @@ class Fingerprint(GenericFingerprint):
         if Backend.getOsVersion():
             infoMsg += " Service Pack %d" % Backend.getOsServicePack()
 
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         self.cleanup(onlyFileTbl=True)

@@ -60,7 +60,7 @@ def _search(dork):
         raise SqlmapConnectionException(errMsg)
 
     gpage = conf.googlePage if conf.googlePage > 1 else 1
-    logger.args("using search result page #%d" % gpage)
+    logger.info("using search result page #%d" % gpage)
 
     url = "https://www.google.com/search?"
     url += "q=%s&" % urlencode(dork, convall=True)
@@ -78,7 +78,7 @@ def _search(dork):
         page = conn.read()
         code = conn.code
         status = conn.msg
-        responseHeaders = conn.args()
+        responseHeaders = conn.info()
 
         responseMsg = "HTTP response (%s - %d):\n" % (status, code)
 
@@ -91,7 +91,7 @@ def _search(dork):
     except _urllib.error.HTTPError as ex:
         try:
             page = ex.read()
-            responseHeaders = ex.args()
+            responseHeaders = ex.info()
         except Exception as _:
             warnMsg = "problem occurred while trying to get "
             warnMsg += "an error page information (%s)" % getSafeExString(_)
@@ -142,7 +142,7 @@ def _search(dork):
             page = conn.read()
             code = conn.code
             status = conn.msg
-            responseHeaders = conn.args()
+            responseHeaders = conn.info()
             page = decodePage(page, responseHeaders.get("Content-Encoding"), responseHeaders.get("Content-Type"))
 
             responseMsg = "HTTP response (%s - %d):\n" % (status, code)

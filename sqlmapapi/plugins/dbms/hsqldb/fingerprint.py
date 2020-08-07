@@ -91,13 +91,13 @@ class Fingerprint(GenericFingerprint):
             return True
 
         infoMsg = "testing %s" % DBMS.HSQLDB
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         result = inject.checkBooleanExpression("CASEWHEN(1=1,1,0)=1")
 
         if result:
             infoMsg = "confirming %s" % DBMS.HSQLDB
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             result = inject.checkBooleanExpression("ROUNDMAGIC(PI())>=3")
 

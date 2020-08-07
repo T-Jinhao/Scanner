@@ -45,7 +45,7 @@ class Enumeration(Custom, Databases, Entries, Search, Users):
 
         if kb.data.banner is None:
             infoMsg = "fetching banner"
-            logger.args(infoMsg)
+            logger.info(infoMsg)
 
             if Backend.isDbms(DBMS.DB2):
                 rootQuery = queries[DBMS.DB2].banner
@@ -75,7 +75,7 @@ class Enumeration(Custom, Databases, Entries, Search, Users):
 
     def getHostname(self):
         infoMsg = "fetching server hostname"
-        logger.args(infoMsg)
+        logger.info(infoMsg)
 
         query = queries[Backend.getIdentifiedDbms()].hostname.query
 
