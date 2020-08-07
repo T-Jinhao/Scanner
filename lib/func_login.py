@@ -3,6 +3,7 @@
 #author:Jinhao
 
 import os
+import requests
 from concurrent.futures import ThreadPoolExecutor
 from reports import reports
 from bs4 import BeautifulSoup
@@ -135,7 +136,7 @@ class Login:
         with ThreadPoolExecutor(max_workers=self.threads) as pool:
             results = pool.map(self.fuzz,exp)
             for result in results:
-                print(result['len'])
+                # print(result['len'])
                 if result['flag'] == 1:
                     print(result['msg'])
                     report.append(result['msg'])
@@ -148,8 +149,11 @@ class Login:
         :param data:
         :return:
         '''
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
+        }
         try:
-            res = self.REQ.autoPostAccess(self.url,data=data).content
+            res = requests.post(self.url, data=data, headers=headers).content
             length = len(res)
             if length != self.len:
                 msg = {'flag':1,'msg':data,'len':length}
