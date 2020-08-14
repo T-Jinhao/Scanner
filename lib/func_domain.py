@@ -3,7 +3,10 @@
 #author:Jinhao
 
 import requests
-import os,re
+import os
+import re
+import hashlib
+import time
 import dns.resolver
 from urllib.parse import urlparse
 from reports import reports
@@ -27,6 +30,7 @@ class Domain:
             check = input("当前域名 {} 是否正确解析？[正确则回车，否则输入正确的域名]\n".format(self.domain))  # 防止出错
             if check:
                 self.domain = check
+            self.panAnalysis(self.domain)
             print("[ 开始爆破域名: {} ]".format(self.domain))
             report = self.chinaz_search()
             payload = self.load_payload(self.flag)
@@ -136,6 +140,27 @@ class Domain:
         res = ans.response.answer
         res_type = str(type(res[0][0])).split('.')[3]
         return res_type
+
+
+    def panAnalysis(self, domain):
+        '''
+        以随机数拼接查看是否会存在泛解析
+        :param domain:
+        :return:
+        '''
+        ranstr = hashlib.md5(domain.encode()).hexdigest()
+        ranstr1 = ranstr[:4]
+        ranstr2 = ranstr[-4:]
+        url1 = "http://{}.{}".format(ranstr1, domain)
+        url2 = "http://{}.{}".format(ranstr2, domain)
+        try:
+            res1 = requests.get(url1, headers=self.headers, timeout=self.timeout)
+            res2 = requests.get(url2, headers=self.headers, timeout=self.timeout)
+            print("[{} 存在泛解析]".format(domain))
+            time.sleep(3)
+        except:
+            pass
+        return
 
 
     def scan(self,url):
