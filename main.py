@@ -37,11 +37,18 @@ class Scanner():
         try:
             name = parse.urlparse(self.args.url).hostname
             host = socket.gethostbyname(name)
+            return host
         except:
+            pass
+        try:
             netloc = 'www.{}'.format(urlparse(self.args.url).netloc)
             name = netloc
             host = socket.gethostbyname(name)
-        return host
+            return host
+        except Exception as e:
+            print("{}:该域名未查询到绑定IP".format(self.args.url))
+            exit(0)
+
 
 
     def base_report(self):
