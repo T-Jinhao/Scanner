@@ -27,10 +27,10 @@ class O:
         '''
         if file == None:
             return
-        with open(file, 'rb') as f:
-            encoding = chardet.detect(f.read())['encoding']
         payload = []
         try:
+            with open(file, 'rb') as f:
+                encoding = chardet.detect(f.read())['encoding']
             F = open(file, 'r', encoding=encoding)
             for x in F:
                 payload.append(x.replace('\n', ''))
