@@ -2,6 +2,8 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
+import chardet
+
 class O:
     def checkCookies(self, cookie):
         '''
@@ -25,11 +27,16 @@ class O:
         '''
         if file == None:
             return
+        with open(file, 'rb') as f:
+            encoding = chardet.detect(f.read())['encoding']
         payload = []
-        F = open(file, 'r')
-        for x in F:
-            payload.append(x.replace('\n', ''))
-        payload = list(set(payload))  # payload去重
+        try:
+            F = open(file, 'r', encoding=encoding)
+            for x in F:
+                payload.append(x.replace('\n', ''))
+            payload = list(set(payload))  # payload去重
+        except:
+            print("文件读取失败：", file)
         return payload
 
     def threadSetting(self, threadN, flag):
