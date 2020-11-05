@@ -24,13 +24,14 @@ class RC:
         略有不同的调用方法
         :return:
         '''
+        # print(self.args)
         if self.args.spider:
             ress = spider.delay(self.args.url, self.REQ)
             self.status(ress)
         if self.args.ports:
             resp = spider.delay(self.host)
             self.status(resp)
-        if self.args.host:
+        if self.host:
             resh = hosts.delay(self.host)
             self.status(resh)
         if self.args.burp:
