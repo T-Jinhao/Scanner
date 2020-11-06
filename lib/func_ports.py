@@ -114,15 +114,30 @@ class Ports():
         sock.settimeout(3)
         result = sock.connect_ex((self.host, port))
         if result == 0:
+            banner = self.getBanner(sock)
             if port in port_dict:
-                msg = "[ {0} : {1}已开启 ]".format(str(port),port_dict[port])
+                msg = "[ {0} : {1}已开启  :  {2}]".format(str(port),port_dict[port],banner)
             else:
-                msg = "[ {} : 已开启 ]".format(str(port))
+                msg = "[ {0} : 已开启  :  {1}]".format(str(port),banner)
             m = {'msg':msg,'flag':1}
             return m
         else:
             m = {'flag':0}
             return m
+
+    def getBanner(self, sock):
+        '''
+        获取端口banner信息
+        :param sock:
+        :return:
+        '''
+        try:
+            banner = sock.recv(1024)
+            banner = banner.strip()
+        except:
+            banner = ''
+        sock.close()  # 关闭连接
+        return banner
 
 
 

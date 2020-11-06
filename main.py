@@ -88,8 +88,7 @@ class Scanner():
         self.cookies = O.checkCookies(self.args.cookies)
         self.REQ = _requests.URL(
             cookies=self.cookies,
-            timeout=self.timeout,
-            proxies={}
+            timeout=self.timeout
         )
         return
 

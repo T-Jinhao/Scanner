@@ -3,14 +3,19 @@
 #author:Jinhao
 
 import requests
+import config
+
+HEADER = config.HEADERS
+PROXY = config.PROXY
+
 
 class URL:
-    def __init__(self, cookies={}, proxies={}, verify=False, timeout=5):
+    def __init__(self, cookies={},  verify=False, timeout=5):
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
         }
         self.cookies = cookies
-        self.proxies = proxies
+        self.proxies = PROXY
         self.verify = verify
         self.timeout = timeout
 
