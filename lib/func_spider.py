@@ -16,6 +16,8 @@ class Spider():
         self.url = url
         self.REQ = REQ
         self.crazy = crazy
+        self.Phone = []
+        self.Email = []
 
     def start(self):
         color_output(">>>>>spider" + "-" * 40)
@@ -36,7 +38,15 @@ class Spider():
             color_output('-'*10 + 'js文件分析' + '-'*10, color='BLUE')
             for x in js:
                 color_output(x)    # js链接
-                color_output(self.findstr(x), color='GREEN')    # 正则js文件中的中文
+                color_output(self.find_CN(x), color='GREEN')    # 正则js文件中的中文
+        if self.Phone != []:
+            color_output('手机号码', color='MAGENTA')
+            for x in self.Phone:
+                color_output(x, color='GREEN')
+        if self.Email != []:
+            color_output('邮箱', color='MAGENTA')
+            for x in self.Email:
+                color_output(x, color='GREEN')
         color_output("-" * 40 + "<<<<<spider" + "\n")
         return
 
@@ -84,6 +94,8 @@ class Spider():
         '''
         try:
             res = self.REQ.autoAccess(url)
+            self.find_Email(res.text)   # 匹配邮箱
+            self.find_Phone(res.text)   # 匹配电话
             img_sites = []      # 图片链接
             web_sites = []      # 网站链接
             js_sites = []        # js脚本链接
@@ -116,6 +128,72 @@ class Spider():
             sys.exit(1)
 
 
+
+    def statusCheck(self,urls):
+        '''
+        测试链接是否可用
+        :param urls: 爬取到的url
+        :return:
+        '''
+        Gurls = []
+        for url in list(set(urls)):
+            color_output('测试链接：{0}'.format(url), color='CYAN')
+            try:
+                res = self.REQ.httpAccess(url)
+                color_output("状态码：{}  文本长度：{}".format(res.status_code, len(res.content)), color='GREEN')
+                if res.status_code != 404 and len(res.content) != 0:
+                    Gurls.append(url)
+            except:
+                pass
+                # print('访问失败')
+            time.sleep(0.5)   # 防止过于频繁导致网站崩溃
+        return Gurls
+
+    def find_CN(self, url):
+        '''
+        找出js文件内的中文字符
+        :return:
+        '''
+        compile_CN = re.compile(u"[\u4e00-\u9fa5]")   # 匹配中文
+        try:
+            res = self.REQ.httpAccess(url)
+            content = str(res.content.decode('utf-8'))
+            self.find_Phone(res.text)
+            self.find_Email(res.text)
+            ret = compile_CN.findall(content)
+            ret = ''.join(ret)
+        except:
+            return
+        return ret
+
+    def find_Phone(self, text):
+        '''
+        匹配手机号码
+        :param text:
+        :return:
+        '''
+        compile_Phone = re.compile(r'1[3456789]\d{9}')
+        ret = compile_Phone.findall(text)
+        if ret != []:
+            for x in ret:
+                if x not in self.Phone:
+                    self.Phone.append(x)
+        return
+
+    def find_Email(self, text):
+        '''
+        匹配邮箱
+        :param content:
+        :return:
+        '''
+        compile_Email = re.compile(r'[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]{0,4}')
+        ret = compile_Email.findall(text)
+        if ret != []:
+            for x in ret:
+                if x not in self.Email and x.split('.')[-1] != 'png':
+                    self.Email.append(x)
+        return
+
     def spider_report(self,url,report,flag):
         '''
         对爬取结果进行处理
@@ -138,43 +216,6 @@ class Spider():
             color_output("[ 并没有扫描到{}链接 ]".format(flag), color='YELLOW')
         F.close()
         return
-
-    def statusCheck(self,urls):
-        '''
-        测试链接是否可用
-        :param urls: 爬取到的url
-        :return:
-        '''
-        Gurls = []
-        for url in list(set(urls)):
-            color_output('测试链接：{0}'.format(url), color='CYAN')
-            try:
-                res = self.REQ.httpAccess(url)
-                color_output("状态码：{}  文本长度：{}".format(res.status_code, len(res.content)), color='CYAN')
-                if res.status_code != 404 and len(res.content) != 0:
-                    Gurls.append(url)
-            except:
-                pass
-                # print('访问失败')
-            time.sleep(0.5)   # 防止过于频繁导致网站崩溃
-        return Gurls
-
-    def findstr(self, url):
-        '''
-        找出js文件内的中文字符
-        :return:
-        '''
-        compile = re.compile(u"[\u4e00-\u9fa5]")
-        try:
-            res = self.REQ.httpAccess(url)
-            content = str(res.content.decode('utf-8'))
-            ret = compile.findall(content)
-            ret = ''.join(ret)
-        except:
-            return
-        return ret
-
-
 
 class celery_spider:
     '''

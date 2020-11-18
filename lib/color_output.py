@@ -24,7 +24,10 @@ fore_color = {
 def color_output(text, color='BLACK'):
     if color not in fore_color.keys():  # 防止设置出错
         color = 'BLACK'
-    init(autoreset=True)
-    print(fore_color[color] + text)
+    try:
+        init(autoreset=True)
+        print(fore_color[color] + text)
+    except:
+        print(text)
     return
 

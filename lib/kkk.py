@@ -3,7 +3,7 @@
 #author:Jinhao
 # 测试文档
 
-import os
+import os,re
 def test(**kwargs):
     b = {}
     for key,value in kwargs.items():
@@ -19,9 +19,20 @@ def ggg():
     print(b.strip('http://').strip('https://'))
     print(c.strip('http://'))
 
+def find_Email( content):
+    '''
+    匹配邮箱
+    :param content:
+    :return:
+    '''
+    compile_Phone = re.compile(r'1[3456789]\d{9}')
+    ret = compile_Phone.findall(content)
+    return ret
+
 if __name__ == '__main__':
-    # test(name='aaa',file='xxx')
-    ggg()
+    email = 'asdfas d15302477100asdofjih '
+    x = find_Email(email)
+    print(x)
 
 
 
