@@ -12,6 +12,7 @@ from lib import func_sqli,func_hosts,func_domain,func_ports,func_burp,func_spide
 from lib import celery_run,func_base
 from modules import _requests
 from modules import check
+from lib.color_output import color_output
 
 class Scanner():
     def __init__(self, args):
@@ -30,7 +31,7 @@ class Scanner():
             self.args.url = "http://"+url                # 添加协议头
             return
         else:
-            print("URL格式出错!")
+            color_output("URL格式出错!", color='RED')
             sys.exit(1)
 
     def getHostname(self):
@@ -46,7 +47,7 @@ class Scanner():
             host = socket.gethostbyname(name)
             return host
         except Exception as e:
-            print("{}:该域名未查询到绑定IP".format(self.args.url))
+            color_output("{}:该域名未查询到绑定IP".format(self.args.url), color='RED')
             exit(0)
 
 
@@ -54,16 +55,16 @@ class Scanner():
     def base_report(self):
         self.host = self.getHostname()  # 获取domain
         self.ip_report = func_base.IPcontent(self.host).run()
-        print('>>>>>base_report'+'-'*40)
-        print('输入URL', self.args.url)
-        print('解析host', self.host)
-        print("\nIP域名绑定情况 : {}".format(self.host))
+        color_output('>>>>>base_report'+'-'*40)
+        color_output('输入URL：' + self.args.url, color='MAGENTA')
+        color_output('解析host：'+ self.host, color='MAGENTA')
+        color_output("\nIP域名绑定情况 : {}".format(self.host), color='CYAN')
         try:
             for x in self.ip_report:
-                print("{} : {}".format(x[0], x[1]))
+                color_output("{} : {}".format(x[0], x[1]))
         except:
             pass
-        print('-'*40+'<<<<<base_report'+'\n')
+        color_output('-'*40+'<<<<<base_report'+'\n')
 
     def start_celery(self):
         '''

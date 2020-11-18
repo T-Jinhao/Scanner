@@ -150,7 +150,7 @@ class Spider():
             color_output('测试链接：{0}'.format(url), color='CYAN')
             try:
                 res = self.REQ.httpAccess(url)
-                color_output((res.status_code, len(res.content)), color='CYAN')
+                color_output("状态码：{}  文本长度：{}".format(res.status_code, len(res.content)), color='CYAN')
                 if res.status_code != 404 and len(res.content) != 0:
                     Gurls.append(url)
             except:
