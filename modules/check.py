@@ -3,6 +3,7 @@
 #author:Jinhao
 
 import chardet
+from colorama import init, Fore, Back, Style
 
 class O:
     def checkCookies(self, cookie):
@@ -36,7 +37,7 @@ class O:
                 payload.append(x.replace('\n', ''))
             payload = list(set(payload))  # payload去重
         except:
-            print("文件读取失败：", file)
+            print(Fore.RED + "文件读取失败：", file)
         return payload
 
     def threadSetting(self, threadN, flag):

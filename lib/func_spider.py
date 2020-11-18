@@ -7,6 +7,7 @@ import re,os,time
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from urllib.parse import urljoin
+from .color_output import color_output
 
 wrong_web_list = ['javascript:void(0)',None,'###','#']
 
@@ -17,26 +18,26 @@ class Spider():
         self.crazy = crazy
 
     def start(self):
-        print(">>>>>spider" + "-" * 40)
-        print("[ 开始爬取网页链接：{}]".format(self.url))
+        color_output(">>>>>spider" + "-" * 40)
+        color_output("[ 开始爬取网页链接：{}]".format(self.url), color='BLUE')
         img, web, js = self.spider(self.url)
         if img:
             self.spider_report(self.url, img, 'img')
         else:
-            print("[ 并没有在{}扫描到图片链接 ]".format(self.url))
+            color_output("[ 并没有在{}扫描到图片链接 ]".format(self.url), color='YELLOW')
         if web:
             if self.crazy:  # url分解访问
                 web += self.crazyRun(web)
             ret = self.statusCheck(web)   # 筛选能访问的链接
             self.spider_report(self.url, ret, 'web')
         else:
-            print("[ 并没有在{}扫描到网站链接 ]".format(self.url))
+            color_output("[ 并没有在{}扫描到网站链接 ]".format(self.url), color='YELLOW')
         if js and self.crazy:    # 寻找js文件内的中文字符
-            print('-'*10 + 'js文件分析' + '-'*10)
+            color_output('-'*10 + 'js文件分析' + '-'*10, color='BLUE')
             for x in js:
-                print(x)
-                print(self.findstr(x))    # 正则js文件中的中文
-        print("-" * 40 + "<<<<<spider" + "\n")
+                color_output(x)    # js链接
+                color_output(self.findstr(x), color='GREEN')    # 正则js文件中的中文
+        color_output("-" * 40 + "<<<<<spider" + "\n")
         return
 
 
@@ -58,7 +59,7 @@ class Spider():
                     x = u.rsplit('/', p + 1)[0]
                     if x not in paths:
                         paths.append(x)
-        print(paths)
+        color_output(paths)
         return paths
 
 
@@ -110,8 +111,8 @@ class Spider():
             return img_sites,web_sites,js_sites
 
         except Exception as e:
-            print(e)
-            print("网站访问出现点问题了...")
+            color_output(e, color='RED')
+            color_output("网站访问出现点问题了...", color='RED')
             sys.exit(1)
 
 
@@ -130,11 +131,11 @@ class Spider():
         F = open(filepath,"a")
         try:
             for m in report:
-                print(m)
+                color_output(m)
                 F.write(m+"\n")
-            print("[ 网站{1}链接已保存于：{0}]".format(filepath,flag))
+            color_output("[ 网站{1}链接已保存于：{0}]".format(filepath,flag), color='MAGENTA')
         except:
-            print("[ 并没有扫描到{}链接 ]".format(flag))
+            color_output("[ 并没有扫描到{}链接 ]".format(flag), color='YELLOW')
         F.close()
         return
 
@@ -146,10 +147,10 @@ class Spider():
         '''
         Gurls = []
         for url in list(set(urls)):
-            print('测试链接：{0}'.format(url))
+            color_output('测试链接：{0}'.format(url), color='CYAN')
             try:
                 res = self.REQ.httpAccess(url)
-                print(res.status_code, len(res.content))
+                color_output((res.status_code, len(res.content)), color='CYAN')
                 if res.status_code != 404 and len(res.content) != 0:
                     Gurls.append(url)
             except:

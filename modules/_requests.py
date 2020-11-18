@@ -4,6 +4,7 @@
 
 import requests
 import config
+from lib.color_output import color_output
 
 HEADER = config.HEADERS
 PROXY = config.PROXY
@@ -38,7 +39,7 @@ class URL:
             )
             return res
         except Exception as e:
-            print(e)
+            color_output(e, color='RED')
             return
 
     def httpsAccess(self, url):
@@ -52,7 +53,7 @@ class URL:
             )
             return res
         except Exception as e:
-            print(e)
+            color_output(e, color='RED')
             return
 
     def autoPostAccess(self, url, data={}):
@@ -75,7 +76,7 @@ class URL:
             )
             return res
         except Exception as e:
-            print(e)
+            color_output(e, color='RED')
             return
 
     def httpsPostAccess(self, url, data={}):
@@ -90,5 +91,5 @@ class URL:
             )
             return res
         except Exception as e:
-            print(e)
+            color_output(e, color='RED')
             return

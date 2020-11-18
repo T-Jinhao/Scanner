@@ -8,6 +8,7 @@ import requests
 from reports import reports
 from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor
+from .color_output import color_output
 
 class Burp():
     def __init__(self,url,payload,threads,timeout,flag):
@@ -23,26 +24,26 @@ class Burp():
 
     def start(self):
         url = self.url
-        print('>>>>>burp' + '-' * 40)
-        print("[ 开始分析网站：{} ]".format(self.url))
+        color_output('>>>>>burp' + '-' * 40)
+        color_output("[ 开始分析网站：{} ]".format(self.url), color='BLUE')
         web_type = self.web_indetify(url)
         if not web_type:
             web_type = self.web_auto_indetify(url)
-        print("[ 网站类型：{} ]".format(web_type))
+        color_output("[ 网站类型：{} ]".format(web_type), color='CYAN')
         mode_msg = self.scan_mode_indetify()
         msg = {0:'基于网站状态码检验模式',1:'基于网站页面内容检验模式'}
-        print('[ 网站分析模式：{} ]'.format(msg[mode_msg]))
+        color_output('[ 网站分析模式：{} ]'.format(msg[mode_msg]), color='CYAN')
         payloads = self.load_payload(web_type)
         if payloads:
-            print('[ payload导入完成 ]')
+            color_output('[ payload导入完成 ]', color='MAGENTA')
             report = self.run(payloads, self.threads)
             if report:
                 reports.Report(report, url, 'burp_report.txt', '网站目录爆破报告已存放于', '并没有扫描出可疑后台')
             else:
-                print("[ 并没有扫描出可疑后台 ]")
+                color_output("[ 并没有扫描出可疑后台 ]", color='YELLOW')
         else:
-            print('[ payload导入失败 ]')
-        print('-' * 40 + 'burp<<<<<' + '\n')
+            color_output('[ payload导入失败 ]', color='RED')
+        color_output('-' * 40 + 'burp<<<<<' + '\n')
         return
 
 
@@ -182,9 +183,11 @@ class Burp():
                 results = pool.map(self.sites_scan,URL)
             for result in results:
                 if result['flag'] != 0:     # 选择性输出
-                    print(result['msg'])
                     if result['flag'] == 1:
+                        color_output(result['msg'], color='GREEN')
                         reports.append(result['msg'])
+                    else:
+                        color_output(result['msg'], color='YELLOW')
             return reports
 
 

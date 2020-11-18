@@ -11,6 +11,7 @@ import dns.resolver
 from urllib.parse import urlparse
 from reports import reports
 from concurrent.futures import ThreadPoolExecutor
+from .color_output import color_output
 
 class Domain:
     def __init__(self,url,payload,threads,timeout,flag):
@@ -25,27 +26,27 @@ class Domain:
         }
 
     def start(self):
-        print('>>>>>domain' + '-' * 40)
+        color_output('>>>>>domain' + '-' * 40)
         if self.domain:
             check = input("当前域名 {} 是否正确解析？[正确则回车，否则输入正确的域名]\n".format(self.domain))  # 防止出错
             if check:
                 self.domain = check
             self.panAnalysis(self.domain)
-            print("[ 开始爆破域名: {} ]".format(self.domain))
+            color_output("[ 开始爆破域名: {} ]".format(self.domain), color='BLUE')
             report = self.chinaz_search()
             payload = self.load_payload(self.flag)
             if payload:
-                print('[ payload导入完成 ]')
+                color_output('[ payload导入完成 ]', color='MAGENTA')
                 report += self.run(self.domain, payload, self.threads)
             else:
-                print('[ payload导入失败 ]')
+                color_output('[ payload导入失败 ]', color='RED')
             if report:
                 reports.Report(report, self.url, 'domain_report.txt', '网站子域名挖掘报告已存放于', '未能挖掘出网站子域名')
             else:
-                print("[ 未能挖掘出网站子域名 ]")
+                color_output("[ 未能挖掘出网站子域名 ]", color='YELLOW')
         else:
-            print("[ {}不支持子域名挖掘 ]".format(self.url))
-        print('-' * 40 + 'domain<<<<<' + '\n')
+            color_output("[ {}不支持子域名挖掘 ]".format(self.url), color='YELLOW')
+        color_output('-' * 40 + 'domain<<<<<' + '\n')
         return
 
     def url_check(self,url):
@@ -76,7 +77,7 @@ class Domain:
         domains = domain.finditer(res.text)
         for d in domains:
             if d.group() not in report:
-                print(d.group())
+                color_output(d.group(), color='GREEN')
                 report.append(d.group())
         return report
 
@@ -124,7 +125,7 @@ class Domain:
             results = pool.map(self.scan,URL)
             for result in results:
                 if result['flag'] == 1:
-                    print(result['msg'])
+                    color_output(result['msg'], color='GREEN')
                     report.append(result['msg'])
         return report
 
@@ -156,7 +157,7 @@ class Domain:
         try:
             res1 = requests.get(url1, headers=self.headers, timeout=self.timeout)
             res2 = requests.get(url2, headers=self.headers, timeout=self.timeout)
-            print("[{} 存在泛解析]".format(domain))
+            color_output("[{} 存在泛解析]".format(domain), color='YELLOW')
             time.sleep(3)
         except:
             pass

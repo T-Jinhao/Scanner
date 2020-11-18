@@ -7,6 +7,7 @@ import requests
 from concurrent.futures import ThreadPoolExecutor
 from reports import reports
 from bs4 import BeautifulSoup
+from .color_output import color_output
 
 weak_dict = ['123', '888', '@123', '666']  # 常用弱密码后缀
 sql_pass = ['\'or 1=1#', '"or 1=1#', '\')or 1=1#', 'or 1=1--', 'a\'or\'1=1--', '\'OR 1=1%00']  # sql万能密码
@@ -22,12 +23,12 @@ class Login:
 
     def start(self):
         exp = []
-        print('>>>>>Login_fuzz'+'-'*40)
-        print('[ tips:有很多payload文件保存在./dict/login目录下 ]')
+        color_output('>>>>>Login_fuzz'+'-'*40)
+        color_output('[ tips:有很多payload文件保存在./dict/login目录下 ]', color='MAGENTA')
         args = self.get_args()
         if not args:
-            print('[ 未识别到登录框 ]')
-            print('-' * 40 + 'Login_fuzz<<<<<')
+            color_output('[ 未识别到登录框 ]', color='RED')
+            color_output('-' * 40 + 'Login_fuzz<<<<<')
             return
         data = {}
         for x in args:
@@ -35,22 +36,22 @@ class Login:
                 data[x] = input('请输入 {} 的值\n'.format(x))
             else:
                 data[x] = args[x]
-        print(data)
+        color_output(data, color='CYAN')
         exp = self.add_payload(data,payload)
         if self.file or self.flag:
             payloads = self.load_file(self.file)
             if payloads:
-                print('[ payload导入完成 ]')
+                color_output('[ payload导入完成 ]', color='MAGENTA')
                 exp += self.set_payload(data, payloads)
             else:
-                print('[ payload导入失败 ]')
+                color_output('[ payload导入失败 ]', color='RED')
         # print(exp)
         report = self.run(exp)
         if report:
             reports.Report(report, self.url, 'login_report.txt', '网站密码fuzz报告已存放于', '没有探测出网站密码')
         else:
-            print('[ 没有探测出网站密码 ]')
-        print('-'*40+'Login_fuzz<<<<<')
+            color_output('[ 没有探测出网站密码 ]', color='YELLOW')
+        color_output('-'*40+'Login_fuzz<<<<<')
         return
 
     def get_args(self):
@@ -138,7 +139,7 @@ class Login:
             for result in results:
                 # print(result['len'])
                 if result['flag'] == 1:
-                    print(result['msg'])
+                    color_output(result['msg'], color='GREEN')
                     report.append(result['msg'])
         return report
 

@@ -11,7 +11,7 @@ from Sqliscan import sqlerrors
 from Sqliscan import web
 from Sqliscan import serverinfo
 import threading,time,requests,json
-
+from .color_output import color_output
 
 class Sql:
     def __init__(self,url,flag):
@@ -20,15 +20,15 @@ class Sql:
         self.start()
 
     def start(self):
-        print('>>>>>Sqlscan' + '-' * 40)
+        color_output('>>>>>Sqlscan' + '-' * 40)
         result = self.Fuzz()
         if result['flag']:
-            print('[ 网站数据库：{0}  闭合payload：{1} ]'.format(result['db'],result['payload']))
+            color_output('[ 网站数据库：{0}  闭合payload：{1} ]'.format(result['db'],result['payload']), color='BLUE')
         else:
-            print('[ 未探测出网站数据库信息 ]')
+            color_output('[ 未探测出网站数据库信息 ]', color='YELLOW')
         if self.flag:
             self.Crazy()
-        print('-'*40+'Sqlscan<<<<<'+'\n')
+        color_output('-'*40+'Sqlscan<<<<<'+'\n')
         return
 
     def Fuzz(self):
@@ -58,29 +58,29 @@ class Sql:
         调用sqlmapapi扫描
         :return:
         '''
-        print("[ 正在启动sqlmapapi ]")
+        color_output("[ 正在启动sqlmapapi ]", color='CYAN')
         t = threading.Thread(target=self.start_api)
         t.start()
         time.sleep(5)  # 让sqlmapapi能完全启动
         taskid = self.get_taskid()
         if taskid:
-            print('[ taskid：{} ]'.format(taskid))
+            color_output('[ taskid：{} ]'.format(taskid), color='MAGENTA')
             url = 'http://localhost:8775/option/{}/set'.format(taskid)  # 设置任务
             if self.api_set(url):
                 url = 'http://localhost:8775/scan/{}/start'.format(taskid)  # 启动扫描
                 if self.api_set(url):
                     report = self.sql_results(taskid)  # 获取报告
                     if report:
-                        print(report)
+                        color_output(report, color='GREEN')
                         reports.Report(report, self.url, 'sqlscan_report.txt', '主机注入漏洞扫描报告已存放于', '并没有扫描出主机注入漏洞')
                     else:
-                        print('[ 并没有扫描出主机注入漏洞 ]')
+                        color_output('[ 并没有扫描出主机注入漏洞 ]', color='YELLOW')
                 else:
-                    print('[ sqlmapapi 启动扫描失败 ]')
+                    color_output('[ sqlmapapi 启动扫描失败 ]', color='RED')
             else:
-                print('[ sqlmapapi 设置任务失败 ]')
+                color_output('[ sqlmapapi 设置任务失败 ]', color='RED')
         else:
-            print('[ sqlmapapi 启动失败 ]')
+            color_output('[ sqlmapapi 启动失败 ]', color='RED')
 
 
     def start_api(self):
@@ -134,7 +134,7 @@ class Sql:
         :return:
         '''
         num = 1
-        print('[ 此流程将极为耗时 ]')
+        color_output('[ 此流程将极为耗时 ]', color='MAGENTA')
         while 1:
             url = 'http://localhost:8775/scan/{}/status'.format(taskid)
             res = requests.get(url).json()
@@ -144,7 +144,7 @@ class Sql:
             if num%3 == 0:         # 30秒打一次状态报告
                 x = 'http://localhost:8775/scan/{}/log'.format(taskid)
                 msg = requests.get(x).json()
-                print(msg['log'][-1]['message'])
+                color_output(msg['log'][-1]['message'], color='MAGENTA')
             num += 1
             time.sleep(10)    # 10秒查询一次完成状态
         url = 'http://localhost:8775/scan/{}/data'.format(taskid)

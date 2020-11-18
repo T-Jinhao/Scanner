@@ -6,21 +6,22 @@ import sys,os
 from socket import *
 from concurrent.futures import ThreadPoolExecutor
 from reports import reports
+from .color_output import color_output
 
 class Hosts:
     def __init__(self,host):
         self.host = host
 
     def start(self):
-        print('>>>>>hosts'+'-'*40)
-        print('[ 开始扫描开放主机 ]')
+        color_output('>>>>>hosts'+'-'*40)
+        color_output('[ 开始扫描开放主机 ]', color='BLUE')
         url = self.c_hosts()
         report = self.run(url)
         if report:
             reports.Report(report, self.host, 'c_hosts_report.txt', '主机c段扫描报告已存放于', '并没有扫描出存活主机')
         else:
-            print("[ 并没有扫描出开放主机 ]")
-        print('-'*40+'hosts<<<<<')
+            color_output("[ 并没有扫描出开放主机 ]", color='YELLOW')
+        color_output('-'*40+'hosts<<<<<')
         return report
 
 
@@ -49,7 +50,7 @@ class Hosts:
             results = pool.map(self.scan,url)
             for result in results:
                 if result['flag'] == 1:
-                    print(result['msg'])
+                    color_output(result['msg'], color='GREEN')
                     reports.append(result['msg'])
         return reports
 

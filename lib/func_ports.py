@@ -7,6 +7,7 @@ import sys,os
 from socket import *
 from concurrent.futures import ThreadPoolExecutor
 from reports import reports
+from .color_output import color_output
 
 port_dict = {
     21:'ftp',
@@ -34,19 +35,19 @@ class Ports():
         self.flag = flag
 
     def start(self):
-        print('>>>>>PortsScan' + '-' * 40)
-        print("[ 开始扫描端口 : {} ]".format(self.host))
+        color_output('>>>>>PortsScan' + '-' * 40)
+        color_output("[ 开始扫描端口 : {} ]".format(self.host), color='BLUE')
         if self.flag:
             ports = self.scan_ports_crazy()
         else:
             ports = self.scan_ports()
-        print('[ 准备就绪，开始扫描 ]')
+        color_output('[ 准备就绪，开始扫描 ]', color='CYAN')
         report = self.run(ports)
         if report:
             reports.Report(report, 'http://'+self.host, 'port_report.txt', '主机端口扫描报告已存放于', '并没有扫描出主机开放端口')
         else:
-            print("[ 并没有扫描出主机开放端口 ]")
-        print('-' * 40 + 'PortsScan<<<<<' + '\n')
+            color_output("[ 并没有扫描出主机开放端口 ]", color='YELLOW')
+        color_output('-' * 40 + 'PortsScan<<<<<' + '\n')
         return
 
 
@@ -99,7 +100,7 @@ class Ports():
             results = pool.map(self.scan,port)
             for result in results:
                 if result['flag']:
-                    print(result['msg'])
+                    color_output(result['msg'], color='GREEN')
                     reports.append(result['msg'])
         return reports
 
