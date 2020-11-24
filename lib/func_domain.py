@@ -33,8 +33,8 @@ class Domain:
                 self.domain = check
             self.panAnalysis(self.domain)
             color_output("[ 开始爆破域名: {} ]".format(self.domain), color='BLUE')
-            report = self.chinaz_search()
-            payload = self.load_payload(self.flag)
+            report = self.chinaz_search()    # 在线查询接口获得的数据
+            payload = self.load_payload(self.flag, report)   # 合并数据
             if payload:
                 color_output('[ payload导入完成 ]', color='MAGENTA')
                 report += self.run(self.domain, payload, self.threads)
@@ -71,10 +71,17 @@ class Domain:
         :return:
         '''
         report = []
-        page = 0
-        while 1:
-            page += 1
-            url = "https://tool.chinaz.com/subdomain/?domain={}&page={}".format(self.domain, page)
+        url = "https://tool.chinaz.com/subdomain/?domain={}&page=1".format(self.domain)
+        rePage = re.compile(r'共(.+?)页')
+        try:
+            res = requests.get(url, headers=self.headers, timeout=self.timeout)
+            pagenum = rePage.findall(res.text)[0]
+            pagenum = int(pagenum)
+        except:
+            return []
+
+        for i in range(1, pagenum+1):
+            url = "https://tool.chinaz.com/subdomain/?domain={}&page={}".format(self.domain, i)
             res = requests.get(url, headers=self.headers, timeout=self.timeout)
             domain = re.compile('[\w]+\.{}'.format(self.domain))    # 正则提取子域名
             domains = domain.finditer(res.text)
@@ -82,15 +89,17 @@ class Domain:
                 break
             for d in domains:
                 if d.group() not in report:
-                    color_output(d.group(), color='GREEN')
+                    # color_output(d.group(), color='GREEN')  # 未知是否存活，不输出
                     report.append(d.group())
         return report
 
 
-    def load_payload(self,flag):
+    def load_payload(self, flag, report):
         '''
         读取payload
+        数据合并并去重
         :param flag: crazy标识
+        :param report: 在线子域名数据
         :return:
         '''
         payload = []
@@ -109,7 +118,7 @@ class Domain:
             F = open(filepath, 'r')
             for x in F:
                 payload.append(x.replace('\n', ''))
-
+        payload += report
         payload = list(set(payload))   # payload去重
         return payload
 
