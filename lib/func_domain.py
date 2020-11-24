@@ -71,14 +71,19 @@ class Domain:
         :return:
         '''
         report = []
-        url = "https://tool.chinaz.com/subdomain/?domain={}".format(self.domain)
-        res = res = requests.get(url, headers=self.headers, timeout=self.timeout)
-        domain = re.compile('[\w]+\.{}'.format(self.domain))    # 正则提取子域名
-        domains = domain.finditer(res.text)
-        for d in domains:
-            if d.group() not in report:
-                color_output(d.group(), color='GREEN')
-                report.append(d.group())
+        page = 0
+        while 1:
+            page += 1
+            url = "https://tool.chinaz.com/subdomain/?domain={}&page={}".format(self.domain, page)
+            res = requests.get(url, headers=self.headers, timeout=self.timeout)
+            domain = re.compile('[\w]+\.{}'.format(self.domain))    # 正则提取子域名
+            domains = domain.finditer(res.text)
+            if domains == []:
+                break
+            for d in domains:
+                if d.group() not in report:
+                    color_output(d.group(), color='GREEN')
+                    report.append(d.group())
         return report
 
 
