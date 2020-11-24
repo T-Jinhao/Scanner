@@ -21,9 +21,11 @@ fore_color = {
     'MAGENTA': Fore.MAGENTA   # 系统提示
 }
 
-def color_output(text, color='BLACK'):
+def color_output(text, color='BLACK', output=True):
     if color not in fore_color.keys():  # 防止设置出错
         color = 'BLACK'
+    if output != True:
+        return
     try:
         init(autoreset=True)
         print(fore_color[color] + text)
