@@ -27,17 +27,18 @@ class Domain:
 
     def start(self):
         color_output('>>>>>domain' + '-' * 40)
+        report = []
         if self.domain:
             check = input("当前域名 {} 是否正确解析？[正确则回车，否则输入正确的域名]\n".format(self.domain))  # 防止出错
             if check:
                 self.domain = check
             self.panAnalysis(self.domain)
             color_output("[ 开始爆破域名: {} ]".format(self.domain), color='BLUE')
-            report = self.chinaz_search()    # 在线查询接口获得的数据
-            payload = self.load_payload(self.flag, report)   # 合并数据
+            onlineReport = self.chinaz_search()    # 在线查询接口获得的数据
+            payload = self.load_payload(self.flag, onlineReport)   # 合并数据
             if payload:
                 color_output('[ payload导入完成 ]', color='MAGENTA')
-                report += self.run(self.domain, payload, self.threads)
+                report = self.run(self.domain, payload, self.threads)
             else:
                 color_output('[ payload导入失败 ]', color='RED')
             if report:
@@ -78,6 +79,7 @@ class Domain:
             pagenum = rePage.findall(res.text)[0]
             pagenum = int(pagenum)
         except:
+            color_output('在线api没有获取数据', color='YELLOW')
             return []
 
         for i in range(1, pagenum+1):

@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- encoding:utf8 -*-
 from colorama import init, Fore
+import sys
+sys.setrecursionlimit(10000)
 
 # Colors = {
 #     "BLACK": "\033[0;30m%s\033[0m",
@@ -29,6 +31,8 @@ def color_output(text, color='BLACK', output=True):
     try:
         init(autoreset=True)
         print(fore_color[color] + text)
+    except Exception as e:
+        print(e)
     except:
         print(text)
     return
