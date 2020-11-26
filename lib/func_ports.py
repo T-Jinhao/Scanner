@@ -2,8 +2,6 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
-
-import sys,os
 from socket import *
 from concurrent.futures import ThreadPoolExecutor
 from reports import reports
@@ -30,8 +28,9 @@ port_dict = {
 }
 
 class Ports():
-    def __init__(self,host,flag):
+    def __init__(self, host, name, flag):
         self.host = host
+        self.name = name
         self.flag = flag
 
     def start(self):
@@ -44,7 +43,7 @@ class Ports():
         color_output('[ 准备就绪，开始扫描 ]', color='CYAN')
         report = self.run(ports)
         if report:
-            reports.Report(report, 'http://'+self.host, 'port_report.txt', '主机端口扫描报告已存放于', '并没有扫描出主机开放端口')
+            reports.Report(report, self.name, 'port_report.txt', '主机端口扫描报告已存放于', '并没有扫描出主机开放端口').save()
         else:
             color_output("[ 并没有扫描出主机开放端口 ]", color='YELLOW')
         color_output('-' * 40 + 'PortsScan<<<<<' + '\n')
