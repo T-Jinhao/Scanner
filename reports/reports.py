@@ -2,24 +2,25 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
-import os,sys,re
-from urllib.parse import urlparse
+import os
+from lib.color_output import color_output
 
 class Report:
-    def __init__(self,reports,dirname,filename,suc_msg,err_msg):
+    def __init__(self,reports,taskname,filename,suc_msg,err_msg):
         self.reports = reports
-        ipsite = re.compile("[\d]{1,3}.[\d]{1,3}.[\d]{1,3}.[\d]{1,3}")
-        if ipsite.match(dirname):
-            self.dirname = dirname
-        else:
-            dir = urlparse(dirname).netloc
-            self.dirname = dir.replace(':','_')
+        # ipsite = re.compile("[\d]{1,3}.[\d]{1,3}.[\d]{1,3}.[\d]{1,3}")
+        # if ipsite.match(dirname):
+        #     self.dirname = dirname
+        # else:
+        #     dir = urlparse(dirname).netloc
+        #     self.dirname = dir.replace(':','_')
+        self.dirname = taskname
         self.filename = filename
         self.suc_msg = suc_msg
         self.err_msg = err_msg
-        self.start()
 
-    def start(self):
+
+    def save(self):
         '''
         保存记录
         :return:
@@ -36,6 +37,6 @@ class Report:
                 msg = "[ {}：{}]".format(self.suc_msg,filepath)
             except:
                 msg = "[ {} ]".format(self.err_msg)
-        print(msg)
+        color_output(msg, color='GREEN')
         return
 

@@ -2,9 +2,13 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
-import argparse,sys,os
+import argparse
+import sys
+import os
 import re
-import threading,time
+import threading
+import time
+import datetime
 from urllib import parse
 from urllib.parse import urlparse
 import socket
@@ -17,6 +21,18 @@ from lib.color_output import color_output
 class Scanner():
     def __init__(self, args):
         self.args = args
+
+    def initTaskName(self):
+        '''
+        输出报告合并文件夹命名
+        :return:
+        '''
+        if self.args.name == None:
+            today = datetime.datetime.today()
+            formatted_today = today.strftime('%y%m%d')
+            self.args.name = formatted_today
+        self.args.name = str(self.args.name)
+        return
 
 
     def url_check(self):
@@ -115,9 +131,9 @@ class Scanner():
             return
 
         if self.args.spider:
-            func_spider.Spider(self.args.url, self.REQ,self.args.crazy).start()
+            func_spider.Spider(self.args.url, self.REQ, self.args.name, self.args.crazy).start()
         if self.args.ports:
-            func_ports.Ports(self.host, self.args.crazy).start()
+            func_ports.Ports(self.host, self.args.name, self.args.crazy).start()
         if self.args.hosts:
             func_hosts.Hosts(self.host).start()
         if self.args.login:
@@ -142,6 +158,7 @@ def terminal_input():
         sys.argv.append('-h')
     parser = argparse.ArgumentParser(description='简易扫描器，[]内为可用功能模块，<>内为开启极致模式的简述',add_help=True)
     parser.add_argument('-u','--url',help='扫描对象的url')
+    parser.add_argument('-n','--name', help='任务命名', default=None)
     parser.add_argument('-X', '--crazy', help='以极致模式启动功能，比较耗时', action='store_true')
     parser.add_argument('-P', '--ports', help='探测目标主机开放端口[-X]<支持自定义端口范围>', action='store_true')
     parser.add_argument('-H','--hosts',help='探测存活主机',action='store_true')
@@ -152,7 +169,7 @@ def terminal_input():
     parser.add_argument('-F', '--file', default=None, help='可自定义payload文件')
     parser.add_argument('-I','--sqlscan',help='网站SQL注入fuzz检测[-X]<sqlmapapi爆破>',action='store_true')
     parser.add_argument('-T','--timeout',help='超时时间',default=3,type=int)
-    parser.add_argument('--celery',help='使用celery分布管理',action='store_true')
+    parser.add_argument('--celery', help='使用celery分布管理',action='store_true')
     parser.add_argument('--cookies', default=None, help='目标网站的cookies')
     parser.add_argument('--threads', default=5, help='脚本启动线程数 <20>', type=int)
     args = parser.parse_args()
@@ -162,6 +179,7 @@ def terminal_input():
 def main():
     args = terminal_input()
     x = Scanner(args)
+    x.initTaskName() # 输出报告合并文件夹命名
     x.url_check()  # 检查输入url
     x.base_report()  # 输出基础报告
     x.prepare()    # 准备工作
