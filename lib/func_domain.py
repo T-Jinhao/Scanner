@@ -35,7 +35,7 @@ class Domain:
             self.panAnalysis(self.domain)
             color_output("[ 开始爆破域名: {} ]".format(self.domain), color='BLUE')
             onlineReport = self.chinaz_search()    # 在线查询接口获得的数据
-            payload = self.load_payload(self.flag, onlineReport)   # 合并数据
+            payload = self.load_payload(onlineReport)   # 合并数据
             if payload:
                 color_output('[ payload导入完成 ]', color='MAGENTA')
                 report = self.run(self.domain, payload, self.threads)
@@ -96,11 +96,10 @@ class Domain:
         return report
 
 
-    def load_payload(self, flag, report):
+    def load_payload(self, report):
         '''
         读取payload
         数据合并并去重
-        :param flag: crazy标识
         :param report: 在线子域名数据
         :return:
         '''
@@ -114,12 +113,12 @@ class Domain:
         F = open(filepath, 'r')
         for x in F:
             payload.append(x.replace('\n', ''))
-        if flag:
-            file = 'domain.txt'
-            filepath = "{0}/{1}/{2}".format(path, r'../dict/domain', file)
-            F = open(filepath, 'r')
-            for x in F:
-                payload.append(x.replace('\n', ''))
+        # if flag:
+        #     file = 'domain.txt'
+        #     filepath = "{0}/{1}/{2}".format(path, r'../dict/domain', file)
+        #     F = open(filepath, 'r')
+        #     for x in F:
+        #         payload.append(x.replace('\n', ''))
         payload += report
         payload = list(set(payload))   # payload去重
         return payload
