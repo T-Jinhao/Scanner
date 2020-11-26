@@ -30,7 +30,8 @@ class Domain:
         color_output('>>>>>domain' + '-' * 40)
         report = []
         if self.domain:
-            check = input("当前域名 {} 是否正确解析？[正确则回车，否则输入正确的域名]\n".format(self.domain))  # 防止出错
+            color_output("当前域名 {} 是否正确解析？[正确则回车，否则输入正确的域名]".format(self.domain), color='RED')
+            check = input()
             if check:
                 self.domain = check
             self.panAnalysis(self.domain)
@@ -114,12 +115,6 @@ class Domain:
         F = open(filepath, 'r')
         for x in F:
             payload.append(x.replace('\n', ''))
-        # if flag:
-        #     file = 'domain.txt'
-        #     filepath = "{0}/{1}/{2}".format(path, r'../dict/domain', file)
-        #     F = open(filepath, 'r')
-        #     for x in F:
-        #         payload.append(x.replace('\n', ''))
         payload += report
         payload = list(set(payload))   # payload去重
         return payload
