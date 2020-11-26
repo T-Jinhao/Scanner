@@ -30,11 +30,20 @@ class Domain:
         color_output('>>>>>domain' + '-' * 40)
         report = []
         if self.domain:
-            color_output("当前域名 {} 是否正确解析？[正确则回车，否则输入正确的域名]".format(self.domain), color='RED')
-            check = input()
-            if check:
-                self.domain = check
-            self.panAnalysis(self.domain)
+            color_output("当前域名 {} 是否正确解析？[正确则回车，否则输入正确的域名]".format(self.domain), color='MAGENTA')
+            checkin = input()
+            if checkin:
+                self.domain = checkin
+            pan = self.panAnalysis(self.domain)   # 检测是否存在泛解析
+            if not pan:
+                color_output("[{} 存在泛解析，任意键继续，直接回车将退出执行]".format(self.domain), color='YELLOW')
+                select = input()
+                if select != '':
+                    color_output('程序继续执行，但结果准确性可能下降', color='CYAN')
+                else:
+                    color_output('程序终止', color='CYAN')
+                    color_output('-' * 40 + 'domain<<<<<' + '\n')
+                    return
             color_output("[ 开始爆破域名: {} ]".format(self.domain), color='BLUE')
             onlineReport = self.chinaz_search()    # 在线查询接口获得的数据
             payload = self.load_payload(onlineReport)   # 合并数据
@@ -168,11 +177,10 @@ class Domain:
         try:
             res1 = requests.get(url1, headers=self.headers, timeout=self.timeout)
             res2 = requests.get(url2, headers=self.headers, timeout=self.timeout)
-            color_output("[{} 存在泛解析]".format(domain), color='YELLOW')
-            time.sleep(3)
+            return True
         except:
             pass
-        return
+        return False
 
 
     def scan(self,url):
