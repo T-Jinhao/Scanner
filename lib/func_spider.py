@@ -7,16 +7,16 @@ import re
 import os
 import time
 from bs4 import BeautifulSoup
-from urllib.parse import urlparse
 from urllib.parse import urljoin
 from .color_output import color_output
 
 wrong_web_list = ['javascript:void(0)',None,'###','#']
 
 class Spider():
-    def __init__(self, url, REQ, crazy):
+    def __init__(self, url, REQ, name, crazy):
         self.url = url
         self.REQ = REQ
+        self.name = name
         self.crazy = crazy
         self.Phone = []
         self.Email = []
@@ -36,6 +36,7 @@ class Spider():
             self.spider_report(self.url, ret, 'web')
         else:
             color_output("[ 并没有在{}扫描到网站链接 ]".format(self.url), color='YELLOW')
+
         if js and self.crazy:    # 寻找js文件内的中文字符
             color_output('-'*10 + 'js文件分析' + '-'*10, color='BLUE')
             for x in js:
@@ -201,13 +202,11 @@ class Spider():
         :return:
         '''
         path = os.path.dirname(__file__)
-        parse_url = urlparse(url)
-        dirname = parse_url.netloc
-        dirpath = "{0}/{1}/{2}".format(path,"../reports",dirname)
+        dirpath = "{0}/{1}/{2}".format(path,"../reports", self.name)
         filepath = "{0}/{1}".format(dirpath,"spider_{}_report.txt".format(flag))
         if not os.path.exists(dirpath):
             os.mkdir(dirpath)
-        F = open(filepath,"a")
+        F = open(filepath, "a")
         try:
             for m in report:
                 color_output(m)
@@ -223,12 +222,13 @@ class celery_spider:
     celery调用模块
     返回新的url进行递归扫描
     '''
-    def __init__(self,url,REQ):
+    def __init__(self,url,REQ,name):
         self.url =url
         self.REQ = REQ
+        self.name = name
 
     def run(self):
-        res = Spider(self.url, self.REQ, '1')
+        res = Spider(self.url, self.REQ, self.name, '1')
         new_url = self.same_check(res)
         return new_url
 
