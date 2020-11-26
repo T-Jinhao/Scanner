@@ -10,12 +10,13 @@ from main import *
 
 
 class RC:
-    def __init__(self, args, REQ, payload, threads, timeout, host=''):
+    def __init__(self, args, REQ, payload, threads, timeout, name, host=''):
         self.args = args
         self.REQ = REQ
         self.payload = payload
         self.threads = threads
         self.timeout = timeout
+        self.name = name
         self.host = host
 
 
@@ -26,22 +27,22 @@ class RC:
         '''
         # print(self.args)
         if self.args.spider:
-            ress = spider.delay(self.args.url, self.REQ)
+            ress = spider.delay(self.args.url, self.REQ, self.name)
             self.status(ress)
         if self.args.ports:
-            resp = spider.delay(self.host)
+            resp = ports.delay(self.host, self.name)
             self.status(resp)
         if self.host:
-            resh = hosts.delay(self.host)
+            resh = hosts.delay(self.host, self.name)
             self.status(resh)
         if self.args.burp:
-            result = burp.delay(self.args.url,self.payload,self.args.crazy)
+            result = burp.delay(self.args.url,self.payload,self.name,self.args.crazy)
             self.status(result)
         if self.args.domain:
-            resd = domain.delay(self.args.url,self.payload)
+            resd = domain.delay(self.args.url,self.payload, self.name)
             self.status(resd)
         if self.args.sqlscan:
-            resi = sqli.delay(self.args.url)
+            resi = sqli.delay(self.args.url, self.name)
             self.status(resi)
         else:
             # will add other things

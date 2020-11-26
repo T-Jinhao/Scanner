@@ -15,33 +15,33 @@ celery任务分配
 app = Celery('task',backend='redis://localhost:6379/0',broker='redis://localhost:6379/0')
 
 @app.task(name='tasks.spider.func_celery')
-def spider(url,REQ):
-    func_spider.celery_spider(url,REQ).run()
+def spider(url,REQ,name):
+    func_spider.celery_spider(url,REQ,name).run()
     return
 
 
 @app.task(name='tasks.sqli.func_celery')
-def sqli(url):
-    func_sqli.Sql(url,True).start()
+def sqli(url,name):
+    func_sqli.Sql(url,name,True).start()
     return
 
 @app.task(name='tasks.hosts.func_celery')
-def hosts(host):
-    func_hosts.Hosts(host).start()
+def hosts(host,name):
+    func_hosts.Hosts(host,name).start()
     return
 
 @app.task(name='tasks.burp.func_celery')
-def burp(url,payload,flag):
-    func_burp.celery_burp(url,payload,flag).run()
+def burp(url,payload,name,flag):
+    func_burp.celery_burp(url,payload,name,flag).run()
     return
 
 @app.task(name='tasks.ports.func_celery')
-def ports(host):
-    func_ports.Ports(host,False).start()
+def ports(host,name):
+    func_ports.Ports(host,name,False).start()
     return
 
 @app.task(name='tasks.domain.func_celery')
-def domain(url,payload):
-    func_domain.celery_domain(url,payload).run()
+def domain(url,payload,name):
+    func_domain.celery_domain(url,payload,name).run()
     return
 
