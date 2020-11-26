@@ -14,12 +14,13 @@ from concurrent.futures import ThreadPoolExecutor
 from .color_output import color_output
 
 class Domain:
-    def __init__(self,url,payload,threads,timeout,flag):
+    def __init__(self,url,payload,threads,timeout,name,flag):
         self.domain = self.url_check(url)
         self.payload = payload
         self.threads = threads
         self.timeout = timeout
         self.flag = flag
+        self.name = name
         self.url = url
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
@@ -42,7 +43,7 @@ class Domain:
             else:
                 color_output('[ payload导入失败 ]', color='RED')
             if report:
-                reports.Report(report, self.url, 'domain_report.txt', '网站子域名挖掘报告已存放于', '未能挖掘出网站子域名')
+                reports.Report(report, self.name, 'domain_report.txt', '网站子域名挖掘报告已存放于', '未能挖掘出网站子域名').save()
             else:
                 color_output("[ 未能挖掘出网站子域名 ]", color='YELLOW')
         else:
@@ -200,10 +201,11 @@ class Domain:
         return m
 
 class celery_domain:
-    def __init__(self,url,payload):
+    def __init__(self,url,payload,name):
         self.url = url
         self.payload = payload
+        self.name = name
 
     def run(self):
-        x = Domain(self.url,self.payload,20,5,False).start()
+        x = Domain(self.url, self.payload, 20, 5, self.name, False).start()
         return
