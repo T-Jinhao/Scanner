@@ -2,15 +2,15 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
-import sys,os
 from socket import *
 from concurrent.futures import ThreadPoolExecutor
 from reports import reports
 from .color_output import color_output
 
 class Hosts:
-    def __init__(self,host):
+    def __init__(self, host, name):
         self.host = host
+        self.name = name
 
     def start(self):
         color_output('>>>>>hosts'+'-'*40)
@@ -18,7 +18,7 @@ class Hosts:
         url = self.c_hosts()
         report = self.run(url)
         if report:
-            reports.Report(report, self.host, 'c_hosts_report.txt', '主机c段扫描报告已存放于', '并没有扫描出存活主机')
+            reports.Report(report, self.name, 'c_hosts_report.txt', '主机c段扫描报告已存放于', '并没有扫描出存活主机').save()
         else:
             color_output("[ 并没有扫描出开放主机 ]", color='YELLOW')
         color_output('-'*40+'hosts<<<<<')
