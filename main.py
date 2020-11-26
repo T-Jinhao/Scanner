@@ -120,7 +120,8 @@ class Scanner():
                 payload=self.payload,
                 threads=self.threads,
                 timeout=self.timeout,
-                host=self.host
+                host=self.host,
+                name=self.name
             )
             c.start()
             return
@@ -134,11 +135,11 @@ class Scanner():
         if self.args.login:
             func_login.Login(self.args.url, self.REQ, self.payload, self.threads, self.name, self.args.crazy).start()
         if self.args.burp:
-            func_burp.Burp(self.args.url, self.payload, self.threads, self.timeout, self.args.crazy).start()
+            func_burp.Burp(self.args.url, self.payload, self.threads, self.timeout, self.name, self.args.crazy).start()
         if self.args.domain:
-            func_domain.Domain(self.args.url, self.payload, self.threads, self.timeout, self.args.crazy).start()
+            func_domain.Domain(self.args.url, self.payload, self.threads, self.timeout, self.name, self.args.crazy).start()
         if self.args.sqlscan:
-            func_sqli.Sql(self.args.url, self.args.crazy)
+            func_sqli.Sql(self.args.url, self.name, self.args.crazy).start()
         else:
             # print("Nothing to do...")
             sys.exit()

@@ -14,10 +14,10 @@ import threading,time,requests,json
 from .color_output import color_output
 
 class Sql:
-    def __init__(self,url,flag):
+    def __init__(self,url,name,flag):
         self.url = url
         self.flag = flag
-        self.start()
+        self.name = name
 
     def start(self):
         color_output('>>>>>Sqlscan' + '-' * 40)
@@ -72,7 +72,7 @@ class Sql:
                     report = self.sql_results(taskid)  # 获取报告
                     if report:
                         color_output(report, color='GREEN')
-                        reports.Report(report, self.url, 'sqlscan_report.txt', '主机注入漏洞扫描报告已存放于', '并没有扫描出主机注入漏洞')
+                        reports.Report(report, self.name, 'sqlscan_report.txt', '主机注入漏洞扫描报告已存放于', '并没有扫描出主机注入漏洞').save()
                     else:
                         color_output('[ 并没有扫描出主机注入漏洞 ]', color='YELLOW')
                 else:
