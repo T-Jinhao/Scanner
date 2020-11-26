@@ -14,11 +14,12 @@ sql_pass = ['\'or 1=1#', '"or 1=1#', '\')or 1=1#', 'or 1=1--', 'a\'or\'1=1--', '
 payload = weak_dict+sql_pass
 
 class Login:
-    def __init__(self,url,REQ,file,threads,flag):
+    def __init__(self,url,REQ,file,threads,name,flag):
         self.url = url
         self.REQ = REQ
         self.file = file
         self.threads = threads
+        self.name = name
         self.flag = flag
 
     def start(self):
@@ -48,7 +49,7 @@ class Login:
         # print(exp)
         report = self.run(exp)
         if report:
-            reports.Report(report, self.url, 'login_report.txt', '网站密码fuzz报告已存放于', '没有探测出网站密码')
+            reports.Report(report, self.name, 'login_report.txt', '网站密码fuzz报告已存放于', '没有探测出网站密码').save()
         else:
             color_output('[ 没有探测出网站密码 ]', color='YELLOW')
         color_output('-'*40+'Login_fuzz<<<<<')

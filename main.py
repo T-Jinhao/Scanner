@@ -22,18 +22,6 @@ class Scanner():
     def __init__(self, args):
         self.args = args
 
-    def initTaskName(self):
-        '''
-        输出报告合并文件夹命名
-        :return:
-        '''
-        if self.args.name == None:
-            today = datetime.datetime.today()
-            formatted_today = today.strftime('%y%m%d')
-            self.args.name = formatted_today
-        self.args.name = str(self.args.name)
-        return
-
 
     def url_check(self):
         '''
@@ -107,6 +95,13 @@ class Scanner():
             cookies=self.cookies,
             timeout=self.timeout
         )
+
+        # 输出报告合并文件夹命名
+        if self.args.name == None:
+            today = datetime.datetime.today()
+            formatted_today = today.strftime('%y%m%d')
+            self.args.name = formatted_today
+        self.name = str(self.args.name)
         return
 
     def run(self):
@@ -131,13 +126,13 @@ class Scanner():
             return
 
         if self.args.spider:
-            func_spider.Spider(self.args.url, self.REQ, self.args.name, self.args.crazy).start()
+            func_spider.Spider(self.args.url, self.REQ, self.name, self.args.crazy).start()
         if self.args.ports:
-            func_ports.Ports(self.host, self.args.name, self.args.crazy).start()
+            func_ports.Ports(self.host, self.name, self.args.crazy).start()
         if self.args.hosts:
-            func_hosts.Hosts(self.host).start()
+            func_hosts.Hosts(self.host, self.name).start()
         if self.args.login:
-            func_login.Login(self.args.url, self.REQ, self.payload, self.threads, self.args.crazy).start()
+            func_login.Login(self.args.url, self.REQ, self.payload, self.threads, self.name, self.args.crazy).start()
         if self.args.burp:
             func_burp.Burp(self.args.url, self.payload, self.threads, self.timeout, self.args.crazy).start()
         if self.args.domain:
@@ -179,7 +174,6 @@ def terminal_input():
 def main():
     args = terminal_input()
     x = Scanner(args)
-    x.initTaskName() # 输出报告合并文件夹命名
     x.url_check()  # 检查输入url
     x.base_report()  # 输出基础报告
     x.prepare()    # 准备工作
