@@ -6,8 +6,10 @@ import requests
 import os
 import re
 import hashlib
-import time
 import dns.resolver
+import aiohttp
+import asyncio
+from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from reports import reports
 from concurrent.futures import ThreadPoolExecutor
@@ -35,7 +37,7 @@ class Domain:
             if checkin:
                 self.domain = checkin
             pan = self.panAnalysis(self.domain)   # 检测是否存在泛解析
-            if not pan:
+            if pan:    # 泛解析处理块
                 color_output("[{} 存在泛解析，任意键继续，直接回车将退出执行]".format(self.domain), color='YELLOW')
                 select = input()
                 if select != '':
@@ -44,14 +46,21 @@ class Domain:
                     color_output('程序终止', color='CYAN')
                     color_output('-' * 40 + 'domain<<<<<' + '\n')
                     return
+
             color_output("[ 开始爆破域名: {} ]".format(self.domain), color='BLUE')
-            onlineReport = self.chinaz_search()    # 在线查询接口获得的数据
-            payload = self.load_payload(onlineReport)   # 合并数据
-            if payload:
-                color_output('[ payload导入完成 ]', color='MAGENTA')
-                report = self.run(self.domain, payload, self.threads)
-            else:
-                color_output('[ payload导入失败 ]', color='RED')
+            if self.flag:           # 调用rapiddns.io进行在线获取
+                color_output('当前模式可能十分耗时，请耐心等待', color='MAGENTA')
+                self.rapidSearch(self.domain)
+                report = self.RAPID
+
+            if report == []:    # 普通模式及rapid获取数据失败的情况下，使用字典爆破
+                onlineReport = self.chinaz_search()  # chinaz在线查询接口获得的数据
+                payload = self.load_payload(onlineReport)  # 合并数据
+                if payload:
+                    color_output('[ payload导入完成 ]', color='MAGENTA')
+                    report = self.run(self.domain, payload, self.threads)
+                else:
+                    color_output('[ payload导入失败 ]', color='RED')
             if report:
                 reports.Report(report, self.name, 'domain_report.txt', '网站子域名挖掘报告已存放于', '未能挖掘出网站子域名').save()
             else:
@@ -165,7 +174,7 @@ class Domain:
 
     def panAnalysis(self, domain):
         '''
-        以随机数拼接查看是否会存在泛解析
+        以随机数拼接域名判断是否会存在泛解析
         :param domain:
         :return:
         '''
@@ -181,6 +190,53 @@ class Domain:
         except:
             pass
         return False
+
+    def rapidSearch(self, domain):
+        '''
+        根据最大最全的repiddns.io平台进行在线搜索，但网速可能会比较慢
+        :param domain:
+        :return:
+        '''
+        self.RAPID = []
+        url = f'https://rapiddns.io/subdomain/{domain}?full=1&down=1#result'
+        loop = asyncio.get_event_loop()
+        task = loop.create_task(self.rapidDns(url))
+        loop.run_until_complete(task)
+
+    async def rapidDns(self, url):
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as res:
+                    text = await res.read()
+                    await self.resultParse(text)
+        except Exception as e:
+            print(e)
+        return
+
+    async def resultParse(self, text):
+        url_dict = []
+        soup = BeautifulSoup(text, 'html.parser')
+        td_links = soup.find_all('tr')
+        for d in td_links:
+            a = d.get_text()
+            a = a.strip()
+            m = a.split('\n')
+            if m[1] not in url_dict and m[-1] in ['CNAME', 'A', 'AAAA']:
+                try:
+                    url = 'http://' + m[1]
+                    res = requests.post(url, headers=self.headers, timeout=self.timeout)  # 高并发，单独创建对象
+                    if res.status_code == 200 or res.status_code == 302 or res.status_code == 500 or res.status_code == 502:
+                        url_dict.append(m[1])    # 保存存活状态的子域名
+                        if m[1] == m[2]:
+                            msg = "{0} : {1} : {2}".format(res.status_code, m[-1], m[1])
+                        else:
+                            msg = "{0} : {1} : {2} ==> {3}".format(res.status_code, m[-1], m[1], m[2])
+                        color_output(msg, color='GREEN')
+                        self.RAPID.append(msg)
+                except Exception as e:
+                    # print(e)
+                    continue
+        return
 
 
     def scan(self,url):
