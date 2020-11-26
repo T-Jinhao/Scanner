@@ -3,7 +3,9 @@
 #author:Jinhao
 
 import sys
-import re,os,time
+import re
+import os
+import time
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from urllib.parse import urljoin
@@ -144,8 +146,7 @@ class Spider():
                 if res.status_code != 404 and len(res.content) != 0:
                     Gurls.append(url)
             except:
-                pass
-                # print('访问失败')
+                color_output('访问失败', color='YELLOW')
             time.sleep(0.5)   # 防止过于频繁导致网站崩溃
         return Gurls
 
