@@ -11,9 +11,10 @@ from concurrent.futures import ThreadPoolExecutor
 from .color_output import color_output
 
 class Burp():
-    def __init__(self,url,payload,threads,timeout,flag):
+    def __init__(self,url,payload,threads,timeout,name,flag):
         self.url = self.url_parse(url)
         self.flag = flag
+        self.name = name
         self.payload = payload
         self.scan_mode = 0
         self.threads = threads
@@ -38,7 +39,7 @@ class Burp():
             color_output('[ payload导入完成 ]', color='MAGENTA')
             report = self.run(payloads, self.threads)
             if report:
-                reports.Report(report, url, 'burp_report.txt', '网站目录爆破报告已存放于', '并没有扫描出可疑后台')
+                reports.Report(report, self.name, 'burp_report.txt', '网站目录爆破报告已存放于', '并没有扫描出可疑后台').save()
             else:
                 color_output("[ 并没有扫描出可疑后台 ]", color='YELLOW')
         else:
@@ -238,13 +239,14 @@ class celery_burp:
     '''
     celery调用模块
     '''
-    def __init__(self,url,payload,flag):
+    def __init__(self,url,payload,name,flag):
         self.url = url
         self.payload = payload
         self.flag =flag
+        self.name = name
 
     def run(self):
-        x = Burp(self.url,self.payload,10,5,self.flag).start()    # 线程有所减少
+        x = Burp(self.url, self.payload, 10, 5, self.name, self.flag).start()    # 线程有所减少
         return
 
 
