@@ -9,6 +9,8 @@ import hashlib
 import dns.resolver
 import aiohttp
 import asyncio
+import socket
+import time
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from reports import reports
@@ -49,9 +51,12 @@ class Domain:
 
             color_output("[ 开始爆破域名: {} ]".format(self.domain), color='BLUE')
             if self.flag:           # 调用rapiddns.io进行在线获取
-                color_output('当前模式可能十分耗时，请耐心等待', color='MAGENTA')
+                color_output('正在运行在线查询，请耐心等待', color='CYAN')
                 self.rapidSearch(self.domain)
                 report = self.RAPID
+                if report == []:
+                    color_output('在线查询获取数据失败，请检查输入或再次运行', color='YELLOW')
+                    time.sleep(3)
 
             if report == []:    # 普通模式及rapid获取数据失败的情况下，使用字典爆破
                 onlineReport = self.chinaz_search()  # chinaz在线查询接口获得的数据
@@ -229,14 +234,25 @@ class Domain:
                         url_dict.append(m[1])    # 保存存活状态的子域名
                         if m[1] == m[2]:
                             msg = "{0} : {1} : {2}".format(res.status_code, m[-1], m[1])
-                        else:
+                        elif m[-1] in ['A', 'AAAA']:
                             msg = "{0} : {1} : {2} ==> {3}".format(res.status_code, m[-1], m[1], m[2])
+                        else:
+                            msg = "{0} : {1} : {2} ==> {3} ==> {4}".format(res.status_code, m[-1], m[1], m[2],
+                                                                           self.getHostname(m[2]))
                         color_output(msg, color='GREEN')
                         self.RAPID.append(msg)
                 except Exception as e:
                     # print(e)
                     continue
         return
+
+    def getHostname(self, host):
+        IP = ''
+        try:
+            IP = socket.gethostbyname(host)
+        except:
+            pass
+        return IP
 
 
     def scan(self,url):
