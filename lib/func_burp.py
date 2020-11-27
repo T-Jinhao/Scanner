@@ -97,8 +97,8 @@ class Burp():
         :param url:
         :return:
         '''
-        for i in ['/index.php','/index.asp','/index.aspx','/index.mdb']:
-            URL = "{0}{1}".format(url,i)
+        for i in ['/index.php','/index.asp','/index.aspx','/index.mdb','/index.jsp']:
+            URL = "{0}{1}".format(url, i)
             try:
                 res = requests.get(url, headers=self.headers, timeout=self.timeout)
                 if res.status_code == 200:
@@ -124,6 +124,8 @@ class Burp():
             filename = 'ASPX.txt'
         elif type == 'mdb':
             filename = 'MDB.txt'
+        elif type == 'jsp':
+            filename = 'JSP.txt'
         else:
             filename = ''
 
@@ -143,10 +145,10 @@ class Burp():
         F.close()
 
         if filename != '' and self.flag:         # 此模块需要启动极致模式
-            filepath = "{0}/{1}/{2}".format(path,r'../dict/burp',filename)
+            filepath = "{0}/{1}/{2}".format(path, r'../dict/burp', filename)
             f = open(filepath,'r')
             for x in f:
-                payloads.append(x.replace('\n',''))
+                payloads.append(x.replace('\n', ''))
                 # print(x.replace('\n',''))
             f.close()
         payloads = list(set(payloads))
@@ -177,6 +179,7 @@ class Burp():
         for x in payloads:
             url = self.url + x
             URL.append(url)
+
         with ThreadPoolExecutor(max_workers=threads) as pool:
             if self.scan_mode:
                 results = pool.map(self.text_scan, URL)
@@ -242,7 +245,7 @@ class celery_burp:
     def __init__(self,url,payload,name,flag):
         self.url = url
         self.payload = payload
-        self.flag =flag
+        self.flag = flag
         self.name = name
 
     def run(self):
