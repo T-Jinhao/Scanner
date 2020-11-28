@@ -95,7 +95,8 @@ class Scanner():
         self.cookies = O.checkCookies(self.args.cookies)
         self.REQ = _requests.Concurrent(
             cookies=self.cookies,
-            timeout=self.timeout
+            timeout=self.timeout,
+            threads=self.threads
         )
 
         # 输出报告合并文件夹命名

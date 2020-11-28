@@ -58,5 +58,5 @@ class O:
         :return:
         '''
         if timeout <= 0:
-            timeout = 3
+            timeout = 5
         return timeout

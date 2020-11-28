@@ -99,6 +99,9 @@ class Spider():
             res = self.REQ.autoGetAccess(url)
             self.find_Email(res.text)   # 匹配邮箱
             self.find_Phone(res.text)   # 匹配电话
+        except Exception as e:
+            print(e)
+        try:
             img_sites = []      # 图片链接
             web_sites = []      # 网站链接
             js_sites = []        # js脚本链接

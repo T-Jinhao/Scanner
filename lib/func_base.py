@@ -25,7 +25,7 @@ class IPcontent:
         url = "https://site.ip138.com/{ip}/".format(
             ip=self.ip
         )
-        res = self.REQ.autoGetAccess(url)
+        res = self.REQ.mGetAccess(url)
         return res
 
     def soupDate(self, res):
@@ -47,7 +47,7 @@ class IPcontent:
 
 if __name__ == '__main__':
     r = _requests.Concurrent()
-    x = IPcontent('meituan.com', r)
+    x = IPcontent('baidu.com', r)
     rep = x.run()
     for m in rep:
         print(m)

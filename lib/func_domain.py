@@ -184,8 +184,8 @@ class Domain:
         url1 = "http://{}.{}".format(ranstr1, domain)
         url2 = "http://{}.{}".format(ranstr2, domain)
         try:
-            res1 = self.REQ.autoGetAccess(url1, headers=self.headers, timeout=self.timeout)
-            res2 = self.REQ.autoGetAccess(url2, headers=self.headers, timeout=self.timeout)
+            res1 = self.REQ.autoGetAccess(url1)
+            res2 = self.REQ.autoGetAccess(url2)
             return True
         except:
             pass
