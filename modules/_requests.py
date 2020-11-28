@@ -43,6 +43,26 @@ class Concurrent:
             color_output(e, color='RED')
             return
 
+    def mGetAsyncAccess(self, urls):
+        '''
+        构造高并发请求
+        :param urls:
+        :return:
+        '''
+        try:
+            res = [
+                grequests.get(
+                    u,
+                    headers=self.headers,
+                    cookies=self.cookies,
+                    timeout=self.timeout
+                ) for u in urls
+            ]
+            ret = grequests.map(res)
+            return ret
+        except Exception as e:
+            color_output(e, color='RED')
+            return
 
     def autoPostAccess(self, url, data={}):
         if url.startswith('http://') or url.startswith('https://'):

@@ -142,7 +142,7 @@ class Spider():
         for url in list(set(urls)):
             color_output('测试链接：{0}'.format(url), color='CYAN')
             try:
-                res = self.REQ.mGetAccess(url)
+                res = self.REQ.autoGetAccess(url)
                 color_output("状态码：{}  文本长度：{}".format(res.status_code, len(res.content)), color='GREEN')
                 if res.status_code != 404 and len(res.content) != 0:
                     Gurls.append(url)
@@ -158,7 +158,7 @@ class Spider():
         '''
         compile_CN = re.compile(u"[\u4e00-\u9fa5]")   # 匹配中文
         try:
-            res = self.REQ.mGetAccess(url)
+            res = self.REQ.autoGetAccess(url)
             content = str(res.content.decode('utf-8'))
             self.find_Phone(res.text)
             self.find_Email(res.text)
