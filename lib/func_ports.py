@@ -95,7 +95,7 @@ class Ports():
         :return:
         '''
         reports = []
-        with ThreadPoolExecutor(max_workers=800) as pool:
+        with ThreadPoolExecutor(max_workers=20) as pool:
             results = pool.map(self.scan,port)
             for result in results:
                 if result['flag']:
