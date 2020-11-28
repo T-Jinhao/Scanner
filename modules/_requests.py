@@ -58,7 +58,7 @@ class Concurrent:
         try:
             res = [
                 grequests.get(
-                    url=u,
+                    url='http://' + u.split('://')[-1],
                     headers=self.headers,
                     cookies=self.cookies,
                     timeout=self.timeout

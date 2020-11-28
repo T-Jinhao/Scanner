@@ -46,11 +46,11 @@ class Domain:
 
             color_output("[ 开始爆破域名: {} ]".format(self.domain), color='BLUE')
             if self.flag:           # 调用rapiddns.io进行在线获取
-                color_output('正在运行在线查询，请耐心等待', color='CYAN')
+                color_output('正在运行在线查询，请耐心等待；该过程请挂载代理，否则可能会访问超时，导致获取数据失败', color='CYAN')
                 self.rapidSearch(self.domain)
                 report = self.RAPID
                 if report == []:
-                    color_output('在线查询获取数据失败，请检查输入或再次运行', color='YELLOW')
+                    color_output('-X模式查询失败，稍后将继续执行', color='YELLOW')
                     time.sleep(3)
 
             if report == []:    # 普通模式及rapid获取数据失败的情况下，使用字典爆破
@@ -58,7 +58,7 @@ class Domain:
                 payload = self.load_payload(onlineReport)  # 合并数据
                 if payload:
                     color_output('[ payload导入完成 ]', color='MAGENTA')
-                    report = self.run(self.domain, payload, self.threads)
+                    report = self.run(self.domain, payload)
                 else:
                     color_output('[ payload导入失败 ]', color='RED')
             if report:
@@ -99,7 +99,7 @@ class Domain:
             pagenum = rePage.findall(res.text)[0]
             pagenum = int(pagenum)
         except:
-            color_output('在线api没有获取数据', color='YELLOW')
+            color_output('站长之家api没有获取数据', color='YELLOW')
             return []
 
         for i in range(1, pagenum+1):
@@ -132,30 +132,40 @@ class Domain:
         filepath = "{0}/{1}/{2}".format(path, r'../dict/domain', file)
         F = open(filepath, 'r')
         for x in F:
-            payload.append(x.replace('\n', ''))
+            url = '{}.{}'.format(x.replace('\n', ''), self.domain)
+            payload.append(url)
         payload += report
         payload = list(set(payload))   # payload去重
+        # print(payload)
         return payload
 
-    def run(self,domain,payload,threads):
+    def run(self,domain,payload):
         '''
         配置线程池
         :param domain:提取到的域名
         :param payload:导入的payload
-        :param threads:最大线程数
         :return:
         '''
         URL = []
+        url_list = []
         report = []
-        for x in payload:
-            url = 'http://{}.{}'.format(str(x),domain)
-            URL.append(url)
-        with ThreadPoolExecutor(max_workers=threads) as pool:
-            results = pool.map(self.scan,URL)
-            for result in results:
-                if result['flag'] == 1:
-                    color_output(result['msg'], color='GREEN')
-                    report.append(result['msg'])
+        for u in payload:
+            URL.append(u)
+
+        resp = self.REQ.mGetAsyncAccess(URL)
+        for r in resp:
+            try:
+                if r.url not in url_list:
+                    url_list.append(r.url)
+                    msg = "当前状态码：{0} | 跳转记录：{1} | 最终URL：{2} ".format(
+                        r.status_code,
+                        r.history,
+                        r.url
+                    )
+                    color_output(msg, color='GREEN')
+                    report.append(msg)
+            except:
+                pass
         return report
 
 
@@ -183,13 +193,11 @@ class Domain:
         ranstr2 = ranstr[-4:]
         url1 = "http://{}.{}".format(ranstr1, domain)
         url2 = "http://{}.{}".format(ranstr2, domain)
-        try:
-            res1 = self.REQ.autoGetAccess(url1)
-            res2 = self.REQ.autoGetAccess(url2)
-            return True
-        except:
-            pass
-        return False
+        res1 = self.REQ.autoGetAccess(url1)
+        res2 = self.REQ.autoGetAccess(url2)
+        if res1 == None and res2 == None:    # grequests没有抛异常，出错返回None
+            return False
+        return True
 
     def rapidSearch(self, domain):
         '''
@@ -198,7 +206,7 @@ class Domain:
         :return:
         '''
         self.RAPID = []
-        url = f'https://rapiddns.io/subdomain/{domain}?full=1&down=1#result'
+        url = f'https://rapiddns.io/subdomain/{domain}?full=1&down=1'
         loop = asyncio.get_event_loop()
         task = loop.create_task(self.rapidDns(url))
         loop.run_until_complete(task)
@@ -217,6 +225,7 @@ class Domain:
         url_dict = []
         soup = BeautifulSoup(text, 'html.parser')
         td_links = soup.find_all('tr')
+
         for d in td_links:
             a = d.get_text()
             a = a.strip()
