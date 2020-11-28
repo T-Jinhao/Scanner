@@ -237,12 +237,12 @@ class Domain:
                     if res.status_code == 200 or res.status_code == 302 or res.status_code == 500 or res.status_code == 502:
                         url_dict.append(m[1])    # 保存存活状态的子域名
                         if m[1] == m[2]:
-                            msg = "{0} : {1} : {2}".format(res.status_code, m[-1], m[1])
+                            msg = "{0} : {1} : {2} : {3}".format(res.status_code, m[-1], m[1], res.url)
                         elif m[-1] in ['A', 'AAAA']:
-                            msg = "{0} : {1} : {2} ==> {3}".format(res.status_code, m[-1], m[1], m[2])
+                            msg = "{0} : {1} : {2} ==> {3} : {4}".format(res.status_code, m[-1], m[1], m[2], res.url)
                         else:
-                            msg = "{0} : {1} : {2} ==> {3} ==> {4}".format(res.status_code, m[-1], m[1], m[2],
-                                                                           self.getHostname(m[2]))
+                            msg = "{0} : {1} : {2} ==> {3} ==> {4} : {5}".format(res.status_code, m[-1], m[1], m[2],
+                                                                           self.getHostname(m[2]), res.url)
                         color_output(msg, color='GREEN')
                         self.RAPID.append(msg)
                 except Exception as e:
