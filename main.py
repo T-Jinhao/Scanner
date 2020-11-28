@@ -18,6 +18,8 @@ from modules import _requests
 from modules import check
 from lib.color_output import color_output
 
+sys.setrecursionlimit(1000000)
+
 class Scanner():
     def __init__(self, args):
         self.args = args
@@ -91,7 +93,7 @@ class Scanner():
         # 设置基础请求体
         self.timeout = O.timeoutSetting(self.args.timeout)
         self.cookies = O.checkCookies(self.args.cookies)
-        self.REQ = _requests.URL(
+        self.REQ = _requests.Concurrent(
             cookies=self.cookies,
             timeout=self.timeout
         )
