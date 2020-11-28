@@ -2,7 +2,6 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
-import requests
 import os
 import re
 import hashlib
@@ -18,17 +17,13 @@ from concurrent.futures import ThreadPoolExecutor
 from .color_output import color_output
 
 class Domain:
-    def __init__(self,url,payload,threads,timeout,name,flag):
+    def __init__(self, url, payload, REQ, name, flag):
         self.domain = self.url_check(url)
         self.payload = payload
-        self.threads = threads
-        self.timeout = timeout
+        self.REQ = REQ
         self.flag = flag
         self.name = name
         self.url = url
-        self.headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
-        }
 
     def start(self):
         color_output('>>>>>domain' + '-' * 40)
@@ -100,7 +95,7 @@ class Domain:
         url = "https://tool.chinaz.com/subdomain/?domain={}&page=1".format(self.domain)
         rePage = re.compile(r'共(.+?)页')
         try:
-            res = requests.get(url, headers=self.headers, timeout=self.timeout)
+            res = self.REQ.autoGetAccess(url)
             pagenum = rePage.findall(res.text)[0]
             pagenum = int(pagenum)
         except:
@@ -109,7 +104,7 @@ class Domain:
 
         for i in range(1, pagenum+1):
             url = "https://tool.chinaz.com/subdomain/?domain={}&page={}".format(self.domain, i)
-            res = requests.get(url, headers=self.headers, timeout=self.timeout)
+            res = self.REQ.autoGetAccess(url)
             domain = re.compile('[\w]+\.{}'.format(self.domain))    # 正则提取子域名
             domains = domain.finditer(res.text)
             if domains == []:
@@ -189,8 +184,8 @@ class Domain:
         url1 = "http://{}.{}".format(ranstr1, domain)
         url2 = "http://{}.{}".format(ranstr2, domain)
         try:
-            res1 = requests.get(url1, headers=self.headers, timeout=self.timeout)
-            res2 = requests.get(url2, headers=self.headers, timeout=self.timeout)
+            res1 = self.REQ.autoGetAccess(url1, headers=self.headers, timeout=self.timeout)
+            res2 = self.REQ.autoGetAccess(url2, headers=self.headers, timeout=self.timeout)
             return True
         except:
             pass
@@ -229,7 +224,7 @@ class Domain:
             if m[1] not in url_dict and m[-1] in ['CNAME', 'A', 'AAAA']:
                 try:
                     url = 'http://' + m[1]
-                    res = requests.post(url, headers=self.headers, timeout=self.timeout)  # 高并发，单独创建对象
+                    res = self.REQ.autoGetAccess(url)  # 高并发，单独创建对象
                     if res.status_code == 200 or res.status_code == 302 or res.status_code == 500 or res.status_code == 502:
                         url_dict.append(m[1])    # 保存存活状态的子域名
                         if m[1] == m[2]:
@@ -262,7 +257,7 @@ class Domain:
         :return:
         '''
         try:
-            res = requests.post(url,headers=self.headers, timeout=self.timeout)   # 高并发，单独创建对象
+            res = self.REQ.autoGetAccess(url)   # 高并发，单独创建对象
             if res.status_code == 200 or res.status_code == 302 or res.status_code == 500 or res.status_code ==502:
                 res_type = self.getDomainType(url)
                 msg = "{0} : {1} : {2}".format(res.status_code, res_type, url)
@@ -276,11 +271,12 @@ class Domain:
         return m
 
 class celery_domain:
-    def __init__(self,url,payload,name):
+    def __init__(self,url,payload,REQ,name):
         self.url = url
         self.payload = payload
+        self.REQ = REQ
         self.name = name
 
     def run(self):
-        x = Domain(self.url, self.payload, 20, 5, self.name, False).start()
+        x = Domain(self.url, self.payload, self.REQ, self.name, False).start()
         return

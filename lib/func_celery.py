@@ -41,7 +41,7 @@ def ports(host,name):
     return
 
 @app.task(name='tasks.domain.func_celery')
-def domain(url,payload,name):
-    func_domain.celery_domain(url,payload,name).run()
+def domain(url,payload,REQ,name):
+    func_domain.celery_domain(url,payload,REQ,name).run()
     return
 

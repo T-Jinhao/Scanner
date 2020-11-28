@@ -39,7 +39,7 @@ class RC:
             result = burp.delay(self.args.url,self.payload,self.REQ,self.name,self.args.crazy)
             self.status(result)
         if self.args.domain:
-            resd = domain.delay(self.args.url,self.payload, self.name)
+            resd = domain.delay(self.args.url,self.payload, self.REQ, self.name)
             self.status(resd)
         if self.args.sqlscan:
             resi = sqli.delay(self.args.url, self.name)

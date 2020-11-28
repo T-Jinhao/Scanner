@@ -5,7 +5,6 @@
 
 import aiohttp
 import asyncio
-import grequests
 from bs4 import BeautifulSoup
 
 async def ripadDns(url):
