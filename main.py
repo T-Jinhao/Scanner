@@ -60,7 +60,7 @@ class Scanner():
 
     def base_report(self):
         self.host = self.getHostname()  # 获取domain
-        self.ip_report = func_base.IPcontent(self.host).run()
+        self.ip_report = func_base.IPcontent(self.host, self.REQ).run()
         color_output('>>>>>base_report'+'-'*40)
         color_output('输入URL：' + self.args.url, color='MAGENTA')
         color_output('解析host：'+ self.host, color='MAGENTA')
@@ -178,8 +178,8 @@ def main():
     args = terminal_input()
     x = Scanner(args)
     x.url_check()  # 检查输入url
+    x.prepare()  # 准备工作
     x.base_report()  # 输出基础报告
-    x.prepare()    # 准备工作
     x.run()
 
 if __name__ == "__main__":

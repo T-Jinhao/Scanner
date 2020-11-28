@@ -4,7 +4,9 @@
 
 import grequests
 import config
+import urllib3
 from lib.color_output import color_output
+urllib3.disable_warnings()
 
 HEADER = config.HEADERS
 PROXY = config.PROXY
@@ -20,16 +22,14 @@ class Concurrent:
         self.verify = verify
         self.timeout = timeout
 
-    def autoAccess(self, url):
-        if url.startswith('http://'):
-            ret = self.httpAccess(url)
-        elif url.startswith('https://'):
-            ret = self.httpsAccess(url)
+    def mAutoGetAccess(self, url):
+        if url.startswith('http://') or url.startswith('https://'):
+            ret = self.mGetAccess(url)
         else:
-            ret = self.httpAccess('http://'+url)
+            ret = self.mGetAccess('http://' + url)
         return ret
 
-    def httpAccess(self, url):
+    def mGetAccess(self, url):
         try:
             res = [grequests.get(
                 url,
@@ -43,52 +43,20 @@ class Concurrent:
             color_output(e, color='RED')
             return
 
-    def httpsAccess(self, url):
-        try:
-            res = [grequests.get(
-                url,
-                headers=self.headers,
-                cookies=self.cookies,
-                verify=self.verify,
-                timeout=self.timeout
-            )]
-            ret = grequests.map(res)
-            return ret[0]
-        except Exception as e:
-            color_output(e, color='RED')
-            return
 
     def autoPostAccess(self, url, data={}):
-        if url.startswith('http://'):
-            ret = self.httpPostAccess(url, data)
-        elif url.startswith('https://'):
-            ret = self.httpsPostAccess(url, data)
+        if url.startswith('http://') or url.startswith('https://'):
+            ret = self.mPostAccess(url, data)
         else:
-            ret = self.httpPostAccess('http://'+url, data)
+            ret = self.mPostAccess('http://' + url, data)
         return ret
 
-    def httpPostAccess(self, url, data={}):
+    def mPostAccess(self, url, data={}):
         try:
             res = [grequests.post(
                 url,
                 headers=self.headers,
                 cookies=self.cookies,
-                timeout=self.timeout,
-                data=data
-            )]
-            ret = grequests.map(res)
-            return ret[0]
-        except Exception as e:
-            color_output(e, color='RED')
-            return
-
-    def httpsPostAccess(self, url, data={}):
-        try:
-            res = [grequests.post(
-                url,
-                headers=self.headers,
-                cookies=self.cookies,
-                verify=self.verify,
                 timeout=self.timeout,
                 data=data
             )]

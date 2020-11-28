@@ -3,11 +3,9 @@
 #author:Jinhao
 # 测试文档
 
-import os
-import re
 import aiohttp
 import asyncio
-import requests
+import grequests
 from bs4 import BeautifulSoup
 
 async def ripadDns(url):

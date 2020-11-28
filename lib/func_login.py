@@ -61,7 +61,7 @@ class Login:
         :return:dict
         '''
         args = {}
-        res = self.REQ.httpAccess(self.url)
+        res = self.REQ.mGetAccess(self.url)
         soup = BeautifulSoup(res.content, 'html.parser')
         xxx = soup.find_all('input')
         for i in xxx:

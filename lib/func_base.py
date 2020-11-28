@@ -2,17 +2,17 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
-import requests
 import re
-
+from modules import _requests
 
 headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
     }
 
 class IPcontent:
-    def __init__(self, ip):
+    def __init__(self, ip, REQ):
         self.ip = ip
+        self.REQ = REQ
 
     def run(self):
         res = self.getDomainData()
@@ -25,7 +25,7 @@ class IPcontent:
         url = "https://site.ip138.com/{ip}/".format(
             ip=self.ip
         )
-        res = requests.get(url, headers=headers, timeout=5)
+        res = self.REQ.httpsAccess(url)
         return res
 
     def soupDate(self, res):
@@ -46,6 +46,8 @@ class IPcontent:
 
 
 if __name__ == '__main__':
-    x = IPcontent('baidu.com')
+    r = _requests.Concurrent()
+    x = IPcontent('meituan.com', r)
     rep = x.run()
-    print(rep)
+    for m in rep:
+        print(m)
