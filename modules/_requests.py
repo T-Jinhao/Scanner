@@ -18,7 +18,7 @@ PROXY = config.PROXY
 
 
 class Concurrent:
-    def __init__(self, cookies={},  timeout=5, threads=5):
+    def __init__(self, cookies={},  timeout=5, threads=5, debug=False):
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
         }
@@ -26,6 +26,7 @@ class Concurrent:
         self.proxies = PROXY
         self.timeout = timeout
         self.threads = threads
+        self.debug = debug
 
     def autoGetAccess(self, url):
         if url.startswith('http://') or url.startswith('https://'):
@@ -92,5 +93,7 @@ class Concurrent:
             return
 
     def err_handler(self, request, exception):
-        color_output(request.url, color='RED')
-        color_output(exception, color='RED')
+        if self.debug == True:
+            color_output(request.url, color='RED')
+            color_output(exception, color='RED')
+        return
