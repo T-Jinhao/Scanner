@@ -156,7 +156,7 @@ class Burp():
         :return:
         '''
         impossible_payload = ['/aaaaaaaaaaaaaaaaaaaa','/bbbbbbbbbbbbbbbb','/asodhpfpowehrpoadosjfho']   # 无中生有的payload
-        res = self.run(impossible_payload,3)
+        res = self.run(impossible_payload)
         if res:
             self.scan_mode = 1
             return 1
@@ -174,46 +174,47 @@ class Burp():
         for x in payloads:
             url = self.url + x
             URL.append(url)
+        if self.scan_mode:
+            results = self.text_scan(URL)
+        else:
+            results = self.status_scan(URL)
 
-        Responses = self.REQ.mGetAsyncAccess(URL)
-        for x in Responses:
-            print(x.status_code)
-        exit()
+        for result in results:
+            if result['flag'] != 0:  # 选择性输出
+                if result['flag'] == 1:
+                    color_output(result['msg'], color='GREEN')
+                    reports.append(result['msg'])
+                else:
+                    pass
+                    # color_output(result['msg'], color='YELLOW')
 
-        # with ThreadPoolExecutor(max_workers=threads) as pool:
-        #     if self.scan_mode:
-        #         results = pool.map(self.text_scan, URL)
-        #     else:
-        #         results = pool.map(self.sites_scan,URL)
-        #     for result in results:
-        #         if result['flag'] != 0:     # 选择性输出
-        #             if result['flag'] == 1:
-        #                 color_output(result['msg'], color='GREEN')
-        #                 reports.append(result['msg'])
-        #             else:
-        #                 color_output(result['msg'], color='YELLOW')
-        return []
+        return reports
 
 
-    def sites_scan(self,url):
+    def status_scan(self, url):
         '''
         根据网站状态码识别后台
         :param url:
         :return:
         '''
-        try:
-            res = self.REQ.autoGetAccess(url)
-            status = res.status_code
-            if status == 200 or status == 302 or status == 500 or status == 502:
-                msg = "{0} : {1} : {2}".format(status, res.headers.get('Content-Length'), url)
-                m = {'msg':msg,'flag':1}
-                return m
-        except:
-            msg = "[Timeout : {}]".format(url)
-            m = {'msg': msg, 'flag': 2}
-            return m
-        m = {'flag':0}
-        return m
+        report = []
+        exist_list = []
+        resp = self.REQ.mGetAsyncAccess(url)
+        for r in resp:
+            m = {'flag': 0}
+            try:
+                status = r.status_code
+                if status == 200 or status == 302 or status == 500 or status == 502:
+                    check_msg = {r.url: r.headers.get('Content-Length')}
+                    if check_msg not in exist_list:
+                        exist_list.append(check_msg.copy())
+                        msg = "{0} : {1} : {2}".format(status, r.headers.get('Content-Length'), r.url)
+                        m = {'msg': msg, 'flag': 1}
+            except:
+                msg = "[Timeout : {}]".format(url)
+                m = {'msg': msg, 'flag': 2}
+            report.append(m.copy())
+        return report
 
     def text_scan(self, url):
         '''
@@ -221,21 +222,28 @@ class Burp():
         :param url:
         :return:
         '''
+        exist_list = []
+        report = []
         bm = []
         bad_msg = ['404','页面不存在','不可访问','page can\'t be found','无法加载模块']    # 用于检测页面自定义报错的信息
-        try:
-            res = self.REQ.autoGetAccess(url)
-            for msg in bad_msg:
-                if msg in res.text:
-                    bm.append(msg)
-            if len(bm) > 5:                        # 若报错信息超过一定数量可视为文章自带内容
-                msg = "{0} : {1} : {2}".format(res.status_code, len(res.content), url)
-                m = {'flag':1,'msg':msg}
-            else:
-                m = {'flag':0,'msg':bm}
-        except:
-            m = {'flag':0,'msg':'[Timeout : {}]'.format(url)}
-        return m
+        resp = self.REQ.mGetAsyncAccess(url)
+        for r in resp:
+            try:
+                for msg in bad_msg:
+                    if msg in r.text:
+                        bm.append(msg)
+                check_msg = {r.url: r.headers.get('Content-Length')}
+                if check_msg not in exist_list:
+                    exist_list.append(check_msg.copy())
+                    if len(bm) > 5:                        # 若报错信息超过一定数量可视为文章自带内容
+                        msg = "{0} : {1} : {2}".format(r.status_code, len(r.get('Content-Length')), url)
+                        m = {'flag':1,'msg':msg}
+                    else:
+                        m = {'flag':0,'msg':bm}
+            except:
+                m = {'flag':0,'msg':'[Timeout : {}]'.format(url)}
+            report.append(m.copy())
+        return report
 
 
 class celery_burp:
