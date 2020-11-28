@@ -135,7 +135,7 @@ class Scanner():
         if self.args.hosts:
             func_hosts.Hosts(self.host, self.name).start()
         if self.args.login:
-            func_login.Login(self.args.url, self.REQ, self.payload, self.threads, self.name, self.args.crazy).start()
+            func_login.Login(self.args.url, self.REQ, self.payload, self.name, self.args.crazy).start()
         if self.args.burp:
             func_burp.Burp(self.args.url, self.payload, self.REQ, self.name, self.args.crazy).start()
         if self.args.domain:
