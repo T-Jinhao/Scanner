@@ -96,7 +96,7 @@ class Spider():
         :return:网站相关链接
         '''
         try:
-            res = self.REQ.mAutoGetAccess(url)
+            res = self.REQ.autoGetAccess(url)
             self.find_Email(res.text)   # 匹配邮箱
             self.find_Phone(res.text)   # 匹配电话
             img_sites = []      # 图片链接

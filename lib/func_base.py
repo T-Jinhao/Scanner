@@ -25,7 +25,7 @@ class IPcontent:
         url = "https://site.ip138.com/{ip}/".format(
             ip=self.ip
         )
-        res = self.REQ.httpsAccess(url)
+        res = self.REQ.autoGetAccess(url)
         return res
 
     def soupDate(self, res):

@@ -22,7 +22,7 @@ class Concurrent:
         self.verify = verify
         self.timeout = timeout
 
-    def mAutoGetAccess(self, url):
+    def autoGetAccess(self, url):
         if url.startswith('http://') or url.startswith('https://'):
             ret = self.mGetAccess(url)
         else:
