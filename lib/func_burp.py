@@ -211,8 +211,7 @@ class Burp():
                         msg = "{0} : {1} : {2}".format(status, r.headers.get('Content-Length'), r.url)
                         m = {'msg': msg, 'flag': 1}
             except:
-                msg = "[Timeout : {}]".format(url)
-                m = {'msg': msg, 'flag': 2}
+                pass
             report.append(m.copy())
         return report
 
@@ -241,7 +240,7 @@ class Burp():
                     else:
                         m = {'flag':0,'msg':bm}
             except:
-                m = {'flag':0,'msg':'[Timeout : {}]'.format(url)}
+                pass
             report.append(m.copy())
         return report
 
