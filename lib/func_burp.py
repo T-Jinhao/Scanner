@@ -4,24 +4,20 @@
 
 import os
 import re
-import requests
 from reports import reports
 from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor
 from .color_output import color_output
 
 class Burp():
-    def __init__(self,url,payload,threads,timeout,name,flag):
+    def __init__(self, url, payload, REQ, name, flag):
         self.url = self.url_parse(url)
         self.flag = flag
         self.name = name
         self.payload = payload
         self.scan_mode = 0
-        self.threads = threads
-        self.timeout = timeout
-        self.headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
-        }
+        self.REQ = REQ
+
 
     def start(self):
         url = self.url
@@ -37,7 +33,7 @@ class Burp():
         payloads = self.load_payload(web_type)
         if payloads:
             color_output('[ payload导入完成 ]', color='MAGENTA')
-            report = self.run(payloads, self.threads)
+            report = self.run(payloads)
             if report:
                 reports.Report(report, self.name, 'burp_report.txt', '网站目录爆破报告已存放于', '并没有扫描出可疑后台').save()
             else:
@@ -100,7 +96,7 @@ class Burp():
         for i in ['/index.php','/index.asp','/index.aspx','/index.mdb','/index.jsp']:
             URL = "{0}{1}".format(url, i)
             try:
-                res = requests.get(url, headers=self.headers, timeout=self.timeout)
+                res = self.REQ.autoGetAccess(url)
                 if res.status_code == 200:
                     m = self.web_indetify(URL)
                     return m
@@ -167,11 +163,10 @@ class Burp():
         return 0
 
 
-    def run(self,payloads,threads):
+    def run(self,payloads):
         '''
         调用线程池
         :param payloads: 导入的payload
-        :param threads: 最大线程数
         :return:
         '''
         URL = []
@@ -180,19 +175,24 @@ class Burp():
             url = self.url + x
             URL.append(url)
 
-        with ThreadPoolExecutor(max_workers=threads) as pool:
-            if self.scan_mode:
-                results = pool.map(self.text_scan, URL)
-            else:
-                results = pool.map(self.sites_scan,URL)
-            for result in results:
-                if result['flag'] != 0:     # 选择性输出
-                    if result['flag'] == 1:
-                        color_output(result['msg'], color='GREEN')
-                        reports.append(result['msg'])
-                    else:
-                        color_output(result['msg'], color='YELLOW')
-            return reports
+        Responses = self.REQ.mGetAsyncAccess(URL)
+        for x in Responses:
+            print(x.status_code)
+        exit()
+
+        # with ThreadPoolExecutor(max_workers=threads) as pool:
+        #     if self.scan_mode:
+        #         results = pool.map(self.text_scan, URL)
+        #     else:
+        #         results = pool.map(self.sites_scan,URL)
+        #     for result in results:
+        #         if result['flag'] != 0:     # 选择性输出
+        #             if result['flag'] == 1:
+        #                 color_output(result['msg'], color='GREEN')
+        #                 reports.append(result['msg'])
+        #             else:
+        #                 color_output(result['msg'], color='YELLOW')
+        return []
 
 
     def sites_scan(self,url):
@@ -202,7 +202,7 @@ class Burp():
         :return:
         '''
         try:
-            res = res = requests.get(url, headers=self.headers, timeout=self.timeout)
+            res = self.REQ.autoGetAccess(url)
             status = res.status_code
             if status == 200 or status == 302 or status == 500 or status == 502:
                 msg = "{0} : {1} : {2}".format(status, res.headers.get('Content-Length'), url)
@@ -215,7 +215,7 @@ class Burp():
         m = {'flag':0}
         return m
 
-    def text_scan(self,url):
+    def text_scan(self, url):
         '''
         根据页面信息检测网站，用于判断自定义错误页面的网站
         :param url:
@@ -224,11 +224,11 @@ class Burp():
         bm = []
         bad_msg = ['404','页面不存在','不可访问','page can\'t be found','无法加载模块']    # 用于检测页面自定义报错的信息
         try:
-            res = res = requests.get(url, headers=self.headers, timeout=self.timeout)
+            res = self.REQ.autoGetAccess(url)
             for msg in bad_msg:
                 if msg in res.text:
                     bm.append(msg)
-            if len(bm)>5:                        # 若报错信息超过一定数量可视为文章自带内容
+            if len(bm) > 5:                        # 若报错信息超过一定数量可视为文章自带内容
                 msg = "{0} : {1} : {2}".format(res.status_code, len(res.content), url)
                 m = {'flag':1,'msg':msg}
             else:
@@ -242,14 +242,15 @@ class celery_burp:
     '''
     celery调用模块
     '''
-    def __init__(self,url,payload,name,flag):
+    def __init__(self, url, payload, REQ, name, flag):
         self.url = url
         self.payload = payload
+        self.REQ = REQ
         self.flag = flag
         self.name = name
 
     def run(self):
-        x = Burp(self.url, self.payload, 10, 5, self.name, self.flag).start()    # 线程有所减少
+        x = Burp(self.url, self.payload, self.REQ, self.name, self.flag).start()    # 线程有所减少
         return
 
 

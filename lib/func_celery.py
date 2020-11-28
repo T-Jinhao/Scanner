@@ -31,8 +31,8 @@ def hosts(host,name):
     return
 
 @app.task(name='tasks.burp.func_celery')
-def burp(url,payload,name,flag):
-    func_burp.celery_burp(url,payload,name,flag).run()
+def burp(url,payload,REQ,name,flag):
+    func_burp.celery_burp(url,payload,REQ,name,flag).run()
     return
 
 @app.task(name='tasks.ports.func_celery')

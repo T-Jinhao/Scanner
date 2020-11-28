@@ -36,7 +36,7 @@ class RC:
             resh = hosts.delay(self.host, self.name)
             self.status(resh)
         if self.args.burp:
-            result = burp.delay(self.args.url,self.payload,self.name,self.args.crazy)
+            result = burp.delay(self.args.url,self.payload,self.REQ,self.name,self.args.crazy)
             self.status(result)
         if self.args.domain:
             resd = domain.delay(self.args.url,self.payload, self.name)
