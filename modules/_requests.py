@@ -45,7 +45,6 @@ class Concurrent:
             ret = grequests.map(res, exception_handler=self.err_handler, size=self.threads)
             return ret[0]
         except Exception as e:
-            print(e)
             color_output(e, color='RED')
             return
 
@@ -93,6 +92,5 @@ class Concurrent:
             return
 
     def err_handler(self, request, exception):
-        print(request.url)
-        # print('something wrong')
-        print(exception)
+        color_output(request.url, color='RED')
+        color_output(exception, color='RED')

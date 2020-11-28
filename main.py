@@ -2,6 +2,7 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
+import grequests   # 入口文件必须添加，防止monkey报错
 import argparse
 import sys
 import os

@@ -26,14 +26,14 @@ class Spider():
         color_output("[ 开始爬取网页链接：{}]".format(self.url), color='BLUE')
         img, web, js = self.spider(self.url)
         if img:
-            self.spider_report(self.url, img, 'img')
+            self.spider_report(img, 'img')
         else:
             color_output("[ 并没有在{}扫描到图片链接 ]".format(self.url), color='YELLOW')
         if web:
             if self.crazy:  # url分解访问
                 web += self.crazyRun(web)
             ret = self.statusCheck(web)   # 筛选能访问的链接
-            self.spider_report(self.url, ret, 'web')
+            self.spider_report(ret, 'web')
         else:
             color_output("[ 并没有在{}扫描到网站链接 ]".format(self.url), color='YELLOW')
 
@@ -105,7 +105,7 @@ class Spider():
             img_sites = []      # 图片链接
             web_sites = []      # 网站链接
             js_sites = []        # js脚本链接
-            soup = BeautifulSoup(res.text,'html.parser')
+            soup = BeautifulSoup(res.text, 'html.parser')
             img_links = soup.find_all('img')
             web_links = soup.find_all('a')
             js_links = soup.find_all('script')
@@ -199,7 +199,7 @@ class Spider():
                     self.Email.append(x)
         return
 
-    def spider_report(self,url,report,flag):
+    def spider_report(self,report,flag):
         '''
         对爬取结果进行处理
         :return:
