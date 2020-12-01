@@ -223,6 +223,7 @@ class Domain:
 
     async def resultParse(self, text):
         url_dict = []
+        cname_list = []
         soup = BeautifulSoup(text, 'html.parser')
         td_links = soup.find_all('tr')
 
@@ -230,7 +231,9 @@ class Domain:
             a = d.get_text()
             a = a.strip()
             m = a.split('\n')
-            if m[1] not in url_dict and m[-1] in ['CNAME', 'A', 'AAAA']:
+            if m[1] not in url_dict and m[-1] in ['CNAME', 'A', 'AAAA'] and m[2] not in cname_list:
+                if m[-1] in ['CNAME'] and m[2] not in cname_list:
+                    cname_list.append(m[2])
                 try:
                     url = 'http://' + m[1]
                     res = self.REQ.autoGetAccess(url)  # 高并发，单独创建对象
