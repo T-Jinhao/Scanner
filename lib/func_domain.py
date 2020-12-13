@@ -58,7 +58,7 @@ class Domain:
                 payload = self.load_payload(onlineReport)  # 合并数据
                 if payload:
                     color_output('[ payload导入完成 ]', color='MAGENTA')
-                    report = self.run(self.domain, payload)
+                    report = self.run(payload)
                 else:
                     color_output('[ payload导入失败 ]', color='RED')
             if report:
@@ -139,25 +139,23 @@ class Domain:
         # print(payload)
         return payload
 
-    def run(self,domain,payload):
+    def run(self,payload):
         '''
         配置线程池
-        :param domain:提取到的域名
         :param payload:导入的payload
         :return:
         '''
-        URL = []
+        URL = [u for u in payload]
         url_list = []
         report = []
-        for u in payload:
-            URL.append(u)
-
         resp = self.REQ.mGetAsyncAccess(URL)
         for r in resp:
+            if r == None:
+                continue
             try:
                 if r.url not in url_list:
                     url_list.append(r.url)
-                    msg = "当前状态码：{0} | 跳转记录：{1} | 最终URL：{2} ".format(
+                    msg = "状态码：{0} | 跳转记录：{1} | 最终URL：{2} ".format(
                         r.status_code,
                         r.history,
                         r.url
@@ -217,11 +215,11 @@ class Domain:
                 async with session.get(url) as res:
                     text = await res.read()
                     ret_dict = await self.resultParse(text)  # 获取页面解析数据
+                    if ret_dict != []:
+                        color_output('获取数据成功，即将开始存活性筛选', color='CYAN')
+                        self.multiScan(ret_dict)
         except Exception as e:
             print(e)
-        if ret_dict != []:
-            color_output('获取数据成功，即将开始存活性筛选', color='CYAN')
-            self.multiScan(ret_dict)
         return
 
     async def resultParse(self, text):
@@ -265,19 +263,19 @@ class Domain:
             if r == None:
                 continue
             if r.status_code == 200 or r.status_code == 302 or r.status_code == 500 or r.status_code == 502:
-                msg = "{status_code} : {content_length} : {url}".format(
-                    status_code=r.status_code,
-                    url=r.url,
-                    content_length=len(r.content)
-                )
-                # m = ret_dict[i]
-                # if m['Domain'] == m['Address']:
-                #     msg = "{0} : {1} : {2} : {3}".format(r.status_code, m['Type'], m['Domain'], r.url)
-                # elif m['Type'] in ['A', 'AAAA']:
-                #     msg = "{0} : {1} : {2} ==> {3} : {4}".format(r.status_code, m['Type'], m['Domain'], m['Address'], r.url)
-                # else:
-                #     msg = "{0} : {1} : {2} ==> {3} ==> {4} : {5}".format(r.status_code, m['Type'], m['Domain'], m['Address'],
-                #                                                    self.getHostname(m['Address']), r.url)
+                # msg = "{status_code} : {content_length} : {url}".format(
+                #     status_code=r.status_code,
+                #     url=r.url,
+                #     content_length=len(r.content)
+                # )
+                m = ret_dict[i]
+                if m['Domain'] == m['Address']:
+                    msg = "{0} : {1} : {2} : {3}".format(r.status_code, m['Type'], m['Domain'], r.url)
+                elif m['Type'] in ['A', 'AAAA']:
+                    msg = "{0} : {1} : {2} ==> {3} : {4}".format(r.status_code, m['Type'], m['Domain'], m['Address'], r.url)
+                else:
+                    msg = "{0} : {1} : {2} ==> {3} ==> {4} : {5}".format(r.status_code, m['Type'], m['Domain'], m['Address'],
+                                                                   self.getHostname(m['Address']), r.url)
                 color_output(msg, color='GREEN')
                 self.RAPID.append(msg)
         return
@@ -290,26 +288,26 @@ class Domain:
             pass
         return IP
 
-
-    def scan(self,url):
-        '''
-        开始扫描
-        :param url:
-        :return:
-        '''
-        try:
-            res = self.REQ.autoGetAccess(url)   # 高并发，单独创建对象
-            if res.status_code == 200 or res.status_code == 302 or res.status_code == 500 or res.status_code == 502:
-                res_type = self.getDomainType(url)
-                msg = "{0} : {1} : {2}".format(res.status_code, res_type, url)
-                m = {'msg': msg, 'flag': 1}
-                return m
-        except:
-            msg = "[Timeout : {}]".format(url)
-            m = {'msg': msg, 'flag': 2}
-            return m
-        m = {'flag' : 0}
-        return m
+    #
+    # def scan(self,url):
+    #     '''
+    #     开始扫描
+    #     :param url:
+    #     :return:
+    #     '''
+    #     try:
+    #         res = self.REQ.autoGetAccess(url)   # 高并发，单独创建对象
+    #         if res.status_code == 200 or res.status_code == 302 or res.status_code == 500 or res.status_code == 502:
+    #             res_type = self.getDomainType(url)
+    #             msg = "{0} : {1} : {2}".format(res.status_code, res_type, url)
+    #             m = {'msg': msg, 'flag': 1}
+    #             return m
+    #     except:
+    #         msg = "[Timeout : {}]".format(url)
+    #         m = {'msg': msg, 'flag': 2}
+    #         return m
+    #     m = {'flag' : 0}
+    #     return m
 
 class celery_domain:
     def __init__(self,url,payload,REQ,name):
