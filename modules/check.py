@@ -3,9 +3,10 @@
 #author:Jinhao
 
 import chardet
-from colorama import init, Fore, Back, Style
+import sys
+from lib import color_output
 
-class O:
+class Check:
     def checkCookies(self, cookie):
         '''
         检查cookie并组合cookie
@@ -37,7 +38,7 @@ class O:
                 payload.append(x.replace('\n', ''))
             payload = list(set(payload))  # payload去重
         except:
-            print(Fore.RED + "文件读取失败：", file)
+            color_output.color_output("文件读取失败：{}".format(file), color="RED")
         return payload
 
     def threadSetting(self, threadN, flag):
@@ -60,3 +61,16 @@ class O:
         if timeout <= 0:
             timeout = 5
         return timeout
+
+    def recursionSetting(self, recursion):
+        '''
+        递归深度设置
+        :param recursion:
+        :return:
+        '''
+        try:
+            sys.setrecursionlimit(recursion)
+        except:
+            sys.setrecursionlimit(1000000)
+            color_output.color_output("递归深度设置失败，设置为1000000", color="RED")
+        return

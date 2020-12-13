@@ -19,7 +19,6 @@ from modules import _requests
 from modules import check
 from lib.color_output import color_output
 
-sys.setrecursionlimit(1000000)
 
 class Scanner():
     def __init__(self, args):
@@ -87,13 +86,14 @@ class Scanner():
         启动前进行的检查与设置工作
         :return:
         '''
-        O = check.O()  # 创建检查对象
+        O = check.Check()  # 创建检查对象
         self.threads = O.threadSetting(self.args.threads, self.args.crazy)
         self.payload = O.fileRead(self.args.file)
 
         # 设置基础请求体
         self.timeout = O.timeoutSetting(self.args.timeout)
         self.cookies = O.checkCookies(self.args.cookies)
+        O.recursionSetting(self.args.limit)
         self.REQ = _requests.Concurrent(
             cookies=self.cookies,
             timeout=self.timeout,
@@ -157,21 +157,22 @@ def terminal_input():
     if len(sys.argv) == 1:
         sys.argv.append('-h')
     parser = argparse.ArgumentParser(description='简易扫描器，[]内为可用功能模块，<>内为开启极致模式的简述',add_help=True)
-    parser.add_argument('-u','--url',help='扫描对象的url')
+    parser.add_argument('-u','--url', help='扫描对象的url')
     parser.add_argument('-n','--name', help='任务命名', default=None)
     parser.add_argument('-X', '--crazy', help='以极致模式启动功能，比较耗时', action='store_true')
     parser.add_argument('-P', '--ports', help='探测目标主机开放端口[-X]<支持自定义端口范围>', action='store_true')
-    parser.add_argument('-H','--hosts',help='探测存活主机',action='store_true')
-    parser.add_argument('-S','--spider',help='爬取网站上的网页链接 [--cookie]<分解路径测试>',action='store_true')
-    parser.add_argument('-L','--login',help='测试网站密码缺陷[-F,-T]<测试弱密码>',action='store_true')
-    parser.add_argument('-B','--burp',help='爆破网站目录[-F,-X,-T]<附加超大payload>',action='store_true')
-    parser.add_argument('-D','--domain',help='挖掘网站子域名[-F,-X,--threads]<更多线程更多payload>',action='store_true')
+    parser.add_argument('-H','--hosts', help='探测存活主机', action='store_true')
+    parser.add_argument('-S','--spider', help='爬取网站上的网页链接 [--cookie]<分解路径测试>', action='store_true')
+    parser.add_argument('-L','--login', help='测试网站密码缺陷[-F,-T]<测试弱密码>', action='store_true')
+    parser.add_argument('-B','--burp', help='爆破网站目录[-F,-X,-T]<附加超大payload>', action='store_true')
+    parser.add_argument('-D','--domain',help='挖掘网站子域名[-F,-X,--threads]<更多线程更多payload>', action='store_true')
     parser.add_argument('-F', '--file', default=None, help='可自定义payload文件')
-    parser.add_argument('-I','--sqlscan',help='网站SQL注入fuzz检测[-X]<sqlmapapi爆破>',action='store_true')
-    parser.add_argument('-T','--timeout',help='超时时间',default=3,type=int)
-    parser.add_argument('--celery', help='使用celery分布管理',action='store_true')
+    parser.add_argument('-I','--sqlscan', help='网站SQL注入fuzz检测[-X]<sqlmapapi爆破>', action='store_true')
+    parser.add_argument('-T','--timeout', help='超时时间', default=3, type=int)
+    parser.add_argument('--celery', help='使用celery分布管理', action='store_true')
     parser.add_argument('--cookies', default=None, help='目标网站的cookies')
     parser.add_argument('--threads', default=5, help='脚本启动线程数 <20>', type=int)
+    parser.add_argument('--limit', default=10000, help='最大递归深度', type=int)
     args = parser.parse_args()
     return args
 
