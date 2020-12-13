@@ -216,13 +216,21 @@ class Domain:
             async with aiohttp.ClientSession() as session:
                 async with session.get(url) as res:
                     text = await res.read()
-                    await self.resultParse(text)
+                    ret_dict = await self.resultParse(text)  # 获取页面解析数据
         except Exception as e:
             print(e)
+        if ret_dict != []:
+            color_output('获取数据成功，即将开始存活性筛选', color='CYAN')
+            self.multiScan(ret_dict)
         return
 
     async def resultParse(self, text):
-        url_dict = []
+        '''
+        解析网页内容，筛选符合条件的数据
+        :param text:
+        :return:
+        '''
+        ret_dict = []
         cname_list = []
         soup = BeautifulSoup(text, 'html.parser')
         td_links = soup.find_all('tr')
@@ -231,26 +239,48 @@ class Domain:
             a = d.get_text()
             a = a.strip()
             m = a.split('\n')
-            if m[1] not in url_dict and m[-1] in ['CNAME', 'A', 'AAAA'] and m[2] not in cname_list:
+            if m[-1] in ['CNAME', 'A', 'AAAA'] and m[2] not in cname_list:  # 目前只嗅探3种类型的DNS记录
                 if m[-1] in ['CNAME'] and m[2] not in cname_list:
-                    cname_list.append(m[2])
-                try:
-                    url = 'http://' + m[1]
-                    res = self.REQ.autoGetAccess(url)  # 高并发，单独创建对象
-                    if res.status_code == 200 or res.status_code == 302 or res.status_code == 500 or res.status_code == 502:
-                        url_dict.append(m[1])    # 保存存活状态的子域名
-                        if m[1] == m[2]:
-                            msg = "{0} : {1} : {2} : {3}".format(res.status_code, m[-1], m[1], res.url)
-                        elif m[-1] in ['A', 'AAAA']:
-                            msg = "{0} : {1} : {2} ==> {3} : {4}".format(res.status_code, m[-1], m[1], m[2], res.url)
-                        else:
-                            msg = "{0} : {1} : {2} ==> {3} ==> {4} : {5}".format(res.status_code, m[-1], m[1], m[2],
-                                                                           self.getHostname(m[2]), res.url)
-                        color_output(msg, color='GREEN')
-                        self.RAPID.append(msg)
-                except Exception as e:
-                    # print(e)
+                    cname_list.append(m[2])     # 收集被指向子域名，过多重复可不再重复收录
                     continue
+                ret = {
+                    '#': m[0],
+                    'Domain': m[1],
+                    'Address': m[2],
+                    'Type': m[-1]
+                }
+                ret_dict.append(ret.copy())
+        return ret_dict
+
+    def multiScan(self, ret_dict):
+        '''
+        处理字典中的数据
+        :param ret_dict:
+        :return:
+        '''
+        url_dict = [m['Domain'] for m in ret_dict]
+        res = self.REQ.mGetAsyncAccess(url_dict)   # 获取访问结果
+        i = -1   # 下标
+        for r in res:
+            i += 1
+            if r == None:
+                continue
+            if r.status_code == 200 or r.status_code == 302 or r.status_code == 500 or r.status_code == 502:
+                msg = "{status_code} : {content_length} : {url}".format(
+                    status_code=r.status_code,
+                    url=r.url,
+                    content_length=len(r.content)
+                )
+                # m = ret_dict[i]
+                # if m['Domain'] == m['Address']:
+                #     msg = "{0} : {1} : {2} : {3}".format(r.status_code, m['Type'], m['Domain'], r.url)
+                # elif m['Type'] in ['A', 'AAAA']:
+                #     msg = "{0} : {1} : {2} ==> {3} : {4}".format(r.status_code, m['Type'], m['Domain'], m['Address'], r.url)
+                # else:
+                #     msg = "{0} : {1} : {2} ==> {3} ==> {4} : {5}".format(r.status_code, m['Type'], m['Domain'], m['Address'],
+                #                                                    self.getHostname(m['Address']), r.url)
+                color_output(msg, color='GREEN')
+                self.RAPID.append(msg)
         return
 
     def getHostname(self, host):
@@ -270,7 +300,7 @@ class Domain:
         '''
         try:
             res = self.REQ.autoGetAccess(url)   # 高并发，单独创建对象
-            if res.status_code == 200 or res.status_code == 302 or res.status_code == 500 or res.status_code ==502:
+            if res.status_code == 200 or res.status_code == 302 or res.status_code == 500 or res.status_code == 502:
                 res_type = self.getDomainType(url)
                 msg = "{0} : {1} : {2}".format(res.status_code, res_type, url)
                 m = {'msg': msg, 'flag': 1}
