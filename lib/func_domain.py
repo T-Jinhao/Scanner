@@ -242,7 +242,6 @@ class Domain:
             if m[-1] in ['CNAME', 'A', 'AAAA'] and m[2] not in cname_list:  # 目前只嗅探3种类型的DNS记录
                 if m[-1] in ['CNAME'] and m[2] not in cname_list:
                     cname_list.append(m[2])     # 收集被指向子域名，过多重复可不再重复收录
-                    continue
                 ret = {
                     '#': m[0],
                     'Domain': m[1],

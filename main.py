@@ -168,7 +168,7 @@ def terminal_input():
     parser.add_argument('-D','--domain',help='挖掘网站子域名[-F,-X,--threads]<更多线程更多payload>', action='store_true')
     parser.add_argument('-F', '--file', default=None, help='可自定义payload文件')
     parser.add_argument('-I','--sqlscan', help='网站SQL注入fuzz检测[-X]<sqlmapapi爆破>', action='store_true')
-    parser.add_argument('-T','--timeout', help='超时时间', default=3, type=int)
+    parser.add_argument('-T','--timeout', help='超时时间', default=5, type=int)
     parser.add_argument('--celery', help='使用celery分布管理', action='store_true')
     parser.add_argument('--cookies', default=None, help='目标网站的cookies')
     parser.add_argument('--threads', default=5, help='脚本启动线程数 <20>', type=int)
