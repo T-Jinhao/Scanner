@@ -155,10 +155,12 @@ class Domain:
             try:
                 if r.url not in url_list:
                     url_list.append(r.url)
-                    msg = "状态码：{0} | 跳转记录：{1} | 最终URL：{2} ".format(
-                        r.status_code,
-                        r.history,
-                        r.url
+                    title = self.getTitle(r.text)
+                    msg = "状态码：{status} | 跳转记录：{history} | 标题：{title} | 最终URL：{url} ".format(
+                        status=r.status_code,
+                        history=r.history,
+                        title=title,
+                        url=r.url
                     )
                     color_output(msg, color='GREEN')
                     report.append(msg)
@@ -263,19 +265,35 @@ class Domain:
             if r == None:
                 continue
             if r.status_code == 200 or r.status_code == 302 or r.status_code == 500 or r.status_code == 502:
-                # msg = "{status_code} : {content_length} : {url}".format(
-                #     status_code=r.status_code,
-                #     url=r.url,
-                #     content_length=len(r.content)
-                # )
                 m = ret_dict[i]
+                title = self.getTitle(r.text)
                 if m['Domain'] == m['Address']:
-                    msg = "{0} : {1} : {2} : {3}".format(r.status_code, m['Type'], m['Domain'], r.url)
+                    msg = "{status} : {Type} : {title} : {Domain} : {url}".format(
+                        status=r.status_code,
+                        Type=m['Type'],
+                        title=title,
+                        Domain=m['Domain'],
+                        url=r.url
+                    )
                 elif m['Type'] in ['A', 'AAAA']:
-                    msg = "{0} : {1} : {2} ==> {3} : {4}".format(r.status_code, m['Type'], m['Domain'], m['Address'], r.url)
+                    msg = "{status} : {Type} : {title} : {Domain} ==> {Address} : {url}".format(
+                        status=r.status_code,
+                        Type=m['Type'],
+                        title=title,
+                        Domain=m['Domain'],
+                        Address=m['Address'],
+                        url=r.url
+                    )
                 else:
-                    msg = "{0} : {1} : {2} ==> {3} ==> {4} : {5}".format(r.status_code, m['Type'], m['Domain'], m['Address'],
-                                                                   self.getHostname(m['Address']), r.url)
+                    msg = "{status} : {Type} : {title} :{Domain} ==> {Address} ==> {hostname} : {url}".format(
+                        status=r.status_code,
+                        Type=m['Type'],
+                        title=title,
+                        Domain=m['Domain'],
+                        Address=m['Address'],
+                        hostname=self.getHostname(m['Address']),
+                        url=r.url
+                    )
                 color_output(msg, color='GREEN')
                 self.RAPID.append(msg)
         return
@@ -288,26 +306,18 @@ class Domain:
             pass
         return IP
 
-    #
-    # def scan(self,url):
-    #     '''
-    #     开始扫描
-    #     :param url:
-    #     :return:
-    #     '''
-    #     try:
-    #         res = self.REQ.autoGetAccess(url)   # 高并发，单独创建对象
-    #         if res.status_code == 200 or res.status_code == 302 or res.status_code == 500 or res.status_code == 502:
-    #             res_type = self.getDomainType(url)
-    #             msg = "{0} : {1} : {2}".format(res.status_code, res_type, url)
-    #             m = {'msg': msg, 'flag': 1}
-    #             return m
-    #     except:
-    #         msg = "[Timeout : {}]".format(url)
-    #         m = {'msg': msg, 'flag': 2}
-    #         return m
-    #     m = {'flag' : 0}
-    #     return m
+    def getTitle(self, text):
+        '''
+        获取网页title
+        :param text:
+        :return:
+        '''
+        compile=re.compile("<title>(.*?)</title>")
+        title = compile.findall(text)
+        if len(title) > 0:
+            return title[0]
+        return ''
+
 
 class celery_domain:
     def __init__(self,url,payload,REQ,name):

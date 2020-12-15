@@ -4,6 +4,8 @@
 # 测试文档
 
 import aiohttp
+import re
+import requests
 import asyncio
 from bs4 import BeautifulSoup
 
@@ -38,13 +40,16 @@ async def resultParse(text):
     print(RAPID)
     return
 
+def getTitle(text):
+    compile = re.compile("<title22>(.*?)</title22>")
+    title = compile.findall(text)
+    print(title)
+
 
 if __name__ == '__main__':
-    url = 'https://rapiddns.io/subdomain/andseclab.com?full=1&down=1#result'
-    loop = asyncio.get_event_loop()
-    task = loop.create_task(ripadDns(url))
-    loop.run_until_complete(task)
-    print('helloworld')
+    url = "https://loan.jd.com/home.htm"
+    r = requests.get(url)
+    getTitle(r.text)
 
 
 
