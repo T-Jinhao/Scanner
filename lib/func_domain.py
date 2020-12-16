@@ -15,6 +15,7 @@ from urllib.parse import urlparse
 from reports import reports
 from concurrent.futures import ThreadPoolExecutor
 from .color_output import color_output
+from modules import util
 
 class Domain:
     def __init__(self, url, payload, REQ, name, flag):
@@ -266,7 +267,7 @@ class Domain:
                 continue
             if r.status_code == 200 or r.status_code == 302 or r.status_code == 500 or r.status_code == 502:
                 m = ret_dict[i]
-                title = self.getTitle(r.text)
+                title = util.getTitle(r.text)
                 if m['Domain'] == m['Address']:
                     msg = "{status} : {Type} : {title} : {Domain} : {url}".format(
                         status=r.status_code,
@@ -291,32 +292,13 @@ class Domain:
                         title=title,
                         Domain=m['Domain'],
                         Address=m['Address'],
-                        hostname=self.getHostname(m['Address']),
+                        hostname=util.getHostname(m['Address']),
                         url=r.url
                     )
                 color_output(msg, color='GREEN')
                 self.RAPID.append(msg)
         return
 
-    def getHostname(self, host):
-        IP = ''
-        try:
-            IP = socket.gethostbyname(host)
-        except:
-            pass
-        return IP
-
-    def getTitle(self, text):
-        '''
-        获取网页title
-        :param text:
-        :return:
-        '''
-        compile=re.compile("<title>(.*?)</title>")
-        title = compile.findall(text)
-        if len(title) > 0:
-            return title[0]
-        return ''
 
 
 class celery_domain:

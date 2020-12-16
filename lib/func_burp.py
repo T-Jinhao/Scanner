@@ -8,6 +8,7 @@ from reports import reports
 from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor
 from .color_output import color_output
+from modules import util
 
 class Burp():
     def __init__(self, url, payload, REQ, name, flag):
@@ -208,7 +209,12 @@ class Burp():
                     check_msg = {r.url: r.headers.get('Content-Length')}
                     if check_msg not in exist_list:
                         exist_list.append(check_msg.copy())
-                        msg = "{0} : {1} : {2}".format(status, r.headers.get('Content-Length'), r.url)
+                        msg = "{status} : {len} : {title} : {url}".format(
+                            status=status,
+                            len=r.headers.get('Content-Length'),
+                            title=util.getTitle(r.text),
+                            url=r.url
+                        )
                         m = {'msg': msg, 'flag': 1}
             except:
                 pass
@@ -235,13 +241,18 @@ class Burp():
                 if check_msg not in exist_list:
                     exist_list.append(check_msg.copy())
                     if len(bm) > 5:                        # 若报错信息超过一定数量可视为文章自带内容
-                        msg = "{0} : {1} : {2}".format(r.status_code, len(r.get('Content-Length')), url)
+                        msg = "{status} : {len} : {title} : {url}".format(
+                            status=r.status_code,
+                            len=len(r.get('Content-Length')),
+                            title=util.getTitle(r.text),
+                            url=url
+                        )
                         m = {'flag':1,'msg':msg}
                     else:
                         m = {'flag':0,'msg':bm}
+                    report.append(m.copy())
             except:
                 pass
-            report.append(m.copy())
         return report
 
 
