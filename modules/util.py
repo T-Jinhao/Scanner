@@ -29,4 +29,4 @@ def getTitle(text):
     title = compile.findall(text)
     if len(title) > 0:
         return title[0]
-    return '___'
+    return '[ X ]'
