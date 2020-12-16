@@ -212,6 +212,7 @@ class Domain:
         loop.run_until_complete(task)
 
     async def rapidDns(self, url):
+        self.RAPID = []
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(url) as res:
@@ -257,7 +258,6 @@ class Domain:
         :param ret_dict:
         :return:
         '''
-        self.RAPID = []
         url_dict = [m['Domain'] for m in ret_dict]
         res = self.REQ.mGetAsyncAccess(url_dict)   # 获取访问结果
         i = -1   # 下标
