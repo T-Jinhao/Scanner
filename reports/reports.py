@@ -30,12 +30,13 @@ class Report:
         filepath = "./{}/{}".format(self.dirname,self.filename)
         if not os.path.exists(self.dirname):
             os.mkdir(self.dirname)
-        with open(filepath, 'a') as F:
+        with open(filepath, 'a', encoding='utf-8') as F:
             try:
                 for m in self.reports:
                     F.write(m + '\n')
-                msg = "[ {}：{}]".format(self.suc_msg,filepath)
-            except:
+                msg = "[ {}：{}]".format(self.suc_msg, filepath)
+            except Exception as e:
+                print(e)
                 msg = "[ {} ]".format(self.err_msg)
         color_output(msg, color='GREEN')
         return

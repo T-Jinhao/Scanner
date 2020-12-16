@@ -62,8 +62,8 @@ class Domain:
                 else:
                     color_output('[ payload导入失败 ]', color='RED')
             if report:
-                reports.Report(report, self.name, 'domain_report.txt', '网站子域名挖掘报告已存放于', '未能挖掘出网站子域名').save()
-            else:
+                reports.Report(report, self.name, 'domain_report.txt', '网站子域名挖掘报告已存放于', '保存出错').save()
+            elif report == []:
                 color_output("[ 未能挖掘出网站子域名 ]", color='YELLOW')
         else:
             color_output("[ {}不支持子域名挖掘 ]".format(self.url), color='YELLOW')
@@ -205,7 +205,6 @@ class Domain:
         :param domain:
         :return:
         '''
-        self.RAPID = []
         url = f'https://rapiddns.io/subdomain/{domain}?full=1&down=1'
         loop = asyncio.get_event_loop()
         task = loop.create_task(self.rapidDns(url))
@@ -257,6 +256,7 @@ class Domain:
         :param ret_dict:
         :return:
         '''
+        self.RAPID = []
         url_dict = [m['Domain'] for m in ret_dict]
         res = self.REQ.mGetAsyncAccess(url_dict)   # 获取访问结果
         i = -1   # 下标
