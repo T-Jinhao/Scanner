@@ -12,7 +12,7 @@ from modules import util
 
 class Burp():
     def __init__(self, url, payload, REQ, name, flag):
-        self.url = self.url_parse(url)
+        self.url = self.url_parse(url).rstrip('/')
         self.flag = flag
         self.name = name
         self.payload = payload
