@@ -60,14 +60,14 @@ class Scanner():
 
     def base_report(self):
         self.host = self.getHostname()  # 获取domain
-        self.ip_report = func_base.IPcontent(self.host, self.REQ).run()
+        ip_report = func_base.IPcontent(self.host, self.REQ).run()
         color_output('>>>>>base_report'+'-'*40)
         color_output('输入URL：' + self.args.url, color='MAGENTA')
         color_output('解析host：'+ self.host, color='MAGENTA')
         color_output("\nIP域名绑定情况 : {}".format(self.host), color='CYAN')
         try:
-            for x in self.ip_report:
-                color_output("{} : {}".format(x[0], x[1]))
+            for x,y in dict(ip_report).items():
+                print(x, y)  # 递归过于频繁，不适合用color_output()
         except:
             pass
         color_output('-'*40+'<<<<<base_report'+'\n')
