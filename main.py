@@ -67,7 +67,7 @@ class Scanner():
         color_output("\nIP域名绑定情况 : {}".format(self.host), color='CYAN')
         try:
             for x,y in dict(ip_report).items():
-                print(x, y)  # 递归过于频繁，不适合用color_output()
+                color_output('%s %s'%(x, y))
         except:
             pass
         color_output('-'*40+'<<<<<base_report'+'\n')
