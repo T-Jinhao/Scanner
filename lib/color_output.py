@@ -31,8 +31,6 @@ def color_output(text, color='BLACK', output=True):
     try:
         init(autoreset=True)
         print(fore_color[color] + text)
-    except Exception as e:
-        print(e)
     except:
         print(text)
     return
