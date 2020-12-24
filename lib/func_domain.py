@@ -19,6 +19,7 @@ from modules import util
 
 class Domain:
     def __init__(self, url, payload, REQ, name, flag):
+        self.check = False
         self.domain = self.url_check(url)
         self.payload = payload
         self.REQ = REQ
@@ -30,10 +31,11 @@ class Domain:
         color_output('>>>>>domain' + '-' * 40)
         report = []
         if self.domain:
-            color_output("当前域名 {} 是否正确解析？[正确则回车，否则输入正确的域名]".format(self.domain), color='MAGENTA')
-            checkin = input()
-            if checkin:
-                self.domain = checkin
+            if self.check == False:
+                color_output("当前域名 {} 是否正确解析？[正确则回车，否则输入正确的域名]".format(self.domain), color='MAGENTA')
+                checkin = input()
+                if checkin:
+                    self.domain = checkin
             pan = self.panAnalysis(self.domain)   # 检测是否存在泛解析
             if pan:    # 泛解析处理块
                 color_output("[{} 存在泛解析，任意键继续，直接回车将退出执行]".format(self.domain), color='YELLOW')
@@ -83,6 +85,8 @@ class Domain:
         if res:
             return
         n = netloc.split('.')
+        if len(n) == 2:
+            self.check = True
         domain = "{0}.{1}".format(n[-2],n[-1])     # 域名切割，但会误报三级域名等
         return domain
 
