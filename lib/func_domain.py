@@ -160,7 +160,7 @@ class Domain:
             try:
                 if r.url not in url_list:
                     url_list.append(r.url)
-                    title = self.getTitle(r.text)
+                    title = util.getTitle(r.text)
                     msg = "状态码：{status} | 跳转记录：{history} | 标题：{title} | 最终URL：{url} ".format(
                         status=r.status_code,
                         history=r.history,
