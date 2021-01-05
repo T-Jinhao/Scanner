@@ -160,9 +160,8 @@ class Scan():
                 color_output('文件中文爬取：', color="MAGENTA")
                 ret = ''.join(ret)
                 color_output(ret, color='GREEN')
-        except Exception as e:
+        except Exception:
             pass
-            # print(e)
         return
 
     def find_Phone(self, text):
