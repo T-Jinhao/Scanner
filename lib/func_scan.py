@@ -32,12 +32,12 @@ class Scan():
             self.scan_report(ret, 'web')
         else:
             color_output("[ 并没有在{}扫描到网站链接 ]".format(self.url), color='YELLOW')
-
         if js and self.crazy:    # 寻找js文件内的中文字符
             color_output('-'*10 + 'js文件分析' + '-'*10, color='BLUE')
             for x in js:
                 color_output(x)    # js链接
-                color_output(self.find_CN(x), color='GREEN')    # 正则js文件中的中文
+                self.find_Disclose(x)    # 寻找敏感信息
+
         if self.Phone != []:
             color_output('手机号码', color='MAGENTA')
             for x in self.Phone:
@@ -79,7 +79,8 @@ class Scan():
         :param u: 获取到的url
         :return:
         '''
-        if u == None:
+        err = ['', None, '/', '\n']
+        if u in err:
             return
         if re.match("(http|https)://.*", u):  # 匹配绝对地址
             return u
@@ -142,7 +143,7 @@ class Scan():
             time.sleep(0.5)   # 防止过于频繁导致网站崩溃
         return Gurls
 
-    def find_CN(self, url):
+    def find_Disclose(self, url):
         '''
         找出js文件内的中文字符
         :return:
@@ -153,11 +154,15 @@ class Scan():
             content = str(res.content.decode('utf-8'))
             self.find_Phone(res.text)
             self.find_Email(res.text)
+            self.reg_str(res.text)
             ret = compile_CN.findall(content)
-            ret = ''.join(ret)
-        except:
-            return
-        return ret
+            if ret != None:
+                color_output('文件中文爬取：', color="MAGENTA")
+                ret = ''.join(ret)
+                color_output(ret, color='GREEN')
+        except Exception:
+            pass
+        return
 
     def find_Phone(self, text):
         '''
@@ -186,6 +191,42 @@ class Scan():
                 if x not in self.Email and x.split('.')[-1] != 'png':
                     self.Email.append(x)
         return
+
+    def reg_str(self, text):
+        resultUrls = []
+        regex_str = r"""
+                      (?:"|')                               # Start newline delimiter
+                      (
+                        ((?:[a-zA-Z]{1,10}://|//)           # Match a scheme [a-Z]*1-10 or //
+                        [^"'/]{1,}\.                        # Match a domainname (any character + dot)
+                        [a-zA-Z]{2,}[^"']{0,})              # The domainextension and/or path
+                        |
+                        ((?:/|\.\./|\./)                    # Start with /,../,./
+                        [^"'><,;| *()(%%$^/\\\[\]]          # Next character can't be...
+                        [^"'><,;|()]{1,})                   # Rest of the characters can't be
+                        |
+                        ([a-zA-Z0-9_\-/]{1,}/               # Relative endpoint with /
+                        [a-zA-Z0-9_\-/]{1,}                 # Resource name
+                        \.(?:[a-zA-Z]{1,4}|action)          # Rest + extension (length 1-4 or action)
+                        (?:[\?|/][^"|']{0,}|))              # ? mark with parameters
+                        |
+                        ([a-zA-Z0-9_\-]{1,}                 # filename
+                        \.(?:php|asp|aspx|jsp|json|
+                             action|html|js|txt|xml)             # . + extension
+                        (?:\?[^"|']{0,}|))                  # ? mark with parameters
+                      )
+                      (?:"|')                               # End newline delimiter
+                    """
+        compile_str = re.compile(regex_str, re.VERBOSE)
+        ret = compile_str.findall(text)
+        if ret != []:
+            color_output('JS链接爬取：', color="MAGENTA")
+            for x in ret:
+                for m in x:
+                    u = self.url_check(self.url, m)
+                    if u not in resultUrls and u:
+                        resultUrls.append(u)
+                        color_output(u, color="GREEN")
 
     def scan_report(self, report, flag):
         '''
