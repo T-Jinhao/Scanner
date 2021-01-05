@@ -13,7 +13,7 @@ import datetime
 from urllib import parse
 from urllib.parse import urlparse
 import socket
-from lib import func_sqli,func_hosts,func_domain,func_ports,func_burp,func_spider,func_login
+from lib import func_sqli,func_hosts,func_domain,func_ports,func_burp,func_scan,func_login
 from lib import celery_run,func_base
 from modules import _requests
 from modules import check
@@ -130,8 +130,8 @@ class Scanner():
             c.start()
             return
 
-        if self.args.spider:
-            func_spider.Spider(self.args.url, self.REQ, self.name, self.args.crazy).start()
+        if self.args.scan:
+            func_scan.Scan(self.args.url, self.REQ, self.name, self.args.crazy).start()
         if self.args.ports:
             func_ports.Ports(self.host, self.name, self.args.crazy).start()
         if self.args.hosts:
@@ -162,7 +162,7 @@ def terminal_input():
     parser.add_argument('-X', '--crazy', help='以极致模式启动功能，比较耗时', action='store_true')
     parser.add_argument('-P', '--ports', help='探测目标主机开放端口[-X]<支持自定义端口范围>', action='store_true')
     parser.add_argument('-H','--hosts', help='探测存活主机', action='store_true')
-    parser.add_argument('-S','--spider', help='爬取网站上的网页链接 [--cookie]<分解路径测试>', action='store_true')
+    parser.add_argument('-S','--scan', help='爬取页面的网页链接并分析 [--cookie]<js文件分析>', action='store_true')
     parser.add_argument('-L','--login', help='测试网站密码缺陷[-F,-T]<测试弱密码>', action='store_true')
     parser.add_argument('-B','--burp', help='爆破网站目录[-F,-X,-T]<附加超大payload>', action='store_true')
     parser.add_argument('-D','--domain',help='挖掘网站子域名[-F,-X,--threads]<更多线程更多payload>', action='store_true')

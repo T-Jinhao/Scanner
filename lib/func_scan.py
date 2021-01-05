@@ -12,7 +12,7 @@ from .color_output import color_output
 
 wrong_web_list = ['javascript:void(0)',None,'###','#']
 
-class Spider():
+class Scan():
     def __init__(self, url, REQ, name, crazy):
         self.url = url
         self.REQ = REQ
@@ -22,18 +22,14 @@ class Spider():
         self.Email = []
 
     def start(self):
-        color_output(">>>>>spider" + "-" * 40)
+        color_output(">>>>>scan" + "-" * 40)
         color_output("[ 开始爬取网页链接：{}]".format(self.url), color='BLUE')
-        img, web, js = self.spider(self.url)
-        if img:
-            self.spider_report(img, 'img')
-        else:
-            color_output("[ 并没有在{}扫描到图片链接 ]".format(self.url), color='YELLOW')
+        web, js = self.scan(self.url)
         if web:
             if self.crazy:  # url分解访问
                 web += self.crazyRun(web)
             ret = self.statusCheck(web)   # 筛选能访问的链接
-            self.spider_report(ret, 'web')
+            self.scan_report(ret, 'web')
         else:
             color_output("[ 并没有在{}扫描到网站链接 ]".format(self.url), color='YELLOW')
 
@@ -50,7 +46,7 @@ class Spider():
             color_output('邮箱', color='MAGENTA')
             for x in self.Email:
                 color_output(x, color='GREEN')
-        color_output("-" * 40 + "<<<<<spider" + "\n")
+        color_output("-" * 40 + "<<<<<scan" + "\n")
         return
 
 
@@ -83,14 +79,16 @@ class Spider():
         :param u: 获取到的url
         :return:
         '''
-        if re.match("(http|https)://.*",u):  # 匹配绝对地址
+        if u == None:
+            return
+        if re.match("(http|https)://.*", u):  # 匹配绝对地址
             return u
         else:     # 拼凑相对地址，转换成绝对地址
             u = urljoin(url, u)
             return u
 
 
-    def spider(self,url):
+    def scan(self, url):
         '''
         爬取当前页面的URL
         :return:网站相关链接
@@ -99,34 +97,24 @@ class Spider():
             res = self.REQ.autoGetAccess(url)
             self.find_Email(res.text)   # 匹配邮箱
             self.find_Phone(res.text)   # 匹配电话
-        except Exception as e:
-            print(e)
-        try:
-            img_sites = []      # 图片链接
-            web_sites = []      # 网站链接
-            js_sites = []        # js脚本链接
+            web_sites = []  # 网站链接
+            js_sites = []  # js脚本链接
             soup = BeautifulSoup(res.text, 'html.parser')
-            img_links = soup.find_all('img')
             web_links = soup.find_all('a')
             js_links = soup.find_all('script')
-            for i in img_links:
-                x = i.get('src')           # 提取src后的链接
-                img_sites.append(self.url_check(url, x))
             for j in web_links:
-                y = j.get('href')          # 提取href后的链接
-                if y not in wrong_web_list:  # 除去杂乱的链接
-                    web_sites.append(self.url_check(url, y))   # 处理获取到的url
+                y = j.get('href')  # 提取href后的链接
+                if y != None and y not in wrong_web_list:
+                    web_sites.append(self.url_check(url, y))  # 处理获取到的url
             for k in js_links:
                 z = k.get('src')
                 if z != None:
                     js_sites.append(self.url_check(url, z))
-            if not img_sites:
-                img_sites = ''
             if not web_sites:
                 web_sites = ''
             if not js_sites:
                 js_sites = ''
-            return img_sites,web_sites,js_sites
+            return web_sites, js_sites
 
         except Exception as e:
             color_output(e, color='RED')
@@ -199,20 +187,20 @@ class Spider():
                     self.Email.append(x)
         return
 
-    def spider_report(self,report,flag):
+    def scan_report(self, report, flag):
         '''
         对爬取结果进行处理
         :return:
         '''
         path = os.path.dirname(__file__)
         dirpath = "{0}/{1}/{2}".format(path,"../reports", self.name)
-        filepath = "{0}/{1}".format(dirpath,"spider_{}_report.txt".format(flag))
+        filepath = "{0}/{1}".format(dirpath,"scan_{}_report.txt".format(flag))
         if not os.path.exists(dirpath):
             os.mkdir(dirpath)
         F = open(filepath, "a")
         try:
             for m in report:
-                color_output(m)
+                # color_output(m)
                 F.write(m+"\n")
             color_output("[ 网站{1}链接已保存于：{0}]".format(filepath,flag), color='MAGENTA')
         except:
@@ -220,7 +208,7 @@ class Spider():
         F.close()
         return
 
-class celery_spider:
+class celery_scan:
     '''
     celery调用模块
     返回新的url进行递归扫描
@@ -231,7 +219,7 @@ class celery_spider:
         self.name = name
 
     def run(self):
-        res = Spider(self.url, self.REQ, self.name, '1')
+        res = Scan(self.url, self.REQ, self.name, '1')
         new_url = self.same_check(res)
         return new_url
 

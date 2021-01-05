@@ -6,7 +6,7 @@
 import socket
 from urllib.parse import urlparse
 from celery import Celery
-from lib import func_sqli,func_hosts,func_domain,func_ports,func_burp,func_spider
+from lib import func_sqli,func_hosts,func_domain,func_ports,func_burp,func_scan
 
 '''
 celery任务分配
@@ -16,7 +16,7 @@ app = Celery('task',backend='redis://localhost:6379/0',broker='redis://localhost
 
 @app.task(name='tasks.spider.func_celery')
 def spider(url,REQ,name):
-    func_spider.celery_spider(url,REQ,name).run()
+    func_scan.celery_scan(url, REQ, name).run()
     return
 
 
