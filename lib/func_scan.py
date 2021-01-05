@@ -156,12 +156,13 @@ class Scan():
             self.find_Email(res.text)
             self.reg_str(res.text)
             ret = compile_CN.findall(content)
-            if ret != None:
+            if ret != []:
                 color_output('文件中文爬取：', color="MAGENTA")
                 ret = ''.join(ret)
                 color_output(ret, color='GREEN')
-        except Exception:
+        except Exception as e:
             pass
+            # print(e)
         return
 
     def find_Phone(self, text):
@@ -193,6 +194,12 @@ class Scan():
         return
 
     def reg_str(self, text):
+        '''
+        匹配js中的链接
+        感谢：https://github.com/GerbenJavado/LinkFinder
+        :param text: 页面
+        :return:
+        '''
         resultUrls = []
         regex_str = r"""
                       (?:"|')                               # Start newline delimiter
