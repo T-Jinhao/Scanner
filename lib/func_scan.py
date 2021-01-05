@@ -68,7 +68,7 @@ class Scan():
                     x = u.rsplit('/', p + 1)[0]
                     if x not in paths:
                         paths.append(x)
-        color_output(paths)
+        # color_output(paths)
         return paths
 
 
@@ -106,11 +106,15 @@ class Scan():
             for j in web_links:
                 y = j.get('href')  # 提取href后的链接
                 if y != None and y not in wrong_web_list:
-                    web_sites.append(self.url_check(url, y))  # 处理获取到的url
+                    u = self.url_check(url, y)
+                    if u != None:
+                        web_sites.append(u)  # 处理获取到的url
             for k in js_links:
                 z = k.get('src')
                 if z != None:
-                    js_sites.append(self.url_check(url, z))
+                    u = self.url_check(url, z)
+                    if u != None:
+                        js_sites.append(u)
             if not web_sites:
                 web_sites = ''
             if not js_sites:
