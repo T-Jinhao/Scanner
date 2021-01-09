@@ -8,7 +8,7 @@ import os
 import time
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-from .color_output import color_output
+from .color_output import color_output,color_list_output
 
 wrong_web_list = ['javascript:void(0)',None,'###','#']
 
@@ -33,19 +33,16 @@ class Scan():
         else:
             color_output("[ 并没有在{}扫描到网站链接 ]".format(self.url), color='YELLOW')
         if js and self.crazy:    # 寻找js文件内的中文字符
-            color_output('-'*10 + 'js文件分析' + '-'*10, color='BLUE')
-            for x in js:
-                color_output(x)    # js链接
-                self.find_Disclose(x)    # 寻找敏感信息
+            color_output('-'*10 + 'js文件分析' + '-'*10, color='MAGENTA')
+            for u in js:
+                self.find_Disclose(u)    # 寻找敏感信息
 
         if self.Phone != []:
             color_output('手机号码', color='MAGENTA')
-            for x in self.Phone:
-                color_output(x, color='GREEN')
+            color_list_output(self.Phone, color='GREEN')
         if self.Email != []:
             color_output('邮箱', color='MAGENTA')
-            for x in self.Email:
-                color_output(x, color='GREEN')
+            color_list_output(self.Email, color='GREEN')
         color_output("-" * 40 + "<<<<<scan" + "\n")
         return
 
@@ -153,6 +150,7 @@ class Scan():
         :return:
         '''
         compile_CN = re.compile(u"[\u4e00-\u9fa5]")   # 匹配中文
+        color_output(url)
         try:
             res = self.REQ.autoGetAccess(url)
             content = str(res.content.decode('utf-8'))
@@ -236,7 +234,7 @@ class Scan():
                     u = self.url_check(self.url, m)
                     if u not in resultUrls and u:
                         resultUrls.append(u)
-                        color_output(u, color="GREEN")
+            color_list_output(resultUrls, color='GREEN')
 
     def scan_report(self, report, flag):
         '''
@@ -251,7 +249,6 @@ class Scan():
         F = open(filepath, "a")
         try:
             for m in report:
-                # color_output(m)
                 F.write(m+"\n")
             color_output("[ 网站{1}链接已保存于：{0}]".format(filepath,flag), color='MAGENTA')
         except:

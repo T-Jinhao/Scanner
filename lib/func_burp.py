@@ -7,7 +7,7 @@ import re
 from reports import reports
 from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor
-from .color_output import color_output
+from .color_output import color_output,color_list_output
 from modules import util
 
 class Burp():
@@ -36,6 +36,7 @@ class Burp():
             color_output('[ payload导入完成 ]', color='MAGENTA')
             report = self.run(payloads)
             if report:
+                color_list_output(report, color='GREEN')
                 reports.Report(report, self.name, 'burp_report.txt', '网站目录爆破报告已存放于', '并没有扫描出可疑后台').save()
             else:
                 color_output("[ 并没有扫描出可疑后台 ]", color='YELLOW')
@@ -183,7 +184,7 @@ class Burp():
         for result in results:
             if result['flag'] != 0:  # 选择性输出
                 if result['flag'] == 1:
-                    color_output(result['msg'], color='GREEN')
+                    # color_output(result['msg'], color='GREEN')
                     reports.append(result['msg'])
                 else:
                     pass

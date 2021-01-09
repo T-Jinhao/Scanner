@@ -19,7 +19,8 @@ class IPcontent:
         date = self.soupDate(res)
         domain = self.reDomain(res)
         mes = self._zip(date, domain)
-        return mes
+        report = [x+' : '+y for x,y in dict(mes).items()]
+        return report
 
     def getDomainData(self):
         url = "https://site.ip138.com/{ip}/".format(

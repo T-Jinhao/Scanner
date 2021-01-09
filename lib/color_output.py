@@ -24,14 +24,45 @@ fore_color = {
 }
 
 def color_output(text, color='BLACK', output=True):
+    '''
+    用作单一输出
+    :param text:
+    :param color:
+    :param output:
+    :return:
+    '''
     if color not in fore_color.keys():  # 防止设置出错
         color = 'BLACK'
     if output != True:
         return
+    # print(text)
     try:
         init(autoreset=True)
-        print(fore_color[color] + text)
+        print(fore_color[color] + str(text))
     except:
         print(text)
     return
+
+def color_list_output(textList, color='BLACK', output=True):
+    '''
+    用作列表输出
+    :param textList:
+    :param color:
+    :param output:
+    :return:
+    '''
+    if color not in fore_color.keys():  # 防止设置出错
+        color = 'BLACK'
+    if output != True:
+        return
+
+    for t in textList:
+        try:
+            print(fore_color[color] + str(t))
+        except:
+            print(t)
+    init(autoreset=True)
+    print()    # 恢复前景色
+    return
+
 

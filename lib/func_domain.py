@@ -14,7 +14,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from reports import reports
 from concurrent.futures import ThreadPoolExecutor
-from .color_output import color_output
+from .color_output import color_output,color_list_output
 from modules import util
 
 class Domain:
@@ -51,7 +51,7 @@ class Domain:
             if self.flag:           # 调用rapiddns.io进行在线获取
                 color_output('正在运行在线查询，请耐心等待；该过程请挂载代理，否则可能会访问超时，导致获取数据失败', color='CYAN')
                 self.rapidSearch(self.domain)
-                report = self.RAPID
+                report = self.RAPID   # 该模块结果
                 if report == []:
                     color_output('-X模式查询失败，稍后将继续执行', color='YELLOW')
                     time.sleep(3)
@@ -65,6 +65,7 @@ class Domain:
                 else:
                     color_output('[ payload导入失败 ]', color='RED')
             if report:
+                color_list_output(report, color='GREEN')   # 统一输出
                 reports.Report(report, self.name, 'domain_report.txt', '网站子域名挖掘报告已存放于', '保存出错').save()
             elif report == []:
                 color_output("[ 未能挖掘出网站子域名 ]", color='YELLOW')
@@ -167,10 +168,10 @@ class Domain:
                         title=title,
                         url=r.url
                     )
-                    color_output(msg, color='GREEN')
                     report.append(msg)
             except:
                 pass
+        color_list_output(report, color='GREEN')
         return report
 
 
@@ -299,8 +300,8 @@ class Domain:
                         hostname=util.getHostname(m['Address']),
                         url=r.url
                     )
-                color_output(msg, color='GREEN')
                 self.RAPID.append(msg)
+        # color_list_output(self.RAPID, color='GREEN')
         return
 
 

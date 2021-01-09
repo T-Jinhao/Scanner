@@ -17,7 +17,7 @@ from lib import func_sqli,func_hosts,func_domain,func_ports,func_burp,func_scan,
 from lib import celery_run,func_base
 from modules import _requests
 from modules import check
-from lib.color_output import color_output
+from lib.color_output import color_output,color_list_output
 
 
 class Scanner():
@@ -66,8 +66,7 @@ class Scanner():
         color_output('解析host：'+ self.host, color='MAGENTA')
         color_output("\nIP域名绑定情况 : {}".format(self.host), color='CYAN')
         try:
-            for x,y in dict(ip_report).items():
-                color_output('%s %s'%(x, y))
+            color_list_output(ip_report)
         except:
             pass
         color_output('-'*40+'<<<<<base_report'+'\n')
