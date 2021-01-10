@@ -14,7 +14,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from reports import reports
 from concurrent.futures import ThreadPoolExecutor
-from .color_output import color_output,color_list_output
+from .color_output import *
 from modules import util
 
 class Domain:
@@ -28,50 +28,50 @@ class Domain:
         self.url = url
 
     def start(self):
-        color_output('>>>>>domain' + '-' * 40)
+        print(fuchsia('>>>>>domain' + '-' * 40))
         report = []
         if self.domain:
             if self.check == False:
-                color_output("当前域名 {} 是否正确解析？[正确则回车，否则输入正确的域名]".format(self.domain), color='MAGENTA')
+                print(fuchsia('[ checkin ] ') + red("当前域名") + yellow(self.domain) + red("是否正确解析？[正确则回车，否则输入正确的域名]"))
                 checkin = input()
                 if checkin:
                     self.domain = checkin
             pan = self.panAnalysis(self.domain)   # 检测是否存在泛解析
             if pan:    # 泛解析处理块
-                color_output("[{} 存在泛解析，任意键继续，直接回车将退出执行]".format(self.domain), color='YELLOW')
+                print(yellow('[ warn ] ') + red("{} 存在泛解析 ".format(self.domain)) + fuchsia("[输入任意值继续，直接回车将退出执行]"))
                 select = input()
                 if select != '':
-                    color_output('程序继续执行，但结果准确性可能下降', color='CYAN')
+                    print(yellow('[ warn ] ') + cyan('程序继续执行，但结果准确性可能下降'))
                 else:
-                    color_output('程序终止', color='CYAN')
-                    color_output('-' * 40 + 'domain<<<<<' + '\n')
+                    print(blue('[ schedule ] ') + red('程序终止'))
+                    print(fuchsia('-' * 40 + 'domain<<<<<' + '\n'))
                     return
-
-            color_output("[ 开始爆破域名: {} ]".format(self.domain), color='BLUE')
+            print(blue('[ schedule ] ') + fuchsia('开始爆破域名:') + green(self.domain))
             if self.flag:           # 调用rapiddns.io进行在线获取
-                color_output('正在运行在线查询，请耐心等待；该过程请挂载代理，否则可能会访问超时，导致获取数据失败', color='CYAN')
+                print(blue('[ schedule ] ') + cyan('正在运行在线查询，请耐心等待'))
+                print(yellow('[ warn ] ') + fuchsia('该过程请挂载代理，否则可能会访问超时，导致获取数据失败'))
                 self.rapidSearch(self.domain)
                 report = self.RAPID   # 该模块结果
                 if report == []:
-                    color_output('-X模式查询失败，稍后将继续执行', color='YELLOW')
+                    print(yellow('[ warn ] ') + fuchsia('-X模式查询失败，稍后将继续执行'))
                     time.sleep(3)
 
             if report == []:    # 普通模式及rapid获取数据失败的情况下，使用字典爆破
                 onlineReport = self.chinaz_search()  # chinaz在线查询接口获得的数据
                 payload = self.load_payload(onlineReport)  # 合并数据
                 if payload:
-                    color_output('[ payload导入完成 ]', color='MAGENTA')
+                    print(blue('[ Load ] ') + green('payload导入完成'))
                     report = self.run(payload)
                 else:
-                    color_output('[ payload导入失败 ]', color='RED')
+                    print(blue('[ Load ] ') + red('payload导入完成'))
             if report:
-                color_list_output(report, color='GREEN')   # 统一输出
+                # color_list_output(report, color='GREEN')   # 统一输出
                 reports.Report(report, self.name, 'domain_report.txt', '网站子域名挖掘报告已存放于', '保存出错').save()
             elif report == []:
-                color_output("[ 未能挖掘出网站子域名 ]", color='YELLOW')
+                print(blue('[ result ] ') + yellow('[ 未能挖掘出网站子域名 ]'))
         else:
-            color_output("[ {}不支持子域名挖掘 ]".format(self.url), color='YELLOW')
-        color_output('-' * 40 + 'domain<<<<<' + '\n')
+            print(yellow('[ warn ] ') + cyan("[ {}不支持子域名挖掘 ]".format(self.url)))
+        print(fuchsia('-' * 40 + 'domain<<<<<' + '\n'))
         return
 
     def url_check(self,url):
@@ -105,7 +105,7 @@ class Domain:
             pagenum = rePage.findall(res.text)[0]
             pagenum = int(pagenum)
         except:
-            color_output('站长之家api没有获取数据', color='YELLOW')
+            print(yellow('[ warn ] ') + cyan('站长之家api没有获取数据'))
             return []
 
         for i in range(1, pagenum+1):
@@ -168,10 +168,15 @@ class Domain:
                         title=title,
                         url=r.url
                     )
+                    print(green('[ result ] ')
+                          + fuchsia('status_code:') +green(r.status_code) + interval()
+                          + fuchsia('最终URL:') + r.url + interval()
+                          + fuchsia('标题:') + green(title) + interval()
+                          + fuchsia('跳转记录:') + green(r.history) + interval()
+                          )
                     report.append(msg)
             except:
                 pass
-        color_list_output(report, color='GREEN')
         return report
 
 
@@ -224,7 +229,7 @@ class Domain:
                     text = await res.read()
                     ret_dict = await self.resultParse(text)  # 获取页面解析数据
                     if ret_dict != []:
-                        color_output('获取数据成功，即将开始存活性筛选', color='CYAN')
+                        print(blue('[ Load ] ') + cyan('获取数据成功，即将开始存活性筛选'))
                         self.multiScan(ret_dict)
         except Exception as e:
             print(e)
@@ -281,6 +286,13 @@ class Domain:
                         Domain=m['Domain'],
                         url=r.url
                     )
+                    print(green('[ result ] ')
+                          + fuchsia('status_code:') + green(r.status_code) + interval()
+                          + fuchsia('URL:') + r.url + interval()
+                          + fuchsia('Type:') + green(m['Type']) + interval()
+                          + fuchsia('Title:') + green(title) + interval()
+                          + fuchsia('Domain') + green(m['Domain'])
+                          )
                 elif m['Type'] in ['A', 'AAAA']:
                     msg = "{status} : {Type} : {title} : {Domain} ==> {Address} : {url}".format(
                         status=r.status_code,
@@ -290,18 +302,32 @@ class Domain:
                         Address=m['Address'],
                         url=r.url
                     )
+                    print(green('[ result ] ')
+                          + fuchsia('status_code:') + green(r.status_code) + interval()
+                          + fuchsia('URL:') + r.url + interval()
+                          + fuchsia('Type:') + green(m['Type']) + interval()
+                          + fuchsia('Title:') + green(title) + interval()
+                          + green(m['Domain']) + white('==>') + green(m['Address'])
+                          )
                 else:
+                    hostname = util.getHostname(m['Address'])
                     msg = "{status} : {Type} : {title} :{Domain} ==> {Address} ==> {hostname} : {url}".format(
                         status=r.status_code,
                         Type=m['Type'],
                         title=title,
                         Domain=m['Domain'],
                         Address=m['Address'],
-                        hostname=util.getHostname(m['Address']),
+                        hostname=hostname,
                         url=r.url
                     )
+                    print(green('[ result ] ')
+                          + fuchsia('status_code:') + green(r.status_code) + interval()
+                          + fuchsia('URL:') + r.url + interval()
+                          + fuchsia('Type:') + green(m['Type']) + interval()
+                          + fuchsia('Title:') + green(title) + interval()
+                          + green(m['Domain']) + white('==>') + green(m['Address']) + white('==>') + green(hostname)
+                          )
                 self.RAPID.append(msg)
-        # color_list_output(self.RAPID, color='GREEN')
         return
 
 
