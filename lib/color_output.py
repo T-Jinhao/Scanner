@@ -2,6 +2,7 @@
 # -*- encoding:utf8 -*-
 from colorama import init, Fore
 import sys
+import platform
 sys.setrecursionlimit(10000)
 
 # Colors = {
@@ -35,7 +36,9 @@ def color_output(text, color='BLACK', output=True):
         color = 'BLACK'
     if output != True:
         return
-    # print(text)
+    if platform.system() != 'Windows':
+        print(text)
+        return
     try:
         init(autoreset=True)
         print(fore_color[color] + str(text))
@@ -55,7 +58,10 @@ def color_list_output(textList, color='BLACK', output=True):
         color = 'BLACK'
     if output != True:
         return
-
+    if platform.system() != 'Windows':
+        for x in textList:
+            print(x)
+        return
     for t in textList:
         try:
             print(fore_color[color] + str(t))
