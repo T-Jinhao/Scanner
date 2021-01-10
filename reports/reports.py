@@ -3,17 +3,11 @@
 #author:Jinhao
 
 import os
-from lib.color_output import color_output
+from lib.color_output import *
 
 class Report:
     def __init__(self,reports,taskname,filename,suc_msg,err_msg):
         self.reports = reports
-        # ipsite = re.compile("[\d]{1,3}.[\d]{1,3}.[\d]{1,3}.[\d]{1,3}")
-        # if ipsite.match(dirname):
-        #     self.dirname = dirname
-        # else:
-        #     dir = urlparse(dirname).netloc
-        #     self.dirname = dir.replace(':','_')
         self.dirname = taskname
         self.filename = filename
         self.suc_msg = suc_msg
@@ -36,8 +30,8 @@ class Report:
                     F.write(m + '\n')
                 msg = "[ {}：{}]".format(self.suc_msg, filepath)
             except Exception as e:
-                print(e)
+                # print(e)
                 msg = "[ {} ]".format(self.err_msg)
-        color_output(msg, color='GREEN')
+        print(green('[ 保存输出结果 ] ') + cyan(msg))
         return
 
