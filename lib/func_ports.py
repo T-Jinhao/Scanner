@@ -5,7 +5,7 @@
 from socket import *
 from concurrent.futures import ThreadPoolExecutor
 from reports import reports
-from .color_output import color_output
+from .color_output import *
 
 port_dict = {
     21:'ftp',
@@ -43,19 +43,19 @@ class Ports():
         self.flag = flag
 
     def start(self):
-        color_output('>>>>>PortsScan' + '-' * 40)
-        color_output("[ 开始扫描端口 : {} ]".format(self.host), color='BLUE')
+        print(fuchsia('>>>>>PortsScan' + '-' * 40))
+        print(blue('[ schedule ] ') + fuchsia('开始扫描端口:') + green(self.host))
         if self.flag:
             ports = self.scan_ports_crazy()
         else:
             ports = self.scan_ports()
-        color_output('[ 准备就绪，开始扫描 ]', color='CYAN')
+        print(blue('[ schedule ] ') + cyan('准备就绪，开始扫描'))
         report = self.run(ports)
         if report:
             reports.Report(report, self.name, 'port_report.txt', '主机端口扫描报告已存放于', '并没有扫描出主机开放端口').save()
         else:
-            color_output("[ 并没有扫描出主机开放端口 ]", color='YELLOW')
-        color_output('-' * 40 + 'PortsScan<<<<<' + '\n')
+            print(blue('[ result ] ') + yellow('没有扫描出主机开放端口'))
+        print(fuchsia('-' * 40 + 'PortsScan<<<<<' + '\n'))
         return
 
 
@@ -110,7 +110,7 @@ class Ports():
             results = pool.map(self.scan,port)
             for result in results:
                 if result['flag']:
-                    color_output(result['msg'], color='GREEN')
+                    # color_output(result['msg'], color='GREEN')
                     reports.append(result['msg'])
         return reports
 
@@ -128,8 +128,17 @@ class Ports():
             banner = self.getBanner(sock)
             if port in port_dict:
                 msg = "[ {0} : {1}已开启  :  {2}]".format(str(port),port_dict[port],banner)
+                print(green('[ result ] ')
+                      + fuchsia('port:') + green(port) + interval()
+                      + fuchsia('server:') + green(port_dict[port]) + interval()
+                      + fuchsia('banner:') + green(banner)
+                      )
             else:
                 msg = "[ {0} : 已开启  :  {1}]".format(str(port),banner)
+                print(green('[ result ] ')
+                      + fuchsia('port:') + green(port) + interval()
+                      + fuchsia('banner:') + green(banner)
+                      )
             m = {'msg':msg,'flag':1}
             return m
         else:
