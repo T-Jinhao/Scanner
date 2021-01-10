@@ -8,7 +8,8 @@ import os
 import time
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-from .color_output import color_output,color_list_output
+from modules import util
+from .color_output import *
 
 wrong_web_list = ['javascript:void(0)',None,'###','#']
 
@@ -22,8 +23,8 @@ class Scan():
         self.Email = []
 
     def start(self):
-        color_output(">>>>>scan" + "-" * 40)
-        color_output("[ 开始爬取网页链接：{}]".format(self.url), color='BLUE')
+        print(fuchsia(">>>>>scan" + "-" * 40))
+        print(blue('[ schedule ] ') + fuchsia('开始爬取网页链接:') + self.url)
         web, js = self.scan(self.url)
         if web:
             if self.crazy:  # url分解访问
@@ -31,19 +32,23 @@ class Scan():
             ret = self.statusCheck(web)   # 筛选能访问的链接
             self.scan_report(ret, 'web')
         else:
-            color_output("[ 并没有在{}扫描到网站链接 ]".format(self.url), color='YELLOW')
+            print(blue('[ result ] ') + yellow('没有扫描到网站链接'))
         if js and self.crazy:    # 寻找js文件内的中文字符
-            color_output('-'*10 + 'js文件分析' + '-'*10, color='MAGENTA')
+            print(blue('[ schedule ] ') + cyan('JS文件分析'))
             for u in js:
                 self.find_Disclose(u)    # 寻找敏感信息
 
         if self.Phone != []:
-            color_output('》手机号码', color='MAGENTA')
-            color_list_output(self.Phone, color='GREEN')
+            print()
+            print(green('[ output ] ') + cyan('手机号码'))
+            for x in self.Phone:
+                print(blue('[ result ] ') + green(x))
         if self.Email != []:
-            color_output('》邮箱', color='MAGENTA')
-            color_list_output(self.Email, color='GREEN')
-        color_output("-" * 40 + "<<<<<scan" + "\n")
+            print()
+            print(green('[ output ] ') + cyan('邮箱'))
+            for x in self.Email:
+                print(blue('[ result ] ') + green(x))
+        print(fuchsia("-" * 40 + "<<<<<scan" + "\n"))
         return
 
 
@@ -119,8 +124,8 @@ class Scan():
             return web_sites, js_sites
 
         except Exception as e:
-            color_output(e, color='RED')
-            color_output("网站访问出现点问题了...", color='RED')
+            # color_output(e, color='RED')
+            print(red('[ Error ] ') + yellow('网站访问出现点问题了...'))
             sys.exit(1)
 
 
@@ -133,14 +138,19 @@ class Scan():
         '''
         Gurls = []
         for url in list(set(urls)):
-            color_output('测试链接：{0}'.format(url), color='CYAN')
+            print()
+            print(fuchsia('[ Test ]') + url)
             try:
                 res = self.REQ.autoGetAccess(url)
-                color_output("状态码：{}  文本长度：{}".format(res.status_code, len(res.content)), color='GREEN')
+                print(green('[ Info ] ')
+                      + fuchsia('状态码') + green(res.status_code) + interval()
+                      + fuchsia('文本长度') + green(len(res.content)) + interval()
+                      + fuchsia('标题') + green(util.getTitle(res.text))
+                      )
                 if res.status_code != 404 and len(res.content) != 0:
                     Gurls.append(url)
             except:
-                color_output('访问失败', color='YELLOW')
+                print(green('[ Info ] ') + yellow('访问失败'))
             time.sleep(0.5)   # 防止过于频繁导致网站崩溃
         return Gurls
 
@@ -150,7 +160,8 @@ class Scan():
         :return:
         '''
         compile_CN = re.compile(u"[\u4e00-\u9fa5]")   # 匹配中文
-        color_output('爬取链接：' + url, color='CYAN')
+        print()
+        print(fuchsia('[ Scan ] ') + url)
         try:
             res = self.REQ.autoGetAccess(url)
             content = str(res.content.decode('utf-8'))
@@ -159,9 +170,9 @@ class Scan():
             self.reg_str(res.text)
             ret = compile_CN.findall(content)
             if ret != []:
-                color_output('》文件中文爬取：', color="MAGENTA")
+                print(green('[ output ] ') + cyan('文件中文爬取'))
                 ret = ''.join(ret)
-                color_output(ret, color='GREEN')
+                print(blue('[ result ] ') + green(ret))
         except Exception:
             pass
         return
@@ -228,13 +239,14 @@ class Scan():
         compile_str = re.compile(regex_str, re.VERBOSE)
         ret = compile_str.findall(text)
         if ret != []:
-            color_output('》JS链接爬取结果：', color="MAGENTA")
+            print(green('[ output ] ') + cyan('JS链接爬取结果'))
             for x in ret:
                 for m in x:
                     u = self.url_check(self.url, m)
                     if u not in resultUrls and u:
+                        print(blue('[ result ] ') + u)
                         resultUrls.append(u)
-            color_list_output(resultUrls, color='GREEN')
+
 
     def scan_report(self, report, flag):
         '''
@@ -250,9 +262,9 @@ class Scan():
         try:
             for m in report:
                 F.write(m+"\n")
-            color_output("[ 网站{1}链接已保存于：{0}]".format(filepath,flag), color='MAGENTA')
+            print(blue('[ result ] ') + cyan("[ 网站{1}链接已保存于：{0}]".format(filepath,flag)))
         except:
-            color_output("[ 并没有扫描到{}链接 ]".format(flag), color='YELLOW')
+            print(blue('[ result ] ') + yellow("[ 并没有扫描到{}链接 ]".format(flag)))
         F.close()
         return
 
