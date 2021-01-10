@@ -38,10 +38,10 @@ class Scan():
                 self.find_Disclose(u)    # 寻找敏感信息
 
         if self.Phone != []:
-            color_output('手机号码', color='MAGENTA')
+            color_output('》手机号码', color='MAGENTA')
             color_list_output(self.Phone, color='GREEN')
         if self.Email != []:
-            color_output('邮箱', color='MAGENTA')
+            color_output('》邮箱', color='MAGENTA')
             color_list_output(self.Email, color='GREEN')
         color_output("-" * 40 + "<<<<<scan" + "\n")
         return
@@ -159,7 +159,7 @@ class Scan():
             self.reg_str(res.text)
             ret = compile_CN.findall(content)
             if ret != []:
-                color_output('文件中文爬取：', color="MAGENTA")
+                color_output('》文件中文爬取：', color="MAGENTA")
                 ret = ''.join(ret)
                 color_output(ret, color='GREEN')
         except Exception:
@@ -228,7 +228,7 @@ class Scan():
         compile_str = re.compile(regex_str, re.VERBOSE)
         ret = compile_str.findall(text)
         if ret != []:
-            color_output('JS链接爬取结果：', color="MAGENTA")
+            color_output('》JS链接爬取结果：', color="MAGENTA")
             for x in ret:
                 for m in x:
                     u = self.url_check(self.url, m)
