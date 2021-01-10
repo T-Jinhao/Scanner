@@ -27,7 +27,7 @@ class Burp():
         web_type = self.web_indetify(url)
         if not web_type:
             web_type = self.web_auto_indetify(url)
-        print(blue('[ schedule ] ') + fuchsia('网站类型: ') + green(web_type))
+        print(blue('[ schedule ] ') + fuchsia('网站类型: ') + cyan(web_type))
         mode_msg = self.scan_mode_indetify()
         msg = {0: '基于网站状态码检验模式', 1: '基于网站页面内容检验模式'}
         print(blue('[ schedule ] ') + fuchsia('分析模式: ') + cyan(msg[mode_msg]))
