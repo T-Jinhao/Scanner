@@ -1,18 +1,41 @@
 #!/usr/bin/python
 # -*- encoding:utf8 -*-
-from colorama import init, Fore
-import sys
 import platform
-sys.setrecursionlimit(10000)
+from colorama import Fore,init
 
-# Colors = {
-#     "BLACK": "\033[0;30m%s\033[0m",
-#     "RED": "\033[0;31m%s\033[0m",
-#     "GREEN": "\033[0;32m%s\033[0m",
-#     "YELLOW": "\033[0;33m%s\033[0m",
-#     "BLUE": "\033[0;34m%s\033[0m",
-#     "PURPLE": "\033[0;35m%s\033[0m",
-# }
+Red = '\033[1;31m'  # 红色
+Green = '\033[1;32m'  # 绿色
+Yellow = '\033[1;33m'  # 黄色
+Blue = '\033[1;34m'  # 蓝色
+Fuchsia = '\033[1;35m'  # 紫红色
+Cyan = '\033[1;36m'  # 青蓝色
+White = '\033[1;37m'  # 白色
+Reset = '\033[0m'  # 终端默认颜色
+
+def red(s):
+    return "{0}{1}{2}".format(Red, str(s), Reset)
+
+def green(s):
+    return "{0}{1}{2}".format(Green, str(s), Reset)
+
+def yellow(s):
+    return "{0}{1}{2}".format(Yellow, str(s), Reset)
+
+def blue(s):
+    return "{0}{1}{2}".format(Blue, str(s), Reset)
+
+def fuchsia(s):
+    return "{0}{1}{2}".format(Fuchsia, str(s), Reset)
+
+def cyan(s):
+    return "{0}{1}{2}".format(Cyan, str(s), Reset)
+
+def white(s):
+    return "{0}{1}{2}".format(White, str(s), Reset)
+
+def interval():
+    return "{0}{1}{2}".format(Red, ' | ', Reset)
+
 
 fore_color = {
     'BLACK': Fore.BLACK,   # 默认
@@ -70,5 +93,4 @@ def color_list_output(textList, color='BLACK', output=True):
     init(autoreset=True)
     print()    # 恢复前景色
     return
-
 
