@@ -150,7 +150,7 @@ class Scan():
         :return:
         '''
         compile_CN = re.compile(u"[\u4e00-\u9fa5]")   # 匹配中文
-        color_output(url)
+        color_output('爬取链接：' + url, color='CYAN')
         try:
             res = self.REQ.autoGetAccess(url)
             content = str(res.content.decode('utf-8'))
@@ -228,7 +228,7 @@ class Scan():
         compile_str = re.compile(regex_str, re.VERBOSE)
         ret = compile_str.findall(text)
         if ret != []:
-            color_output('JS链接爬取：', color="MAGENTA")
+            color_output('JS链接爬取结果：', color="MAGENTA")
             for x in ret:
                 for m in x:
                     u = self.url_check(self.url, m)
