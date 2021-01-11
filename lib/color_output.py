@@ -1,8 +1,11 @@
 #!/usr/bin/python
 # -*- encoding:utf8 -*-
 import platform
+import sys
+import ctypes
 from colorama import Fore,init
 
+# 前景色彩色表
 Red = '\033[1;31m'  # 红色
 Green = '\033[1;32m'  # 绿色
 Yellow = '\033[1;33m'  # 黄色
@@ -12,31 +15,7 @@ Cyan = '\033[1;36m'  # 青蓝色
 White = '\033[1;37m'  # 白色
 Reset = '\033[0m'  # 终端默认颜色
 
-def red(s):
-    return "{0}{1}{2}".format(Red, str(s), Reset)
-
-def green(s):
-    return "{0}{1}{2}".format(Green, str(s), Reset)
-
-def yellow(s):
-    return "{0}{1}{2}".format(Yellow, str(s), Reset)
-
-def blue(s):
-    return "{0}{1}{2}".format(Blue, str(s), Reset)
-
-def fuchsia(s):
-    return "{0}{1}{2}".format(Fuchsia, str(s), Reset)
-
-def cyan(s):
-    return "{0}{1}{2}".format(Cyan, str(s), Reset)
-
-def white(s):
-    return "{0}{1}{2}".format(White, str(s), Reset)
-
-def interval():
-    return "{0}{1}{2}".format(Red, ' | ', Reset)
-
-
+# colorama彩色表
 fore_color = {
     'BLACK': Fore.BLACK,   # 默认
     'RED': Fore.RED,       # 警报类，系统出错
@@ -46,6 +25,47 @@ fore_color = {
     'CYAN': Fore.CYAN,     # 配置加载
     'MAGENTA': Fore.MAGENTA   # 系统提示
 }
+
+def red(s):
+    if platform.system() == 'Windows':
+        init(autoreset=True)
+    return "{0}{1}{2}".format(Red, str(s), Reset)
+
+def green(s):
+    if platform.system() == 'Windows':
+        init(autoreset=True)
+    return "{0}{1}{2}".format(Green, str(s), Reset)
+
+def yellow(s):
+    if platform.system() == 'Windows':
+        init(autoreset=True)
+    return "{0}{1}{2}".format(Yellow, str(s), Reset)
+
+def blue(s):
+    if platform.system() == 'Windows':
+        init(autoreset=True)
+    return "{0}{1}{2}".format(Blue, str(s), Reset)
+
+def fuchsia(s):
+    if platform.system() == 'Windows':
+        init(autoreset=True)
+    return "{0}{1}{2}".format(Fuchsia, str(s), Reset)
+
+def cyan(s):
+    if platform.system() == 'Windows':
+        init(autoreset=True)
+    return "{0}{1}{2}".format(Cyan, str(s), Reset)
+
+def white(s):
+    if platform.system() == 'Windows':
+        init(autoreset=True)
+    return "{0}{1}{2}".format(White, str(s), Reset)
+
+def interval():
+    if platform.system() == 'Windows':
+        init(autoreset=True)
+    return "{0}{1}{2}".format(Red, ' | ', Reset)
+
 
 def color_output(text, color='BLACK', output=True):
     '''
@@ -93,4 +113,3 @@ def color_list_output(textList, color='BLACK', output=True):
     init(autoreset=True)
     print()    # 恢复前景色
     return
-
