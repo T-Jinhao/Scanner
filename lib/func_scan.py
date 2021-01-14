@@ -244,7 +244,7 @@ class Scan():
                 for m in x:
                     u = self.url_check(self.url, m)
                     if u not in resultUrls and u:
-                        print(blue('[ result ] ') + u)
+                        print(green('[ result_js ] ') + u)
                         resultUrls.append(u)
 
 
