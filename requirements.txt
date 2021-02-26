@@ -1,4 +1,4 @@
-aiohttp==3.7.3
+aiohttp==3.7.4
 ajpy==0.0.5
 amqp==2.6.1
 appdirs==1.4.4
