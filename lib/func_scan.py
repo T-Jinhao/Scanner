@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from modules import util
 from .color_output import *
+from .load_config import Config
 
 wrong_web_list = ['javascript:void(0)',None,'###','#']
 
@@ -22,8 +23,14 @@ class Scan():
         self.Phone = []
         self.Email = []
 
+    def load_config(self):
+        config = Config().readConfig()
+        self.timeout = config.getfloat("Scan", "timeout")
+        self.threads = config.getint("Scan", "threads")
+
     def start(self):
         print(fuchsia(">>>>>scan" + "-" * 40))
+        self.load_config()
         print(blue('[ schedule ] ') + fuchsia('开始爬取网页链接:') + self.url)
         web, js = self.scan(self.url)
         if web:
@@ -97,7 +104,7 @@ class Scan():
         :return:网站相关链接
         '''
         try:
-            res = self.REQ.autoGetAccess(url)
+            res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
             self.find_Email(res.text)   # 匹配邮箱
             self.find_Phone(res.text)   # 匹配电话
             web_sites = []  # 网站链接
@@ -141,7 +148,7 @@ class Scan():
             print()
             print(fuchsia('[ Test ]') + url)
             try:
-                res = self.REQ.autoGetAccess(url)
+                res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
                 print(green('[ Info ] ')
                       + fuchsia('状态码') + green(res.status_code) + interval()
                       + fuchsia('文本长度') + green(len(res.content)) + interval()
@@ -163,7 +170,7 @@ class Scan():
         print()
         print(fuchsia('[ Scan ] ') + url)
         try:
-            res = self.REQ.autoGetAccess(url)
+            res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
             content = str(res.content.decode('utf-8'))
             self.find_Phone(res.text)
             self.find_Email(res.text)
