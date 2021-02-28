@@ -86,9 +86,12 @@ class Domain:
         if res:
             return
         n = netloc.split('.')
-        if len(n) == 2:
+        if len(n) == 2:      # 检测域名是否自动合理切割
             self.check = True
-        domain = "{0}.{1}".format(n[-2],n[-1])     # 域名切割，但会误报三级域名等
+        if n[-2] != 'com':   # 带地域标签的域名
+            domain = "{0}.{1}".format(n[-2], n[-1])
+        else:
+            domain = "{0}.{1}.{2}".format(n[-3], n[-2], n[-1])
         return domain
 
 
