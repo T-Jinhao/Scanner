@@ -48,6 +48,7 @@ class IPcontent:
 
 
 class CDNcontent:
+    # 检测CDN
     def __init__(self, url):
         self.url = url.replace('http://', '').replace('https://', '').split('/')[0]
 
@@ -59,6 +60,16 @@ class CDNcontent:
             if item[4][0] not in ip_list:
                 ip_list.append(item[4][0])
         return ip_list
+
+    def isCDN(self):
+        try:
+            ip_lsit = self.run()
+            if len(ip_lsit) > 1:
+                return 1
+            else:
+                return 0
+        except:
+            return -1
 
 
 if __name__ == '__main__':
