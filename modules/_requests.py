@@ -3,7 +3,7 @@
 #author:Jinhao
 
 import grequests
-import config
+from modules import config
 import urllib3
 import sys
 from lib.color_output import color_output
