@@ -15,6 +15,7 @@ from urllib.parse import urlparse
 from reports import reports
 from concurrent.futures import ThreadPoolExecutor
 from .color_output import *
+from .load_config import Config
 from modules import util
 
 class Domain:
@@ -27,7 +28,13 @@ class Domain:
         self.name = name
         self.url = url
 
+    def load_config(self):
+        config = Config().readConfig()
+        self.threads = config.getint("Domain", "threads")
+        self.timeout = config.getfloat("Domain", "timeout")
+
     def start(self):
+        self.load_config()
         print(fuchsia('>>>>>domain' + '-' * 40))
         report = []
         if self.domain:
@@ -104,7 +111,7 @@ class Domain:
         url = "https://tool.chinaz.com/subdomain/?domain={}&page=1".format(self.domain)
         rePage = re.compile(r'共(.+?)页')
         try:
-            res = self.REQ.autoGetAccess(url)
+            res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
             pagenum = rePage.findall(res.text)[0]
             pagenum = int(pagenum)
         except:
@@ -113,7 +120,7 @@ class Domain:
 
         for i in range(1, pagenum+1):
             url = "https://tool.chinaz.com/subdomain/?domain={}&page={}".format(self.domain, i)
-            res = self.REQ.autoGetAccess(url)
+            res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
             domain = re.compile('[\w]+\.{}'.format(self.domain))    # 正则提取子域名
             domains = domain.finditer(res.text)
             if domains == []:
@@ -157,7 +164,7 @@ class Domain:
         URL = [u for u in payload]
         url_list = []
         report = []
-        resp = self.REQ.mGetAsyncAccess(URL)
+        resp = self.REQ.mGetAsyncAccess(URL, threads=self.threads, timeout=self.timeout)
         for r in resp:
             if r == None:
                 continue
@@ -272,7 +279,7 @@ class Domain:
         :return:
         '''
         url_dict = [m['Domain'] for m in ret_dict]
-        res = self.REQ.mGetAsyncAccess(url_dict)   # 获取访问结果
+        res = self.REQ.mGetAsyncAccess(url_dict, threads=self.threads, timeout=self.timeout)   # 获取访问结果
         i = -1   # 下标
         for r in res:
             i += 1

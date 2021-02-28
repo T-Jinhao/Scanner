@@ -28,11 +28,11 @@ class Concurrent:
         # self.threads = threads
         self.debug = debug
 
-    def autoGetAccess(self, url):
+    def autoGetAccess(self, url, threads=5, timeout=5):
         if url.startswith('http://') or url.startswith('https://'):
-            ret = self.mGetAccess(url)
+            ret = self.mGetAccess(url, threads=threads, timeout=timeout)
         else:
-            ret = self.mGetAccess('http://' + url)
+            ret = self.mGetAccess('http://' + url, threads=threads, timeout=timeout)
         return ret
 
     def mGetAccess(self, url, threads=5, timeout=5):
@@ -70,11 +70,11 @@ class Concurrent:
             color_output(e, color='RED')
             return
 
-    def autoPostAccess(self, url, data={}):
+    def autoPostAccess(self, url, data={}, threads=5, timeout=5):
         if url.startswith('http://') or url.startswith('https://'):
-            ret = self.mPostAccess(url, data)
+            ret = self.mPostAccess(url, data, threads=threads, timeout=timeout)
         else:
-            ret = self.mPostAccess('http://' + url, data)
+            ret = self.mPostAccess('http://' + url, data, threads=threads, timeout=timeout)
         return ret
 
     def mPostAccess(self, url, data={}, threads=5, timeout=5):

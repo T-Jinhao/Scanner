@@ -5,7 +5,7 @@
 import configparser
 import sys
 
-class config:
+class Config:
     def __init__(self):
         pass
 

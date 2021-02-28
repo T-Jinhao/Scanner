@@ -112,7 +112,7 @@ class Scanner():
         self.name = str(self.args.name)
 
         # 解析配置文件
-        config = load_config.config().readConfig()
+        config = load_config.Config().readConfig()
         recursion = config.getint("Main", "recursion")
         O.recursionSetting(recursion)   # 设置最大递归深度
         return
@@ -127,7 +127,7 @@ class Scanner():
             thread = threading.Thread(target=self.start_celery)
             thread.start()
             time.sleep(15)  # 等待充分启动celery
-            config = load_config.config().readConfig()
+            config = load_config.Config().readConfig()
             threads = config.getint("Celery", "threads")
             timeout = config.getfloat("Celery", "timeout")
             c = celery_run.RC(
