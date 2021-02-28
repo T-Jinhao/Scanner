@@ -70,6 +70,14 @@ class Scanner():
                 print(x)
         except:
             pass
+        try:
+            cdn_report = func_base.CDNcontent(self.args.url).run()
+            if cdn_report != []:
+                print(green('[ CDN情况 ] '))
+                for m in cdn_report:
+                    print(m)
+        except:
+            pass
         print(fuchsia('-'*40+'<<<<<base_report'+'\n'))
 
     def start_celery(self):

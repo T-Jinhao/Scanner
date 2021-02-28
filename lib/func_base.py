@@ -3,6 +3,7 @@
 #author:Jinhao
 
 import re
+import socket
 from modules import _requests
 
 headers = {
@@ -44,6 +45,20 @@ class IPcontent:
     def _zip(self, date, domain):
         mes = zip(date, domain)
         return mes
+
+
+class CDNcontent:
+    def __init__(self, url):
+        self.url = url.replace('http://', '').replace('https://', '').split('/')[0]
+
+    def run(self):
+        ip_list = []
+        socket.setdefaulttimeout(5)
+        addrs = socket.getaddrinfo(self.url, None)   # 端口处置空
+        for item in addrs:
+            if item[4][0] not in ip_list:
+                ip_list.append(item[4][0])
+        return ip_list
 
 
 if __name__ == '__main__':
