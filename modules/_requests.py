@@ -18,14 +18,14 @@ PROXY = config.PROXY
 
 
 class Concurrent:
-    def __init__(self, cookies={},  timeout=5, threads=5, debug=False):
+    def __init__(self, cookies={},debug=False):
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
         }
         self.cookies = cookies
         self.proxies = PROXY
-        self.timeout = timeout
-        self.threads = threads
+        # self.timeout = timeout
+        # self.threads = threads
         self.debug = debug
 
     def autoGetAccess(self, url):
@@ -35,21 +35,21 @@ class Concurrent:
             ret = self.mGetAccess('http://' + url)
         return ret
 
-    def mGetAccess(self, url):
+    def mGetAccess(self, url, threads=5, timeout=5):
         try:
             res = [grequests.get(
                 url=url,
                 headers=self.headers,
                 cookies=self.cookies,
-                timeout=self.timeout
+                timeout=timeout
             )]
-            ret = grequests.map(res, exception_handler=self.err_handler, size=self.threads)
+            ret = grequests.map(res, exception_handler=self.err_handler, size=threads)
             return ret[0]
         except Exception as e:
             color_output(e, color='RED')
             return
 
-    def mGetAsyncAccess(self, urls):
+    def mGetAsyncAccess(self, urls, threads=5, timeout=5):
         '''
         构造高并发请求
         :param urls:
@@ -61,10 +61,10 @@ class Concurrent:
                     url='http://' + u.split('://')[-1],
                     headers=self.headers,
                     cookies=self.cookies,
-                    timeout=self.timeout
+                    timeout=timeout
                 ) for u in urls
             ]
-            ret = grequests.map(res, exception_handler=self.err_handler, size=self.threads)
+            ret = grequests.map(res, exception_handler=self.err_handler, size=threads)
             return ret
         except Exception as e:
             color_output(e, color='RED')
@@ -77,16 +77,16 @@ class Concurrent:
             ret = self.mPostAccess('http://' + url, data)
         return ret
 
-    def mPostAccess(self, url, data={}):
+    def mPostAccess(self, url, data={}, threads=5, timeout=5):
         try:
             res = [grequests.post(
                 url=url,
                 headers=self.headers,
                 cookies=self.cookies,
-                timeout=self.timeout,
+                timeout=timeout,
                 data=data
             )]
-            ret = grequests.map(res, exception_handler=self.err_handler, size=self.threads)
+            ret = grequests.map(res, exception_handler=self.err_handler, size=threads)
             return ret[0]
         except Exception as e:
             color_output(e, color='RED')

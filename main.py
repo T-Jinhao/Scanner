@@ -14,7 +14,7 @@ from urllib import parse
 from urllib.parse import urlparse
 import socket
 from lib import func_sqli,func_hosts,func_domain,func_ports,func_burp,func_scan,func_login
-from lib import celery_run,func_base
+from lib import celery_run,func_base,load_config
 from modules import _requests
 from modules import check
 from lib.color_output import *
@@ -95,17 +95,13 @@ class Scanner():
         :return:
         '''
         O = check.Check()  # 创建检查对象
-        self.threads = O.threadSetting(self.args.threads, self.args.crazy)
         self.payload = O.fileRead(self.args.file)
 
         # 设置基础请求体
-        self.timeout = O.timeoutSetting(self.args.timeout)
+        # self.timeout = O.timeoutSetting(self.args.timeout)
         self.cookies = O.checkCookies(self.args.cookies)
-        O.recursionSetting(self.args.limit)
         self.REQ = _requests.Concurrent(
             cookies=self.cookies,
-            timeout=self.timeout,
-            threads=self.threads
         )
 
         # 输出报告合并文件夹命名
@@ -114,6 +110,11 @@ class Scanner():
             formatted_today = today.strftime('%y%m%d')
             self.args.name = formatted_today
         self.name = str(self.args.name)
+
+        # 解析配置文件
+        config = load_config.config().readConfig()
+        recursion = config.getint("Main", "recursion")
+        O.recursionSetting(recursion)   # 设置最大递归深度
         return
 
     def run(self):
@@ -126,12 +127,15 @@ class Scanner():
             thread = threading.Thread(target=self.start_celery)
             thread.start()
             time.sleep(15)  # 等待充分启动celery
+            config = load_config.config().readConfig()
+            threads = config.getint("Celery", "threads")
+            timeout = config.getfloat("Celery", "timeout")
             c = celery_run.RC(
                 args=self.args,
                 REQ=self.REQ,
                 payload=self.payload,
-                threads=self.threads,
-                timeout=self.timeout,
+                threads=threads,
+                timeout=timeout,
                 host=self.host,
                 name=self.name
             )
@@ -173,14 +177,13 @@ def terminal_input():
     parser.add_argument('-S','--scan', help='爬取页面的网页链接并分析 [--cookie]<js文件分析>', action='store_true')
     parser.add_argument('-L','--login', help='测试网站密码缺陷[-F,-T]<测试弱密码>', action='store_true')
     parser.add_argument('-B','--burp', help='爆破网站目录[-F,-X,-T]<附加超大payload>', action='store_true')
-    parser.add_argument('-D','--domain',help='挖掘网站子域名[-F,-X,--threads]<更多线程更多payload>', action='store_true')
+    parser.add_argument('-D','--domain',help='挖掘网站子域名[-F,-X]<更多线程更多payload>', action='store_true')
     parser.add_argument('-F', '--file', default=None, help='可自定义payload文件')
     parser.add_argument('-I','--sqlscan', help='网站SQL注入fuzz检测[-X]<sqlmapapi爆破>', action='store_true')
-    parser.add_argument('-T','--timeout', help='超时时间', default=5, type=int)
+    # parser.add_argument('-T','--timeout', help='超时时间', default=5, type=int)
     parser.add_argument('--celery', help='使用celery分布管理', action='store_true')
     parser.add_argument('--cookies', default=None, help='目标网站的cookies')
-    parser.add_argument('--threads', default=5, help='脚本启动线程数 <20>', type=int)
-    parser.add_argument('--limit', default=10000, help='最大递归深度', type=int)
+    # parser.add_argument('--threads', default=5, help='脚本启动线程数 <20>', type=int)
     args = parser.parse_args()
     return args
 
