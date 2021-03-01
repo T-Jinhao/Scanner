@@ -12,6 +12,7 @@ class Report:
         self.filename = filename
         self.suc_msg = suc_msg
         self.err_msg = err_msg
+        self.Output = ColorOutput()
 
 
     def save(self):
@@ -32,6 +33,6 @@ class Report:
             except Exception as e:
                 # print(e)
                 msg = "[ {} ]".format(self.err_msg)
-        print(green('[ 保存输出结果 ] ') + cyan(msg))
+        print(self.Output.green('[ 保存输出结果 ] ') + self.Output.cyan(msg))
         return
 
