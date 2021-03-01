@@ -23,7 +23,7 @@ from lib.color_output import *
 class Scanner():
     def __init__(self, args):
         self.args = args
-
+        self.Output = ColorOutput()
 
     def url_check(self):
         '''
@@ -37,7 +37,7 @@ class Scanner():
             self.args.url = "http://"+url                # 添加协议头
             return
         else:
-            print(red("[ Error ] ")+ cyan('URL格式出错!'))
+            print(self.Output.red("[ Error ] ")+ self.Output.cyan('URL格式出错!'))
             sys.exit(1)
 
     def getHostname(self):
@@ -53,7 +53,7 @@ class Scanner():
             host = socket.gethostbyname(name)
             return host
         except Exception:
-            print(red('[ Error ] ') + cyan("{}:该域名未查询到绑定IP".format(self.args.url)))
+            print(self.Output.red('[ Error ] ') + self.Output.cyan("{}:该域名未查询到绑定IP".format(self.args.url)))
             exit(0)
 
 
@@ -61,10 +61,10 @@ class Scanner():
     def base_report(self):
         self.host = self.getHostname()  # 获取domain
         ip_report = func_base.IPcontent(self.host, self.REQ).run()
-        print(fuchsia('>>>>>base_report'+'-'*40))
-        print(green('[ 输入URL ] ') + white(self.args.url))
-        print(green('[ 解析host ] ') + self.host)
-        print(green('[ IP域名绑定情况 ] '))
+        print(self.Output.fuchsia('>>>>>base_report'+'-'*40))
+        print(self.Output.green('[ 输入URL ] ') + self.Output.white(self.args.url))
+        print(self.Output.green('[ 解析host ] ') + self.host)
+        print(self.Output.green('[ IP域名绑定情况 ] '))
         try:
             for x in ip_report:
                 print(x)
@@ -73,12 +73,12 @@ class Scanner():
         try:
             cdn_report = func_base.CDNcontent(self.args.url).run()
             if cdn_report != []:
-                print(green('[ CDN情况 ] '))
+                print(self.Output.green('[ CDN情况 ] '))
                 for m in cdn_report:
                     print(m)
         except:
             pass
-        print(fuchsia('-'*40+'<<<<<base_report'+'\n'))
+        print(self.Output.fuchsia('-'*40+'<<<<<base_report'+'\n'))
 
     def start_celery(self):
         '''

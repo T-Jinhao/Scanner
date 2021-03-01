@@ -4,6 +4,7 @@ import platform
 import sys
 import ctypes
 from colorama import Fore,init
+from .load_config import Config
 
 # 前景色彩色表
 Red = '\033[1;31m'  # 红色
@@ -26,45 +27,68 @@ fore_color = {
     'MAGENTA': Fore.MAGENTA   # 系统提示
 }
 
-def red(s):
-    if platform.system() == 'Windows':
-        init(autoreset=True)
-    return "{0}{1}{2}".format(Red, str(s), Reset)
+class ColorOutput:
+    def __init__(self):
+        self.system = platform.system()
+        config = Config().readConfig()
+        self.isShow = config.getboolean("Output", self.system)
 
-def green(s):
-    if platform.system() == 'Windows':
-        init(autoreset=True)
-    return "{0}{1}{2}".format(Green, str(s), Reset)
+    def red(self, s):
+        if self.isShow:
+            if self.system == 'Windows':
+                init(autoreset=True)
+            return "{0}{1}{2}".format(Red, str(s), Reset)
+        return s
 
-def yellow(s):
-    if platform.system() == 'Windows':
-        init(autoreset=True)
-    return "{0}{1}{2}".format(Yellow, str(s), Reset)
+    def green(self, s):
+        if self.isShow:
+            if self.system == 'Windows':
+                init(autoreset=True)
+            return "{0}{1}{2}".format(Green, str(s), Reset)
+        return s
 
-def blue(s):
-    if platform.system() == 'Windows':
-        init(autoreset=True)
-    return "{0}{1}{2}".format(Blue, str(s), Reset)
+    def yellow(self, s):
+        if self.isShow:
+            if self.system == 'Windows':
+                init(autoreset=True)
+            return "{0}{1}{2}".format(Yellow, str(s), Reset)
+        return s
 
-def fuchsia(s):
-    if platform.system() == 'Windows':
-        init(autoreset=True)
-    return "{0}{1}{2}".format(Fuchsia, str(s), Reset)
+    def blue(self, s):
+        if self.isShow:
+            if self.system == 'Windows':
+                init(autoreset=True)
+            return "{0}{1}{2}".format(Blue, str(s), Reset)
+        return s
 
-def cyan(s):
-    if platform.system() == 'Windows':
-        init(autoreset=True)
-    return "{0}{1}{2}".format(Cyan, str(s), Reset)
+    def fuchsia(self, s):
+        if self.isShow:
+            if self.system == 'Windows':
+                init(autoreset=True)
+            return "{0}{1}{2}".format(Fuchsia, str(s), Reset)
+        return s
 
-def white(s):
-    if platform.system() == 'Windows':
-        init(autoreset=True)
-    return "{0}{1}{2}".format(White, str(s), Reset)
+    def cyan(self, s):
+        if self.isShow:
+            if self.system == 'Windows':
+                init(autoreset=True)
+            return "{0}{1}{2}".format(Cyan, str(s), Reset)
+        return s
 
-def interval():
-    if platform.system() == 'Windows':
-        init(autoreset=True)
-    return "{0}{1}{2}".format(Red, ' | ', Reset)
+    def white(self, s):
+        if self.isShow:
+            if self.system == 'Windows':
+                init(autoreset=True)
+            return "{0}{1}{2}".format(White, str(s), Reset)
+        return s
+
+    def interval(self):
+        if self.isShow:
+            if self.system == 'Windows':
+                init(autoreset=True)
+            return "{0}{1}{2}".format(Red, ' | ', Reset)
+        return ' | '
+
 
 
 def color_output(text, color='BLACK', output=True):
