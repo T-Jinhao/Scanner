@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from reports import reports
 from bs4 import BeautifulSoup
 from .color_output import *
+from .load_config import Config
 
 weak_dict = ['123', '888', '@123', '666']  # 常用弱密码后缀
 sql_pass = ['\'or 1=1#', '"or 1=1#', '\')or 1=1#', 'or 1=1--', 'a\'or\'1=1--', '\'OR 1=1%00']  # sql万能密码
@@ -20,10 +21,16 @@ class Login:
         self.name = name
         self.flag = flag
 
+    def load_config(self):
+        config = Config().readConfig()
+        self.threads = config.getint("Login", "threads")
+        self.timeout = config.getfloat("Login", "timeout")
+
     def start(self):
         exp = []
         print(fuchsia('>>>>>Login_fuzz'+'-'*40))
         print(yellow('[ tips ] ') + fuchsia('有很多payload文件保存在./dict/login目录下'))
+        self.load_config()
         args = self.get_args()
         if not args:
             print(yellow('[ warn ] ') + red('未识别到登录框'))
@@ -59,7 +66,7 @@ class Login:
         :return:dict
         '''
         args = {}
-        res = self.REQ.mGetAccess(self.url)
+        res = self.REQ.mGetAccess(self.url, threads=self.threads, timeout=self.timeout)
         soup = BeautifulSoup(res.content, 'html.parser')
         xxx = soup.find_all('input')
         for i in xxx:
@@ -100,7 +107,7 @@ class Login:
         pwd = list(data)[1]
         p_v = data[pwd]
         try:
-            self.len = len(self.REQ.autoPostAccess(self.url,data=data).content)   # 设置默认网站长度
+            self.len = len(self.REQ.autoPostAccess(self.url, data=data, threads=self.threads, timeout=self.timeout).content)   # 设置默认网站长度
         except:
             raise('获取网站长度失败')
 
@@ -153,7 +160,7 @@ class Login:
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
         }
         try:
-            res = self.REQ.autoPostAccess(self.url, data=data, headers=headers).content
+            res = self.REQ.autoPostAccess(self.url, data=data, headers=headers, threads=self.threads, timeout=self.timeout).content
             length = len(res)
             if length != self.len:
                 msg = {'flag':1,'msg':data,'len':length}
