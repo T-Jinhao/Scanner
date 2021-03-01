@@ -22,6 +22,7 @@ class Scan():
         self.crazy = crazy
         self.Phone = []
         self.Email = []
+        self.Output = ColorOutput()
 
     def load_config(self):
         config = Config().readConfig()
@@ -29,9 +30,9 @@ class Scan():
         self.threads = config.getint("Scan", "threads")
 
     def start(self):
-        print(fuchsia(">>>>>scan" + "-" * 40))
+        print(self.Output.fuchsia(">>>>>scan" + "-" * 40))
         self.load_config()
-        print(blue('[ schedule ] ') + fuchsia('开始爬取网页链接:') + self.url)
+        print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('开始爬取网页链接:') + self.url)
         web, js = self.scan(self.url)
         if web:
             if self.crazy:  # url分解访问
@@ -39,23 +40,23 @@ class Scan():
             ret = self.statusCheck(web)   # 筛选能访问的链接
             self.scan_report(ret, 'web')
         else:
-            print(blue('[ result ] ') + yellow('没有扫描到网站链接'))
+            print(self.Output.blue('[ result ] ') + self.Output.yellow('没有扫描到网站链接'))
         if js and self.crazy:    # 寻找js文件内的中文字符
-            print(blue('[ schedule ] ') + cyan('JS文件分析'))
+            print(self.Output.blue('[ schedule ] ') + self.Output.cyan('JS文件分析'))
             for u in js:
                 self.find_Disclose(u)    # 寻找敏感信息
 
         if self.Phone != []:
             print()
-            print(green('[ output ] ') + cyan('手机号码'))
+            print(self.Output.green('[ output ] ') + self.Output.cyan('手机号码'))
             for x in self.Phone:
-                print(blue('[ result ] ') + green(x))
+                print(self.Output.blue('[ result ] ') + self.Output.green(x))
         if self.Email != []:
             print()
-            print(green('[ output ] ') + cyan('邮箱'))
+            print(self.Output.green('[ output ] ') + self.Output.cyan('邮箱'))
             for x in self.Email:
-                print(blue('[ result ] ') + green(x))
-        print(fuchsia("-" * 40 + "<<<<<scan" + "\n"))
+                print(self.Output.blue('[ result ] ') + self.Output.green(x))
+        print(self.Output.fuchsia("-" * 40 + "<<<<<scan" + "\n"))
         return
 
 
@@ -132,7 +133,7 @@ class Scan():
 
         except Exception as e:
             # color_output(e, color='RED')
-            print(red('[ Error ] ') + yellow('网站访问出现点问题了...'))
+            print(self.Output.red('[ Error ] ') + self.Output.yellow('网站访问出现点问题了...'))
             sys.exit(1)
 
 
@@ -146,18 +147,18 @@ class Scan():
         Gurls = []
         for url in list(set(urls)):
             print()
-            print(fuchsia('[ Test ]') + url)
+            print(self.Output.fuchsia('[ Test ]') + url)
             try:
                 res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
-                print(green('[ Info ] ')
-                      + fuchsia('状态码') + green(res.status_code) + interval()
-                      + fuchsia('文本长度') + green(len(res.content)) + interval()
-                      + fuchsia('标题') + green(util.getTitle(res.text))
+                print(self.Output.green('[ Info ] ')
+                      + self.Output.fuchsia('状态码') + self.Output.green(res.status_code) + self.Output.interval()
+                      + self.Output.fuchsia('文本长度') + self.Output.green(len(res.content)) + self.Output.interval()
+                      + self.Output.fuchsia('标题') + self.Output.green(util.getTitle(res.text))
                       )
                 if res.status_code != 404 and len(res.content) != 0:
                     Gurls.append(url)
             except:
-                print(green('[ Info ] ') + yellow('访问失败'))
+                print(self.Output.green('[ Info ] ') + self.Output.yellow('访问失败'))
             time.sleep(0.5)   # 防止过于频繁导致网站崩溃
         return Gurls
 
@@ -168,7 +169,7 @@ class Scan():
         '''
         compile_CN = re.compile(u"[\u4e00-\u9fa5]")   # 匹配中文
         print()
-        print(fuchsia('[ Scan ] ') + url)
+        print(self.Output.fuchsia('[ Scan ] ') + url)
         try:
             res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
             content = str(res.content.decode('utf-8'))
@@ -177,9 +178,9 @@ class Scan():
             self.reg_str(res.text)
             ret = compile_CN.findall(content)
             if ret != []:
-                print(green('[ output ] ') + cyan('文件中文爬取'))
+                print(self.Output.green('[ output ] ') + self.Output.cyan('文件中文爬取'))
                 ret = ''.join(ret)
-                print(blue('[ result ] ') + green(ret))
+                print(self.Output.blue('[ result ] ') + self.Output.green(ret))
         except Exception:
             pass
         return
@@ -246,12 +247,12 @@ class Scan():
         compile_str = re.compile(regex_str, re.VERBOSE)
         ret = compile_str.findall(text)
         if ret != []:
-            print(green('[ output ] ') + cyan('JS链接爬取结果'))
+            print(self.Output.green('[ output ] ') + self.Output.cyan('JS链接爬取结果'))
             for x in ret:
                 for m in x:
                     u = self.url_check(self.url, m)
                     if u not in resultUrls and u:
-                        print(green('[ result_js ] ') + u)
+                        print(self.Output.green('[ result_js ] ') + u)
                         resultUrls.append(u)
 
 
@@ -269,9 +270,9 @@ class Scan():
         try:
             for m in report:
                 F.write(m+"\n")
-            print(blue('[ result ] ') + cyan("[ 网站{1}链接已保存于：{0}]".format(filepath,flag)))
+            print(self.Output.blue('[ result ] ') + self.Output.cyan("[ 网站{1}链接已保存于：{0}]".format(filepath,flag)))
         except:
-            print(blue('[ result ] ') + yellow("[ 并没有扫描到{}链接 ]".format(flag)))
+            print(self.Output.blue('[ result ] ') + self.Output.yellow("[ 并没有扫描到{}链接 ]".format(flag)))
         F.close()
         return
 

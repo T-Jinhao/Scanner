@@ -19,6 +19,7 @@ class Burp():
         self.payload = payload
         self.scan_mode = 0
         self.REQ = REQ
+        self.Output = ColorOutput()
 
     def load_config(self):
         config = Config().readConfig()
@@ -27,28 +28,28 @@ class Burp():
 
     def start(self):
         url = self.url
-        print(fuchsia('>>>>>burp' + '-' * 40))
-        print(blue('[ schedule ] ') + fuchsia('开始分析网站: ') + cyan(self.url))
+        print(self.Output.fuchsia('>>>>>burp' + '-' * 40))
+        print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('开始分析网站: ') + self.Output.cyan(self.url))
         self.load_config()
         web_type = self.web_indetify(url)
         if not web_type:
             web_type = self.web_auto_indetify(url)
-        print(blue('[ schedule ] ') + fuchsia('网站类型: ') + cyan(web_type))
+        print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('网站类型: ') + self.Output.cyan(web_type))
         mode_msg = self.scan_mode_indetify()
         msg = {0: '基于网站状态码检验模式', 1: '基于网站页面内容检验模式'}
-        print(blue('[ schedule ] ') + fuchsia('分析模式: ') + cyan(msg[mode_msg]))
+        print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('分析模式: ') + self.Output.cyan(msg[mode_msg]))
         payloads = self.load_payload(web_type)
         if payloads:
-            print(blue('[ Load ] ') + green('payload导入完成'))
+            print(self.Output.blue('[ Load ] ') + self.Output.green('payload导入完成'))
             report = self.run(payloads)
             if report:
                 # color_list_output(report, color='GREEN')
                 reports.Report(report, self.name, 'burp_report.txt', '网站目录爆破报告已存放于', '并没有扫描出可疑后台').save()
             else:
-                print(blue('[ result ] ') + yellow("[ 并没有扫描出可疑后台 ]"))
+                print(self.Output.blue('[ result ] ') + self.Output.yellow("[ 并没有扫描出可疑后台 ]"))
         else:
-            print(blue('[ Load ]') + red('payload导入失败'))
-        print(fuchsia('-' * 40 + 'burp<<<<<' + '\n'))
+            print(self.Output.blue('[ Load ]') + self.Output.red('payload导入失败'))
+        print(self.Output.fuchsia('-' * 40 + 'burp<<<<<' + '\n'))
         return
 
 
@@ -220,11 +221,11 @@ class Burp():
                             title=util.getTitle(r.text),
                             url=r.url
                         )
-                        print(green('[ result ] ')
-                              + fuchsia('status_code:') + green(status) + interval()
-                              + fuchsia('url:') + r.url + interval()
-                              + fuchsia('Content-Length:') + green(r.headers.get('Content-Length')) + interval()
-                              + fuchsia('title:') + green(util.getTitle(r.text)))
+                        print(self.Output.green('[ result ] ')
+                              + self.Output.fuchsia('status_code:') + self.Output.green(status) + self.Output.interval()
+                              + self.Output.fuchsia('url:') + r.url + self.Output.interval()
+                              + self.Output.fuchsia('Content-Length:') + self.Output.green(r.headers.get('Content-Length')) + self.Output.interval()
+                              + self.Output.fuchsia('title:') + self.Output.green(util.getTitle(r.text)))
                         m = {'msg': msg, 'flag': 1}
             except:
                 pass
@@ -257,11 +258,11 @@ class Burp():
                             title=util.getTitle(r.text),
                             url=url
                         )
-                        print(green('[ result ] ')
-                              + fuchsia('status_code:') + green(r.status_code) + interval()
-                              + fuchsia('url:') + r.url + interval()
-                              + fuchsia('Content-Length:') + green(r.headers.get('Content-Length')) + interval()
-                              + fuchsia('title:') + green(util.getTitle(r.text)))
+                        print(self.Output.green('[ result ] ')
+                              + self.Output.fuchsia('status_code:') + self.Output.green(r.status_code) + self.Output.interval()
+                              + self.Output.fuchsia('url:') + r.url + self.Output.interval()
+                              + self.Output.fuchsia('Content-Length:') + self.Output.green(r.headers.get('Content-Length')) + self.Output.interval()
+                              + self.Output.fuchsia('title:') + self.Output.green(util.getTitle(r.text)))
                         m = {'flag':1, 'msg':msg}
                     else:
                         m = {'flag':0, 'msg':bm}

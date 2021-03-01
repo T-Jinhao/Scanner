@@ -27,6 +27,7 @@ class Domain:
         self.flag = flag
         self.name = name
         self.url = url
+        self.Output = ColorOutput()
 
     def load_config(self):
         config = Config().readConfig()
@@ -35,50 +36,50 @@ class Domain:
 
     def start(self):
         self.load_config()
-        print(fuchsia('>>>>>domain' + '-' * 40))
+        print(self.Output.fuchsia('>>>>>domain' + '-' * 40))
         report = []
         if self.domain:
             if self.check == False:
-                print(fuchsia('[ checkin ] ') + red("当前域名") + yellow(self.domain) + red("是否正确解析？[正确则回车，否则输入正确的域名]"))
+                print(self.Output.fuchsia('[ checkin ] ') + self.Output.red("当前域名") + self.Output.yellow(self.domain) + self.Output.red("是否正确解析？[正确则回车，否则输入正确的域名]"))
                 checkin = input()
                 if checkin:
                     self.domain = checkin
             pan = self.panAnalysis(self.domain)   # 检测是否存在泛解析
             if pan:    # 泛解析处理块
-                print(yellow('[ warn ] ') + red("{} 存在泛解析 ".format(self.domain)) + fuchsia("[输入任意值继续，直接回车将退出执行]"))
+                print(self.Output.yellow('[ warn ] ') + self.Output.red("{} 存在泛解析 ".format(self.domain)) + self.Output.fuchsia("[输入任意值继续，直接回车将退出执行]"))
                 select = input()
                 if select != '':
-                    print(yellow('[ warn ] ') + cyan('程序继续执行，但结果准确性可能下降'))
+                    print(self.Output.yellow('[ warn ] ') + self.Output.cyan('程序继续执行，但结果准确性可能下降'))
                 else:
-                    print(blue('[ schedule ] ') + red('程序终止'))
-                    print(fuchsia('-' * 40 + 'domain<<<<<' + '\n'))
+                    print(self.Output.blue('[ schedule ] ') + self.Output.red('程序终止'))
+                    print(self.Output.fuchsia('-' * 40 + 'domain<<<<<' + '\n'))
                     return
-            print(blue('[ schedule ] ') + fuchsia('开始爆破域名:') + green(self.domain))
+            print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('开始爆破域名:') + self.Output.green(self.domain))
             if self.flag:           # 调用rapiddns.io进行在线获取
-                print(blue('[ schedule ] ') + cyan('正在运行在线查询，请耐心等待'))
-                print(yellow('[ warn ] ') + fuchsia('该过程请挂载代理，否则可能会访问超时，导致获取数据失败'))
+                print(self.Output.blue('[ schedule ] ') + self.Output.cyan('正在运行在线查询，请耐心等待'))
+                print(self.Output.yellow('[ warn ] ') + self.Output.fuchsia('该过程请挂载代理，否则可能会访问超时，导致获取数据失败'))
                 self.rapidSearch(self.domain)
                 report = self.RAPID   # 该模块结果
                 if report == []:
-                    print(yellow('[ warn ] ') + fuchsia('-X模式查询失败，稍后将继续执行'))
+                    print(self.Output.yellow('[ warn ] ') + self.Output.fuchsia('-X模式查询失败，稍后将继续执行'))
                     time.sleep(3)
 
             if report == []:    # 普通模式及rapid获取数据失败的情况下，使用字典爆破
                 onlineReport = self.chinaz_search()  # chinaz在线查询接口获得的数据
                 payload = self.load_payload(onlineReport)  # 合并数据
                 if payload:
-                    print(blue('[ Load ] ') + green('payload导入完成'))
+                    print(self.Output.blue('[ Load ] ') + self.Output.green('payload导入完成'))
                     report = self.run(payload)
                 else:
-                    print(blue('[ Load ] ') + red('payload导入完成'))
+                    print(self.Output.blue('[ Load ] ') + self.Output.red('payload导入完成'))
             if report:
                 # color_list_output(report, color='GREEN')   # 统一输出
                 reports.Report(report, self.name, 'domain_report.txt', '网站子域名挖掘报告已存放于', '保存出错').save()
             elif report == []:
-                print(blue('[ result ] ') + yellow('[ 未能挖掘出网站子域名 ]'))
+                print(self.Output.blue('[ result ] ') + self.Output.yellow('[ 未能挖掘出网站子域名 ]'))
         else:
-            print(yellow('[ warn ] ') + cyan("[ {}不支持子域名挖掘 ]".format(self.url)))
-        print(fuchsia('-' * 40 + 'domain<<<<<' + '\n'))
+            print(self.Output.yellow('[ warn ] ') + self.Output.cyan("[ {}不支持子域名挖掘 ]".format(self.url)))
+        print(self.Output.fuchsia('-' * 40 + 'domain<<<<<' + '\n'))
         return
 
     def url_check(self,url):
@@ -115,7 +116,7 @@ class Domain:
             pagenum = rePage.findall(res.text)[0]
             pagenum = int(pagenum)
         except:
-            print(yellow('[ warn ] ') + cyan('站长之家api没有获取数据'))
+            print(self.Output.yellow('[ warn ] ') + self.Output.cyan('站长之家api没有获取数据'))
             return []
 
         for i in range(1, pagenum+1):
@@ -178,11 +179,11 @@ class Domain:
                         title=title,
                         url=r.url
                     )
-                    print(green('[ result ] ')
-                          + fuchsia('status_code:') +green(r.status_code) + interval()
-                          + fuchsia('最终URL:') + r.url + interval()
-                          + fuchsia('标题:') + green(title) + interval()
-                          + fuchsia('跳转记录:') + green(r.history) + interval()
+                    print(self.Output.green('[ result ] ')
+                          + self.Output.fuchsia('status_code:') +self.Output.green(r.status_code) + self.Output.interval()
+                          + self.Output.fuchsia('最终URL:') + r.url + self.Output.interval()
+                          + self.Output.fuchsia('标题:') + self.Output.green(title) + self.Output.interval()
+                          + self.Output.fuchsia('跳转记录:') + self.Output.green(r.history) + self.Output.interval()
                           )
                     report.append(msg)
             except:
@@ -239,7 +240,7 @@ class Domain:
                     text = await res.read()
                     ret_dict = await self.resultParse(text)  # 获取页面解析数据
                     if ret_dict != []:
-                        print(blue('[ Load ] ') + cyan('获取数据成功，即将开始存活性筛选'))
+                        print(self.Output.blue('[ Load ] ') + self.Output.cyan('获取数据成功，即将开始存活性筛选'))
                         self.multiScan(ret_dict)
         except Exception as e:
             print(e)
@@ -296,12 +297,12 @@ class Domain:
                         Domain=m['Domain'],
                         url=r.url
                     )
-                    print(green('[ result ] ')
-                          + fuchsia('status_code:') + green(r.status_code) + interval()
-                          + fuchsia('URL:') + r.url + interval()
-                          + fuchsia('Type:') + green(m['Type']) + interval()
-                          + fuchsia('Title:') + green(title) + interval()
-                          + fuchsia('Domain') + green(m['Domain'])
+                    print(self.Output.green('[ result ] ')
+                          + self.Output.fuchsia('status_code:') + self.Output.green(r.status_code) + self.Output.interval()
+                          + self.Output.fuchsia('URL:') + r.url + self.Output.interval()
+                          + self.Output.fuchsia('Type:') + self.Output.green(m['Type']) + self.Output.interval()
+                          + self.Output.fuchsia('Title:') + self.Output.green(title) + self.Output.interval()
+                          + self.Output.fuchsia('Domain') + self.Output.green(m['Domain'])
                           )
                 elif m['Type'] in ['A', 'AAAA']:
                     msg = "{status} : {Type} : {title} : {Domain} ==> {Address} : {url}".format(
@@ -312,12 +313,12 @@ class Domain:
                         Address=m['Address'],
                         url=r.url
                     )
-                    print(green('[ result ] ')
-                          + fuchsia('status_code:') + green(r.status_code) + interval()
-                          + fuchsia('URL:') + r.url + interval()
-                          + fuchsia('Type:') + green(m['Type']) + interval()
-                          + fuchsia('Title:') + green(title) + interval()
-                          + green(m['Domain']) + white('==>') + green(m['Address'])
+                    print(self.Output.green('[ result ] ')
+                          + self.Output.fuchsia('status_code:') + self.Output.green(r.status_code) + self.Output.interval()
+                          + self.Output.fuchsia('URL:') + r.url + self.Output.interval()
+                          + self.Output.fuchsia('Type:') + self.Output.green(m['Type']) + self.Output.interval()
+                          + self.Output.fuchsia('Title:') + self.Output.green(title) + self.Output.interval()
+                          + self.Output.green(m['Domain']) + self.Output.white('==>') + self.Output.green(m['Address'])
                           )
                 else:
                     hostname = util.getHostname(m['Address'])
@@ -330,12 +331,12 @@ class Domain:
                         hostname=hostname,
                         url=r.url
                     )
-                    print(green('[ result ] ')
-                          + fuchsia('status_code:') + green(r.status_code) + interval()
-                          + fuchsia('URL:') + r.url + interval()
-                          + fuchsia('Type:') + green(m['Type']) + interval()
-                          + fuchsia('Title:') + green(title) + interval()
-                          + green(m['Domain']) + white('==>') + green(m['Address']) + white('==>') + green(hostname)
+                    print(self.Output.green('[ result ] ')
+                          + self.Output.fuchsia('status_code:') + self.Output.green(r.status_code) + self.Output.interval()
+                          + self.Output.fuchsia('URL:') + r.url + self.Output.interval()
+                          + self.Output.fuchsia('Type:') + self.Output.green(m['Type']) + self.Output.interval()
+                          + self.Output.fuchsia('Title:') + self.Output.green(title) + self.Output.interval()
+                          + self.Output.green(m['Domain']) + self.Output.white('==>') + self.Output.green(m['Address']) + self.Output.white('==>') + self.Output.green(hostname)
                           )
                 self.RAPID.append(msg)
         return

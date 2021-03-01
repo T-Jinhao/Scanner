@@ -11,17 +11,18 @@ class Hosts:
     def __init__(self, host, name):
         self.host = host
         self.name = name
+        self.Output = ColorOutput()
 
     def start(self):
-        print(fuchsia('>>>>>hosts'+'-'*40))
-        print(blue('[ schedule ] ') + cyan('开始扫描开放主机'))
+        print(self.Output.fuchsia('>>>>>hosts'+'-'*40))
+        print(self.Output.blue('[ schedule ] ') + self.Output.cyan('开始扫描开放主机'))
         url = self.c_hosts()
         report = self.run(url)
         if report:
             reports.Report(report, self.name, 'c_hosts_report.txt', '主机c段扫描报告已存放于', '并没有扫描出存活主机').save()
         else:
-            print(green('[ result ] ') + yellow('没有扫描出开放主机'))
-        print(fuchsia('-'*40+'hosts<<<<<'))
+            print(self.Output.green('[ result ] ') + self.Output.yellow('没有扫描出开放主机'))
+        print(self.Output.fuchsia('-'*40+'hosts<<<<<'))
         return report
 
 
@@ -65,7 +66,7 @@ class Hosts:
         result = sock.connect_ex((url,80))
         if result == 0:
             msg = "[ {} : 80端口已开启 ]".format(url)
-            print(green('[ result ] ') + cyan(url))
+            print(self.Output.green('[ result ] ') + self.Output.cyan(url))
             m = {'msg':msg,'flag':1}
         else:
             m = {'flag':0}
