@@ -50,7 +50,7 @@ reports | 保存输出结果
 Sqliscan | sql检测功能
 sqlmapapi | sqlmapapi组件
 main.py | 入口启动文件
-config.py | 设置文件
+config.ini | 配置文件
 
 
 ### 主要模块实现
