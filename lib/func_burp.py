@@ -8,6 +8,7 @@ from reports import reports
 from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor
 from .color_output import *
+from .load_config import Config
 from modules import util
 
 class Burp():
@@ -19,11 +20,16 @@ class Burp():
         self.scan_mode = 0
         self.REQ = REQ
 
+    def load_config(self):
+        config = Config().readConfig()
+        self.threads = config.getint("Burp", "threads")
+        self.timeout = config.getfloat("Burp", "timeout")
 
     def start(self):
         url = self.url
         print(fuchsia('>>>>>burp' + '-' * 40))
         print(blue('[ schedule ] ') + fuchsia('开始分析网站: ') + cyan(self.url))
+        self.load_config()
         web_type = self.web_indetify(url)
         if not web_type:
             web_type = self.web_auto_indetify(url)
@@ -98,7 +104,7 @@ class Burp():
         for i in ['/index.php','/index.asp','/index.aspx','/index.mdb','/index.jsp']:
             URL = "{0}{1}".format(url, i)
             try:
-                res = self.REQ.autoGetAccess(url)
+                res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
                 if res.status_code == 200:
                     m = self.web_indetify(URL)
                     return m
@@ -199,7 +205,7 @@ class Burp():
         '''
         report = []
         exist_list = []
-        resp = self.REQ.mGetAsyncAccess(url)
+        resp = self.REQ.mGetAsyncAccess(url, threads=self.threads, timeout=self.timeout)
         for r in resp:
             m = {'flag': 0}
             try:
@@ -235,7 +241,7 @@ class Burp():
         report = []
         bm = []
         bad_msg = ['404','页面不存在','不可访问','page can\'t be found','无法加载模块']    # 用于检测页面自定义报错的信息
-        resp = self.REQ.mGetAsyncAccess(url)
+        resp = self.REQ.mGetAsyncAccess(url, threads=self.threads, timeout=self.timeout)
         for r in resp:
             try:
                 for msg in bad_msg:
