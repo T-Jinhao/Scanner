@@ -5,6 +5,7 @@
 from socket import *
 from concurrent.futures import ThreadPoolExecutor
 from reports import reports
+from .load_config import Config
 from .color_output import *
 
 port_dict = {
@@ -42,9 +43,15 @@ class Ports():
         self.name = name
         self.flag = flag
 
+    def load_config(self):
+        config = Config().readConfig()
+        self.max_workers = config.getint("Ports", "max_workers")
+        self.timeout = config.getfloat("Ports", "timeout")
+
     def start(self):
         print(fuchsia('>>>>>PortsScan' + '-' * 40))
         print(blue('[ schedule ] ') + fuchsia('开始扫描端口:') + green(self.host))
+        self.load_config()
         if self.flag:
             ports = self.scan_ports_crazy()
         else:
@@ -95,7 +102,7 @@ class Ports():
         except:
             start_port = 1
             end_port = 65535
-        for i in range(start_port,end_port+1):
+        for i in range(start_port, end_port+1):
             ports.append(i)
         return ports
 
@@ -106,8 +113,8 @@ class Ports():
         :return:
         '''
         reports = []
-        with ThreadPoolExecutor(max_workers=20) as pool:
-            results = pool.map(self.scan,port)
+        with ThreadPoolExecutor(max_workers=self.max_workers) as pool:
+            results = pool.map(self.scan, port)
             for result in results:
                 if result['flag']:
                     # color_output(result['msg'], color='GREEN')
@@ -122,19 +129,19 @@ class Ports():
         :return:
         '''
         sock = socket(AF_INET, SOCK_STREAM)
-        sock.settimeout(3)
+        sock.settimeout(self.timeout)
         result = sock.connect_ex((self.host, port))
         if result == 0:
             banner = self.getBanner(sock)
             if port in port_dict:
-                msg = "[ {0} : {1}已开启  :  {2}]".format(str(port),port_dict[port],banner)
+                msg = "[ {0} : {1}已开启  :  {2}]".format(str(port), port_dict[port], banner)
                 print(green('[ result ] ')
                       + fuchsia('port:') + green(port) + interval()
                       + fuchsia('server:') + green(port_dict[port]) + interval()
                       + fuchsia('banner:') + green(banner)
                       )
             else:
-                msg = "[ {0} : 已开启  :  {1}]".format(str(port),banner)
+                msg = "[ {0} : 已开启  :  {1}]".format(str(port), banner)
                 print(green('[ result ] ')
                       + fuchsia('port:') + green(port) + interval()
                       + fuchsia('banner:') + green(banner)
