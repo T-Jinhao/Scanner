@@ -10,12 +10,12 @@ from main import *
 
 
 class RC:
-    def __init__(self, args, REQ, payload, threads, timeout, name, host=''):
+    def __init__(self, args, REQ, bPayload, dPayload, lPayload, name, host=''):
         self.args = args
         self.REQ = REQ
-        self.payload = payload
-        self.threads = threads
-        self.timeout = timeout
+        self.bPayload = bPayload
+        self.dPayload = dPayload
+        self.lPayload = lPayload
         self.name = name
         self.host = host
 
@@ -36,10 +36,10 @@ class RC:
             resh = hosts.delay(self.host, self.name)
             self.status(resh)
         if self.args.burp:
-            result = burp.delay(self.args.url,self.payload,self.REQ,self.name,self.args.crazy)
+            result = burp.delay(self.args.url,self.bPayload,self.REQ,self.name,self.args.crazy)
             self.status(result)
         if self.args.domain:
-            resd = domain.delay(self.args.url,self.payload, self.REQ, self.name)
+            resd = domain.delay(self.args.url,self.dPayload, self.REQ, self.name)
             self.status(resd)
         if self.args.sqlscan:
             resi = sqli.delay(self.args.url, self.name)

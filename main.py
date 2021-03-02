@@ -136,9 +136,9 @@ class Scanner():
             c = celery_run.RC(
                 args=self.args,
                 REQ=self.REQ,
-                payload=None,
-                threads=threads,
-                timeout=timeout,
+                bPayload=self.bPayload,
+                dPayload=self.dPayload,
+                lPayload=self.lPayload,
                 host=self.host,
                 name=self.name
             )
