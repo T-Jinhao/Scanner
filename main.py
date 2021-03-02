@@ -95,10 +95,13 @@ class Scanner():
         :return:
         '''
         O = check.Check()  # 创建检查对象
-        self.payload = O.fileRead(self.args.file)
+        # 导入各模块payload
+        self.bPayload = O.fileRead(self.args.bfile)
+        self.dPayload = O.fileRead(self.args.dfile)
+        self.lPayload = O.fileRead(self.args.lfile)
+        # self.payload = O.fileRead(self.args.file)
 
         # 设置基础请求体
-        # self.timeout = O.timeoutSetting(self.args.timeout)
         self.cookies = O.checkCookies(self.args.cookies)
         self.REQ = _requests.Concurrent(
             cookies=self.cookies,
@@ -133,7 +136,7 @@ class Scanner():
             c = celery_run.RC(
                 args=self.args,
                 REQ=self.REQ,
-                payload=self.payload,
+                payload=None,
                 threads=threads,
                 timeout=timeout,
                 host=self.host,
@@ -149,11 +152,11 @@ class Scanner():
         if self.args.hosts:
             func_hosts.Hosts(self.host, self.name).start()
         if self.args.login:
-            func_login.Login(self.args.url, self.REQ, self.payload, self.name, self.args.crazy).start()
+            func_login.Login(self.args.url, self.REQ, self.lPayload, self.name, self.args.crazy).start()
         if self.args.burp:
-            func_burp.Burp(self.args.url, self.payload, self.REQ, self.name, self.args.crazy).start()
+            func_burp.Burp(self.args.url, self.bPayload, self.REQ, self.name, self.args.crazy).start()
         if self.args.domain:
-            func_domain.Domain(self.args.url, self.payload, self.REQ, self.name, self.args.crazy).start()
+            func_domain.Domain(self.args.url, self.dPayload, self.REQ, self.name, self.args.crazy).start()
         if self.args.sqlscan:
             func_sqli.Sql(self.args.url, self.name, self.args.crazy).start()
         else:
@@ -178,12 +181,12 @@ def terminal_input():
     parser.add_argument('-L','--login', help='测试网站密码缺陷[-F,-T]<测试弱密码>', action='store_true')
     parser.add_argument('-B','--burp', help='爆破网站目录[-F,-X,-T]<附加超大payload>', action='store_true')
     parser.add_argument('-D','--domain',help='挖掘网站子域名[-F,-X]<更多线程更多payload>', action='store_true')
-    parser.add_argument('-F', '--file', default=None, help='可自定义payload文件')
+    parser.add_argument('-bF', '--bfile', default=None, help='Burp模块自定义payload文件')
+    parser.add_argument('-dF', '--dfile', default=None, help='Domain模块自定义payload文件')
+    parser.add_argument('-lF', '--lfile', default=None, help='Login模块自定义payload文件')
     parser.add_argument('-I','--sqlscan', help='网站SQL注入fuzz检测[-X]<sqlmapapi爆破>', action='store_true')
-    # parser.add_argument('-T','--timeout', help='超时时间', default=5, type=int)
     parser.add_argument('--celery', help='使用celery分布管理', action='store_true')
     parser.add_argument('--cookies', default=None, help='目标网站的cookies')
-    # parser.add_argument('--threads', default=5, help='脚本启动线程数 <20>', type=int)
     args = parser.parse_args()
     return args
 
