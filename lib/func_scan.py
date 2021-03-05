@@ -29,6 +29,7 @@ class Scan():
         config = Config().readConfig()
         self.timeout = config.getfloat("Scan", "timeout")
         self.threads = config.getint("Scan", "threads")
+        self.ICPUrl = config.get("Scan", "ICPUrl")
 
     def start(self):
         print(self.Output.fuchsia(">>>>>scan" + "-" * 40))
@@ -62,6 +63,14 @@ class Scan():
             print(self.Output.green('[ output ] ') + self.Output.cyan('备案号'))
             for x in self.ICP:
                 print(self.Output.blue('[ result ] ') + self.Output.green(x))
+                # 暂不启用
+                # data = {
+                #     'pageNo': 1,
+                #     'pageSize': 20,
+                #     'Kw': x.split('-')[0]
+                # }
+                # r = self.REQ.autoPostAccess(url=self.ICPUrl, data=data)
+                # print(r.text)
         print(self.Output.fuchsia("-" * 40 + "<<<<<scan" + "\n"))
         return
 
