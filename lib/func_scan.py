@@ -22,6 +22,7 @@ class Scan():
         self.crazy = crazy
         self.Phone = []
         self.Email = []
+        self.ICP = []
         self.Output = ColorOutput()
 
     def load_config(self):
@@ -55,6 +56,11 @@ class Scan():
             print()
             print(self.Output.green('[ output ] ') + self.Output.cyan('邮箱'))
             for x in self.Email:
+                print(self.Output.blue('[ result ] ') + self.Output.green(x))
+        if self.ICP != []:
+            print()
+            print(self.Output.green('[ output ] ') + self.Output.cyan('备案号'))
+            for x in self.ICP:
                 print(self.Output.blue('[ result ] ') + self.Output.green(x))
         print(self.Output.fuchsia("-" * 40 + "<<<<<scan" + "\n"))
         return
@@ -108,6 +114,7 @@ class Scan():
             res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
             self.find_Email(res.text)   # 匹配邮箱
             self.find_Phone(res.text)   # 匹配电话
+            self.find_ICP(res.content.decode('utf-8'))   # 匹配备案号
             web_sites = []  # 网站链接
             js_sites = []  # js脚本链接
             soup = BeautifulSoup(res.text, 'html.parser')
@@ -197,6 +204,21 @@ class Scan():
             for x in ret:
                 if x not in self.Phone:
                     self.Phone.append(x)
+        return
+
+    def find_ICP(self, text):
+        '''
+        匹配ICP备案号
+        :param text:
+        :return:
+        '''
+        compile_ICP = re.compile("([\u4e00-\u9fa5]ICP备\d{8}号-([0-9]|10))")
+        ret = compile_ICP.search(text)
+        try:
+            if ret != None and ret[0] not in self.ICP and ret[0] != []:
+                self.ICP.append(ret[0])
+        except:
+            pass
         return
 
     def find_Email(self, text):
