@@ -30,23 +30,31 @@ class Scan():
         self.timeout = config.getfloat("Scan", "timeout")
         self.threads = config.getint("Scan", "threads")
         self.ICPUrl = config.get("Scan", "ICPUrl")
+        self.checkWebStatus = config.getboolean("Scan", "checkWebStatus")
+        self.checkJsStatus = config.getboolean("Scan", "checkJsStatus")
 
     def start(self):
         print(self.Output.fuchsia(">>>>>scan" + "-" * 40))
         self.load_config()
         print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('开始爬取网页链接:') + self.url)
         web, js = self.scan(self.url)
-        if web:
-            if self.crazy:  # url分解访问
+        if web:   # 检测爬取链接的存活性
+            if self.checkWebStatus:
                 web += self.crazyRun(web)
-            ret = self.statusCheck(web)   # 筛选能访问的链接
-            self.scan_report(ret, 'web')
+                ret = self.statusCheck(web)
+                self.scan_report(ret, 'web')
+            else:
+                print(self.Output.blue('[ Setting ] ') + self.Output.fuchsia('checkWebStatus ')
+                      + self.Output.yellow(self.checkWebStatus))
+                for x in web:
+                    print(self.Output.green('[ webURL ] ') + x)
         else:
             print(self.Output.blue('[ result ] ') + self.Output.yellow('没有扫描到网站链接'))
-        if js and self.crazy:    # 寻找js文件内的中文字符
+
+        if js and self.checkJsStatus:    # 寻找js文件内的中文字符
             print(self.Output.blue('[ schedule ] ') + self.Output.cyan('JS文件分析'))
             for u in js:
-                self.find_Disclose(u)    # 寻找敏感信息
+                self.js_analysis(u)    # 寻找敏感信息
 
         if self.Phone != []:
             print()
@@ -121,9 +129,9 @@ class Scan():
         '''
         try:
             res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
-            self.find_Email(res.text)   # 匹配邮箱
-            self.find_Phone(res.text)   # 匹配电话
-            self.find_ICP(res.content.decode('utf-8'))   # 匹配备案号
+            self.match_Email(res.text)   # 匹配邮箱
+            self.match_Phone(res.text)   # 匹配电话
+            self.match_ICP(res.content.decode('utf-8'))   # 匹配备案号
             web_sites = []  # 网站链接
             js_sites = []  # js脚本链接
             soup = BeautifulSoup(res.text, 'html.parser')
@@ -178,7 +186,7 @@ class Scan():
             time.sleep(0.5)   # 防止过于频繁导致网站崩溃
         return Gurls
 
-    def find_Disclose(self, url):
+    def js_analysis(self, url):
         '''
         找出js文件内的中文字符
         :return:
@@ -189,8 +197,8 @@ class Scan():
         try:
             res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
             content = str(res.content.decode('utf-8'))
-            self.find_Phone(res.text)
-            self.find_Email(res.text)
+            self.match_Phone(res.text)
+            self.match_Email(res.text)
             self.reg_str(res.text)
             ret = compile_CN.findall(content)
             if ret != []:
@@ -201,7 +209,7 @@ class Scan():
             pass
         return
 
-    def find_Phone(self, text):
+    def match_Phone(self, text):
         '''
         匹配手机号码
         :param text:
@@ -215,7 +223,7 @@ class Scan():
                     self.Phone.append(x)
         return
 
-    def find_ICP(self, text):
+    def match_ICP(self, text):
         '''
         匹配ICP备案号
         :param text:
@@ -230,7 +238,7 @@ class Scan():
             pass
         return
 
-    def find_Email(self, text):
+    def match_Email(self, text):
         '''
         匹配邮箱
         :param content:
