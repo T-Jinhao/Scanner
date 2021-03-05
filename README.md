@@ -52,6 +52,17 @@ sqlmapapi | sqlmapapi组件
 main.py | 入口启动文件
 config.ini | 配置文件
 
+### config.ini参数
+各数值已调配至合适的范围，可根据实际情况进行修改  
+`section`名称对应模块名称  
+`threads/max_workers`对应该模块的网络请求线程数量，数值越大执行速度越快，但要考虑网站的承受能力  
+`timeout`对应该模块的请求超时等待时间，在网络条件不好的情况下适当增大数值可获取更准备的结果  
+`recursion`对应脚本最大递归深度  
+
+Scan模块下的参数  
+`ICPUrl`对应站长之家的ICP查询接口  
+`checkWebStatus`开启时将请求扫描得到的url以检测其存活性，帮助分析  
+`checkJsStatus`开启时将分析页面的JS文件  
 
 ### 主要模块实现
 #### module:scan  
