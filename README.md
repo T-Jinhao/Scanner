@@ -64,6 +64,10 @@ Scan模块下的参数
 `checkWebStatus`开启时将请求扫描得到的url以检测其存活性，帮助分析  
 `checkJsStatus`开启时将分析页面的JS文件  
 
+Domain模块下的参数  
+`domain2IP`统计子域名对应IP的分布情况  
+`showIP`是否展示IP分布情况，开关与否均会保存结果至文件  
+
 ### 主要模块实现
 #### module:scan  
 该模块会提取页面的链接并测试其能否访问，同时收集页面中的邮箱及手机号等信息。  
