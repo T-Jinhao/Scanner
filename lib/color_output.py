@@ -38,49 +38,49 @@ class ColorOutput:
             if self.system == 'Windows':
                 init(autoreset=True)
             return "{0}{1}{2}".format(Red, str(s), Reset)
-        return s
+        return str(s)
 
     def green(self, s):
         if self.isShow:
             if self.system == 'Windows':
                 init(autoreset=True)
             return "{0}{1}{2}".format(Green, str(s), Reset)
-        return s
+        return str(s)
 
     def yellow(self, s):
         if self.isShow:
             if self.system == 'Windows':
                 init(autoreset=True)
             return "{0}{1}{2}".format(Yellow, str(s), Reset)
-        return s
+        return str(s)
 
     def blue(self, s):
         if self.isShow:
             if self.system == 'Windows':
                 init(autoreset=True)
             return "{0}{1}{2}".format(Blue, str(s), Reset)
-        return s
+        return str(s)
 
     def fuchsia(self, s):
         if self.isShow:
             if self.system == 'Windows':
                 init(autoreset=True)
             return "{0}{1}{2}".format(Fuchsia, str(s), Reset)
-        return s
+        return str(s)
 
     def cyan(self, s):
         if self.isShow:
             if self.system == 'Windows':
                 init(autoreset=True)
             return "{0}{1}{2}".format(Cyan, str(s), Reset)
-        return s
+        return str(s)
 
     def white(self, s):
         if self.isShow:
             if self.system == 'Windows':
                 init(autoreset=True)
             return "{0}{1}{2}".format(White, str(s), Reset)
-        return s
+        return str(s)
 
     def interval(self):
         if self.isShow:
