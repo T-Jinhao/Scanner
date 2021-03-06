@@ -27,12 +27,15 @@ class Domain:
         self.flag = flag
         self.name = name
         self.url = url
+        self.IP_dict = {}
         self.Output = ColorOutput()
 
     def load_config(self):
         config = Config().readConfig()
         self.threads = config.getint("Domain", "threads")
         self.timeout = config.getfloat("Domain", "timeout")
+        self.collectIP = config.getboolean("Domain", "collectIP")
+        self.showIP = config.getboolean("Domain", "showIP")
 
     def start(self):
         self.load_config()
@@ -73,6 +76,13 @@ class Domain:
                 else:
                     print(self.Output.blue('[ Load ] ') + self.Output.red('payload导入完成'))
             if report:
+                if self.IP_dict != {}:
+                    if self.showIP:
+                        print()
+                        print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('IP分布情况'))
+                        for x in self.IP_dict:
+                            print(self.Output.green('[ IP_result ] ') + self.Output.cyan(x) + " : " + self.Output.fuchsia(self.IP_dict[x]))
+                    reports.Report(self.IP_dict, self.name, 'IP_collect_report.txt', '网站子域名IP分布报告已存放于', '保存出错').save()
                 # color_list_output(report, color='GREEN')   # 统一输出
                 reports.Report(report, self.name, 'domain_report.txt', '网站子域名挖掘报告已存放于', '保存出错').save()
             elif report == []:
@@ -119,10 +129,10 @@ class Domain:
             print(self.Output.yellow('[ warn ] ') + self.Output.cyan('站长之家api没有获取数据'))
             return []
 
+        domain = re.compile('[\w]+\.{}'.format(self.domain))  # 正则提取子域名
         for i in range(1, pagenum+1):
-            url = "https://tool.chinaz.com/subdomain/?domain={}&page={}".format(self.domain, i)
+            url = "https://tool.chinaz.com/subdomain/?domain={}&page={}".format(self.domain, str(i))
             res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
-            domain = re.compile('[\w]+\.{}'.format(self.domain))    # 正则提取子域名
             domains = domain.finditer(res.text)
             if domains == []:
                 break
@@ -173,6 +183,7 @@ class Domain:
                 if r.url not in url_list:
                     url_list.append(r.url)
                     title = util.getTitle(r.text)
+                    self.collectIP(r.url)
                     msg = "状态码：{status} | 跳转记录：{history} | 标题：{title} | 最终URL：{url} ".format(
                         status=r.status_code,
                         history=r.history,
@@ -180,14 +191,14 @@ class Domain:
                         url=r.url
                     )
                     print(self.Output.green('[ result ] ')
-                          + self.Output.fuchsia('status_code:') +self.Output.green(r.status_code) + self.Output.interval()
+                          + self.Output.fuchsia('status_code:') + self.Output.green(r.status_code) + self.Output.interval()
                           + self.Output.fuchsia('最终URL:') + r.url + self.Output.interval()
                           + self.Output.fuchsia('标题:') + self.Output.green(title) + self.Output.interval()
                           + self.Output.fuchsia('跳转记录:') + self.Output.green(r.history) + self.Output.interval()
                           )
                     report.append(msg)
-            except:
-                pass
+            except Exception as e:
+                print(e)
         return report
 
 
@@ -202,6 +213,25 @@ class Domain:
         res = ans.response.answer
         res_type = str(type(res[0][0])).split('.')[3]
         return res_type
+
+    def collectIP(self, url):
+        '''
+        收集IP
+        :param url:
+        :return:
+        '''
+        if not self.collectIP:
+            return
+        try:
+            domain = urlparse(url).hostname
+            ip = socket.gethostbyname(domain)
+            if ip not in self.IP_dict.keys():
+                self.IP_dict[ip] = 1
+            else:
+                self.IP_dict[ip] = self.IP_dict[ip] + 1
+        except:
+            pass
+        return
 
 
     def panAnalysis(self, domain):
@@ -289,6 +319,7 @@ class Domain:
             if r.status_code == 200 or r.status_code == 302 or r.status_code == 500 or r.status_code == 502:
                 m = ret_dict[i]
                 title = util.getTitle(r.text)
+                self.collectIP(r.url)
                 if m['Domain'] == m['Address']:
                     msg = "{status} : {Type} : {title} : {Domain} : {url}".format(
                         status=r.status_code,
