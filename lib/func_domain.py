@@ -34,7 +34,7 @@ class Domain:
         config = Config().readConfig()
         self.threads = config.getint("Domain", "threads")
         self.timeout = config.getfloat("Domain", "timeout")
-        self.collectIP = config.getboolean("Domain", "collectIP")
+        self.domain2IP = config.getboolean("Domain", "domain2IP")
         self.showIP = config.getboolean("Domain", "showIP")
 
     def start(self):
@@ -220,7 +220,7 @@ class Domain:
         :param url:
         :return:
         '''
-        if not self.collectIP:
+        if not self.domain2IP:
             return
         try:
             domain = urlparse(url).hostname
