@@ -27,7 +27,7 @@ class Domain:
         self.flag = flag
         self.name = name
         self.url = url
-        self.IP_dict = {}
+        self.Domain_List = []
         self.Output = ColorOutput()
 
     def load_config(self):
@@ -36,6 +36,7 @@ class Domain:
         self.timeout = config.getfloat("Domain", "timeout")
         self.domain2IP = config.getboolean("Domain", "domain2IP")
         self.showIP = config.getboolean("Domain", "showIP")
+        self.max_workers = config.getint("Domain", "max_workers")
 
     def start(self):
         self.load_config()
@@ -76,13 +77,15 @@ class Domain:
                 else:
                     print(self.Output.blue('[ Load ] ') + self.Output.red('payload导入完成'))
             if report:
-                if self.IP_dict != {}:
+                IP_dict = self.collectIP()
+                if IP_dict != {}:
                     if self.showIP:
                         print()
                         print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('IP分布情况'))
-                        for x in self.IP_dict:
-                            print(self.Output.green('[ IP_result ] ') + self.Output.cyan(x) + " : " + self.Output.fuchsia(self.IP_dict[x]))
-                    reports.Report(self.IP_dict, self.name, 'IP_collect_report.txt', '网站子域名IP分布报告已存放于', '保存出错').save()
+                        for x in IP_dict:
+                            print(self.Output.green('[ IP_result ] ') + self.Output.cyan(x) + " : " + self.Output.fuchsia(IP_dict[x]))
+                    IP_result = [str(x)+" : "+str(y) for x, y in IP_dict.items()]
+                    reports.Report(IP_result, self.name, 'IP_collect_report.txt', '网站子域名IP分布报告已存放于', '保存出错').save()
                 # color_list_output(report, color='GREEN')   # 统一输出
                 reports.Report(report, self.name, 'domain_report.txt', '网站子域名挖掘报告已存放于', '保存出错').save()
             elif report == []:
@@ -133,13 +136,16 @@ class Domain:
         for i in range(1, pagenum+1):
             url = "https://tool.chinaz.com/subdomain/?domain={}&page={}".format(self.domain, str(i))
             res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
-            domains = domain.finditer(res.text)
-            if domains == []:
-                break
-            for d in domains:
-                if d.group() not in report:
-                    # color_output(d.group(), color='GREEN')  # 未知是否存活，不输出
-                    report.append(d.group())
+            try:
+                domains = domain.finditer(res.text)
+                if domains == []:
+                    break
+                for d in domains:
+                    if d.group() not in report:
+                        # color_output(d.group(), color='GREEN')  # 未知是否存活，不输出
+                        report.append(d.group())
+            except:
+                pass
         return report
 
 
@@ -183,7 +189,7 @@ class Domain:
                 if r.url not in url_list:
                     url_list.append(r.url)
                     title = util.getTitle(r.text)
-                    self.collectIP(r.url)
+                    self.addToList(r.url)
                     msg = "状态码：{status} | 跳转记录：{history} | 标题：{title} | 最终URL：{url} ".format(
                         status=r.status_code,
                         history=r.history,
@@ -213,25 +219,6 @@ class Domain:
         res = ans.response.answer
         res_type = str(type(res[0][0])).split('.')[3]
         return res_type
-
-    def collectIP(self, url):
-        '''
-        收集IP
-        :param url:
-        :return:
-        '''
-        if not self.domain2IP:
-            return
-        try:
-            domain = urlparse(url).hostname
-            ip = socket.gethostbyname(domain)
-            if ip not in self.IP_dict.keys():
-                self.IP_dict[ip] = 1
-            else:
-                self.IP_dict[ip] = self.IP_dict[ip] + 1
-        except:
-            pass
-        return
 
 
     def panAnalysis(self, domain):
@@ -319,7 +306,7 @@ class Domain:
             if r.status_code == 200 or r.status_code == 302 or r.status_code == 500 or r.status_code == 502:
                 m = ret_dict[i]
                 title = util.getTitle(r.text)
-                self.collectIP(r.url)
+                self.addToList(r.url)
                 if m['Domain'] == m['Address']:
                     msg = "{status} : {Type} : {title} : {Domain} : {url}".format(
                         status=r.status_code,
@@ -372,6 +359,42 @@ class Domain:
                 self.RAPID.append(msg)
         return
 
+    def collectIP(self):
+        '''
+        收集IP
+        :param url:
+        :return:
+        '''
+        IP_dict = {}
+        # print(self.Domain_List)
+        if self.Domain_List == []:
+            return
+        with ThreadPoolExecutor(max_workers=self.max_workers) as pool:
+            results = pool.map(socket.gethostbyname, self.Domain_List)
+            for i in results:
+                if i not in IP_dict.keys():
+                    IP_dict[i] = 1
+                else:
+                    IP_dict[i] += 1
+        return IP_dict
+
+
+
+    def addToList(self, url):
+        '''
+        存储子域名
+        :param url:
+        :return:
+        '''
+        if not self.domain2IP:
+            return
+        try:
+            domain = urlparse(url).hostname
+            if domain not in self.Domain_List:
+                self.Domain_List.append(domain)
+        except:
+            pass
+        return
 
 
 class celery_domain:
