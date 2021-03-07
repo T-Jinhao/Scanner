@@ -31,22 +31,9 @@ fore_color = {
 class ColorOutput:
     def __init__(self):
         self.system = platform.system()
-        filePath = self.getConfigPath()
-        config = Config().readConfig(filePath)
+        config = Config().readConfig()
         self.isShow = config.getboolean("Output", self.system)
 
-    def getConfigPath(self):
-        path = os.getcwd()
-        if self.system == 'Windows':
-            interval = '\\'
-        else:
-            interval = '/'
-        if path.split(interval)[-1] != 'Scanner':
-            file = '{0}..{0}config.ini'.format(interval)
-        else:
-            file = '{0}config.ini'.format(interval)
-        filePath = path + file
-        return filePath
 
     def red(self, s):
         if self.isShow:

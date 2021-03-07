@@ -4,15 +4,23 @@
 
 import configparser
 import sys
+import os
+import platform
 
 class Config:
     def __init__(self):
         pass
 
-    def readConfig(self, file="config.ini"):
+    def readConfig(self):
+        path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+        if platform.system() == 'Windows':
+            file = '\\config.ini'
+        else:
+            file = '/config.ini'
+        filePath = path + file
         config = configparser.ConfigParser()
         try:
-            config.read(file)
+            config.read(filePath)
             return config
         except:
             print("解析config.ini出错")
