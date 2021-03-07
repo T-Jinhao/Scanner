@@ -84,8 +84,8 @@ class Domain:
                         print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('IP分布情况'))
                         for x in IP_dict:
                             print(self.Output.green('[ IP_result ] ') + self.Output.cyan(x) + " : " + self.Output.fuchsia(IP_dict[x]))
-                    IP_result = [str(x)+" : "+str(y) for x, y in IP_dict.items()]
-                    reports.Report(IP_result, self.name, 'IP_collect_report.txt', '网站子域名IP分布报告已存放于', '保存出错').save()
+                    ip_result = [str(x)+" : "+str(y) for x, y in IP_dict.items()]
+                    reports.Report(ip_result, self.name, 'IP_collect_report.txt', '网站子域名IP分布报告已存放于', '保存出错').save()
                 # color_list_output(report, color='GREEN')   # 统一输出
                 reports.Report(report, self.name, 'domain_report.txt', '网站子域名挖掘报告已存放于', '保存出错').save()
             elif report == []:

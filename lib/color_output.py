@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- encoding:utf8 -*-
 import platform
+import os
 import sys
 import ctypes
 from colorama import Fore,init
@@ -29,9 +30,19 @@ fore_color = {
 
 class ColorOutput:
     def __init__(self):
+        filePath = self.getConfigPath()
         self.system = platform.system()
-        config = Config().readConfig()
+        config = Config().readConfig(filePath)
         self.isShow = config.getboolean("Output", self.system)
+
+    def getConfigPath(self):
+        path = os.getcwd()
+        if path.split('/')[-1] != 'Scanner':
+            file = '/../config.ini'
+        else:
+            file = '/config.ini'
+        filePath = path + file
+        return filePath
 
     def red(self, s):
         if self.isShow:
