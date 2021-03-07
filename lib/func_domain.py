@@ -72,10 +72,10 @@ class Domain:
                 onlineReport = self.chinaz_search()  # chinaz在线查询接口获得的数据
                 payload = self.load_payload(onlineReport)  # 合并数据
                 if payload:
-                    print(self.Output.blue('[ Load ] ') + self.Output.green('payload导入完成'))
+                    print(self.Output.blue('[ Load ] ') + self.Output.green('payload导入完成，数量：{}'.format(len(payload))))
                     report = self.run(payload)
                 else:
-                    print(self.Output.blue('[ Load ] ') + self.Output.red('payload导入完成'))
+                    print(self.Output.blue('[ Load ] ') + self.Output.red('payload导入失败'))
             if report:
                 IP_dict = self.collectIP()
                 if IP_dict != {}:
