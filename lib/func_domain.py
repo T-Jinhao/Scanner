@@ -10,6 +10,7 @@ import aiohttp
 import asyncio
 import socket
 import time
+import json
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from reports import reports
@@ -37,6 +38,9 @@ class Domain:
         self.domain2IP = config.getboolean("Domain", "domain2IP")
         self.showIP = config.getboolean("Domain", "showIP")
         self.max_workers = config.getint("Domain", "max_workers")
+        chkStatus = config.get("Domain", "chkStatus")
+        self.chkStatus = json.loads(chkStatus)
+
 
     def start(self):
         self.load_config()
@@ -303,7 +307,7 @@ class Domain:
             i += 1
             if r == None:
                 continue
-            if r.status_code == 200 or r.status_code == 302 or r.status_code == 500 or r.status_code == 502:
+            if r.status_code in self.chkStatus:
                 m = ret_dict[i]
                 title = util.getTitle(r.text)
                 self.addToList(r.url)
