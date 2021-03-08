@@ -190,7 +190,7 @@ class Domain:
             if r == None:
                 continue
             try:
-                if r.url not in url_list:
+                if r.url not in url_list and r.status_code in self.chkStatus:
                     url_list.append(r.url)
                     title = util.getTitle(r.text)
                     self.addToList(r.url)
@@ -200,12 +200,15 @@ class Domain:
                         title=title,
                         url=r.url
                     )
-                    print(self.Output.green('[ result ] ')
-                          + self.Output.fuchsia('status_code:') + self.Output.green(r.status_code) + self.Output.interval()
-                          + self.Output.fuchsia('最终URL:') + r.url + self.Output.interval()
-                          + self.Output.fuchsia('标题:') + self.Output.green(title) + self.Output.interval()
-                          + self.Output.fuchsia('跳转记录:') + self.Output.green(r.history) + self.Output.interval()
-                          )
+                    output = "".join([
+                        self.Output.green('[ result ] '), self.Output.fuchsia('status_code:'),
+                        self.Output.green(r.status_code), self.Output.interval(),
+                        self.Output.fuchsia('最终URL:'), r.url, self.Output.interval(),
+                        self.Output.fuchsia('标题:'), self.Output.green(title), self.Output.interval(),
+                        self.Output.fuchsia('跳转记录:'), self.Output.green(r.history), self.Output.interval()
+                    ])
+                    print(output)
+                    sys.stdout.flush()
                     report.append(msg)
             except Exception as e:
                 print(e)
@@ -319,13 +322,17 @@ class Domain:
                         Domain=m['Domain'],
                         url=r.url
                     )
-                    print(self.Output.green('[ result ] ')
-                          + self.Output.fuchsia('status_code:') + self.Output.green(r.status_code) + self.Output.interval()
-                          + self.Output.fuchsia('URL:') + r.url + self.Output.interval()
-                          + self.Output.fuchsia('Type:') + self.Output.green(m['Type']) + self.Output.interval()
-                          + self.Output.fuchsia('Title:') + self.Output.green(title) + self.Output.interval()
-                          + self.Output.fuchsia('Domain') + self.Output.green(m['Domain'])
-                          )
+                    output = "".join([
+                        self.Output.green('[ result ] ')
+                        , self.Output.fuchsia('status_code:'), self.Output.green(
+                            r.status_code), self.Output.interval()
+                        , self.Output.fuchsia('URL:'), r.url, self.Output.interval()
+                        , self.Output.fuchsia('Type:'), self.Output.green(m['Type']), self.Output.interval()
+                        , self.Output.fuchsia('Title:'), self.Output.green(title), self.Output.interval()
+                        , self.Output.fuchsia('Domain'), self.Output.green(m['Domain'])
+                    ])
+                    print(output)
+                    sys.stdout.flush()
                 elif m['Type'] in ['A', 'AAAA']:
                     msg = "{status} : {Type} : {title} : {Domain} ==> {Address} : {url}".format(
                         status=r.status_code,
@@ -335,13 +342,17 @@ class Domain:
                         Address=m['Address'],
                         url=r.url
                     )
-                    print(self.Output.green('[ result ] ')
-                          + self.Output.fuchsia('status_code:') + self.Output.green(r.status_code) + self.Output.interval()
-                          + self.Output.fuchsia('URL:') + r.url + self.Output.interval()
-                          + self.Output.fuchsia('Type:') + self.Output.green(m['Type']) + self.Output.interval()
-                          + self.Output.fuchsia('Title:') + self.Output.green(title) + self.Output.interval()
-                          + self.Output.green(m['Domain']) + self.Output.white('==>') + self.Output.green(m['Address'])
-                          )
+                    output = "".join([
+                        self.Output.green('[ result ] ')
+                        , self.Output.fuchsia('status_code:'), self.Output.green(
+                            r.status_code), self.Output.interval()
+                        , self.Output.fuchsia('URL:'), r.url, self.Output.interval()
+                        , self.Output.fuchsia('Type:'), self.Output.green(m['Type']), self.Output.interval()
+                        , self.Output.fuchsia('Title:'), self.Output.green(title), self.Output.interval()
+                        , self.Output.green(m['Domain']), self.Output.white('==>'), self.Output.green(m['Address'])
+                    ])
+                    print(output)
+                    sys.stdout.flush()
                 else:
                     hostname = util.getHostname(m['Address'])
                     msg = "{status} : {Type} : {title} :{Domain} ==> {Address} ==> {hostname} : {url}".format(
@@ -353,13 +364,16 @@ class Domain:
                         hostname=hostname,
                         url=r.url
                     )
-                    print(self.Output.green('[ result ] ')
-                          + self.Output.fuchsia('status_code:') + self.Output.green(r.status_code) + self.Output.interval()
-                          + self.Output.fuchsia('URL:') + r.url + self.Output.interval()
-                          + self.Output.fuchsia('Type:') + self.Output.green(m['Type']) + self.Output.interval()
-                          + self.Output.fuchsia('Title:') + self.Output.green(title) + self.Output.interval()
-                          + self.Output.green(m['Domain']) + self.Output.white('==>') + self.Output.green(m['Address']) + self.Output.white('==>') + self.Output.green(hostname)
-                          )
+                    output = "".join([
+                        self.Output.green('[ result ] ')
+                        , self.Output.fuchsia('status_code:'), self.Output.green(r.status_code), self.Output.interval()
+                        , self.Output.fuchsia('URL:'), r.url, self.Output.interval()
+                        , self.Output.fuchsia('Type:'), self.Output.green(m['Type']), self.Output.interval()
+                        , self.Output.fuchsia('Title:'), self.Output.green(title), self.Output.interval()
+                        , self.Output.green(m['Domain']), self.Output.white('==>'), self.Output.green(m['Address'])
+                        , self.Output.white('==>'), self.Output.green(hostname)])
+                    print(output)
+                    sys.stdout.flush()
                 self.RAPID.append(msg)
         return
 
