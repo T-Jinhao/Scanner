@@ -38,9 +38,10 @@ class Burp():
         mode_msg = self.scan_mode_indetify()
         msg = {0: '基于网站状态码检验模式', 1: '基于网站页面内容检验模式'}
         print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('分析模式: ') + self.Output.cyan(msg[mode_msg]))
+        sys.stdout.flush()
         payloads = self.load_payload(web_type)
         if payloads:
-            print(self.Output.blue('[ Load ] ') + self.Output.green('payload导入完成'))
+            print(self.Output.blue('[ Load ] ') + self.Output.green('payload导入完成，数量：{}'.format(len(payloads))))
             report = self.run(payloads)
             if report:
                 # color_list_output(report, color='GREEN')
@@ -102,16 +103,20 @@ class Burp():
         :param url:
         :return:
         '''
+        web_type = []
         for i in ['/index.php','/index.asp','/index.aspx','/index.mdb','/index.jsp']:
             URL = "{0}{1}".format(url, i)
             try:
                 res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
                 if res.status_code == 200:
                     m = self.web_indetify(URL)
-                    return m
+                    web_type.append(m)
             except:
                 pass
-        return '未能识别'
+        if len(web_type) == 0 or len(web_type) > 1:
+            return '未能识别'
+        else:
+            return web_type[0]
 
 
     def load_payload(self,type):
