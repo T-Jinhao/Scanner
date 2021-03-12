@@ -5,7 +5,7 @@
 import sys,os
 from urllib.parse import urlparse
 from sqlmapapi import *
-from reports import reports
+from reports import reports_txt
 from Sqliscan import std
 from Sqliscan import sqlerrors
 from Sqliscan import web
@@ -74,7 +74,7 @@ class Sql:
                     report = self.sql_results(taskid)  # 获取报告
                     if report:
                         print(self.Output.blue('[ result ] ') + self.Output.green(report))
-                        reports.Report(report, self.name, 'sqlscan_report.txt', '主机注入漏洞扫描报告已存放于', '并没有扫描出主机注入漏洞').save()
+                        reports_txt.Report(report, self.name, 'sqlscan_report.txt', '主机注入漏洞扫描报告已存放于', '并没有扫描出主机注入漏洞').save()
                     else:
                         print(self.Output.blue('[ result ] ') + self.Output.yellow('并没有扫描出主机注入漏洞'))
                 else:

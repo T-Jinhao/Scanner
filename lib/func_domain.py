@@ -13,7 +13,7 @@ import time
 import json
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
-from reports import reports
+from reports import reports_txt
 from concurrent.futures import ThreadPoolExecutor
 from .color_output import *
 from .load_config import Config
@@ -89,9 +89,9 @@ class Domain:
                         for x in IP_dict:
                             print(self.Output.green('[ IP_result ] ') + self.Output.cyan(x) + " : " + self.Output.fuchsia(IP_dict[x]))
                     ip_result = [str(x)+" : "+str(y) for x, y in IP_dict.items()]
-                    reports.Report(ip_result, self.name, 'IP_collect_report.txt', '网站子域名IP分布报告已存放于', '保存出错').save()
+                    reports_txt.Report(ip_result, self.name, 'IP_collect_report.txt', '网站子域名IP分布报告已存放于', '保存出错').save()
                 # color_list_output(report, color='GREEN')   # 统一输出
-                reports.Report(report, self.name, 'domain_report.txt', '网站子域名挖掘报告已存放于', '保存出错').save()
+                reports_txt.Report(report, self.name, 'domain_report.txt', '网站子域名挖掘报告已存放于', '保存出错').save()
             elif report == []:
                 print(self.Output.blue('[ result ] ') + self.Output.yellow('[ 未能挖掘出网站子域名 ]'))
         else:

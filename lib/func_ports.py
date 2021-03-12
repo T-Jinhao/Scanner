@@ -4,7 +4,7 @@
 
 from socket import *
 from concurrent.futures import ThreadPoolExecutor
-from reports import reports
+from reports import reports_txt
 from .load_config import Config
 from .color_output import *
 
@@ -60,7 +60,7 @@ class Ports():
         print(self.Output.blue('[ schedule ] ') + self.Output.cyan('准备就绪，开始扫描'))
         report = self.run(ports)
         if report:
-            reports.Report(report, self.name, 'port_report.txt', '主机端口扫描报告已存放于', '并没有扫描出主机开放端口').save()
+            reports_txt.Report(report, self.name, 'port_report.txt', '主机端口扫描报告已存放于', '并没有扫描出主机开放端口').save()
         else:
             print(self.Output.blue('[ result ] ') + self.Output.yellow('没有扫描出主机开放端口'))
         print(self.Output.fuchsia('-' * 40 + 'PortsScan<<<<<' + '\n'))

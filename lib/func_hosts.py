@@ -4,7 +4,7 @@
 
 from socket import *
 from concurrent.futures import ThreadPoolExecutor
-from reports import reports
+from reports import reports_txt
 from .color_output import *
 
 class Hosts:
@@ -19,7 +19,7 @@ class Hosts:
         url = self.c_hosts()
         report = self.run(url)
         if report:
-            reports.Report(report, self.name, 'c_hosts_report.txt', '主机c段扫描报告已存放于', '并没有扫描出存活主机').save()
+            reports_txt.Report(report, self.name, 'c_hosts_report.txt', '主机c段扫描报告已存放于', '并没有扫描出存活主机').save()
         else:
             print(self.Output.green('[ result ] ') + self.Output.yellow('没有扫描出开放主机'))
         print(self.Output.fuchsia('-'*40+'hosts<<<<<'))

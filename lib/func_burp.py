@@ -4,7 +4,7 @@
 
 import os
 import re
-from reports import reports
+from reports import reports_txt
 from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor
 from .color_output import *
@@ -45,7 +45,7 @@ class Burp():
             report = self.run(payloads)
             if report:
                 # color_list_output(report, color='GREEN')
-                reports.Report(report, self.name, 'burp_report.txt', '网站目录爆破报告已存放于', '并没有扫描出可疑后台').save()
+                reports_txt.Report(report, self.name, 'burp_report.txt', '网站目录爆破报告已存放于', '并没有扫描出可疑后台').save()
             else:
                 print(self.Output.blue('[ result ] ') + self.Output.yellow("[ 并没有扫描出可疑后台 ]"))
         else:
