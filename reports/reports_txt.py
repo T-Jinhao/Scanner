@@ -33,6 +33,6 @@ class Report:
             except Exception as e:
                 # print(e)
                 msg = "[ {} ]".format(self.err_msg)
-        print(self.Output.green('[ 保存输出结果 ] ') + self.Output.cyan(msg))
+        print(self.Output.green('[ 保存输出结果-text ] ') + self.Output.cyan(msg))
         return
 
