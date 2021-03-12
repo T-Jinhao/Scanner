@@ -60,16 +60,20 @@ class Scanner():
 
     def base_report(self):
         self.host = self.getHostname()  # 获取domain
-        ip_report = func_base.IPcontent(self.host, self.REQ).run()
         print(self.Output.fuchsia('>>>>>base_report'+'-'*40))
         print(self.Output.green('[ 输入URL ] ') + self.Output.white(self.args.url))
         print(self.Output.green('[ 解析host ] ') + self.host)
-        print(self.Output.green('[ IP域名绑定情况 ] '))
-        try:
-            for x in ip_report:
-                print(x)
-        except:
-            pass
+        print(self.Output.green('[ 任务命名 ] ') + self.taskname)
+        config = Config().readConfig()
+        showIP = config.getboolean("Main", "ip_report")
+        if showIP:
+            ip_report = func_base.IPcontent(self.host, self.REQ).run()
+            print(self.Output.green('[ IP域名绑定情况 ] '))
+            try:
+                for x in ip_report:
+                    print(x)
+            except:
+                pass
         try:
             cdn_report = func_base.CDNcontent(self.args.url).run()
             if cdn_report != []:
@@ -87,6 +91,27 @@ class Scanner():
         '''
         cmd = 'celery -A lib.func_celery worker --pool=eventlet -l DEBUG'    # 指定工作者
         os.system(cmd)
+
+    def setTaskname(self):
+        if self.args.name != None:
+            self.taskname = self.args.name
+        else:
+            ip = re.compile('[\d]{1,3}\.[\d]{1,3}\.[\d]{1,3}\.[\d]{1,3}')
+            netloc = urlparse(self.args.url).netloc
+            res = ip.match(netloc)
+            if res:    # ip形式的名称，需要改名
+                today = datetime.datetime.today()
+                formatted_today = today.strftime('%y%m%d')
+                self.name = formatted_today
+            else:
+                n = netloc.split(".")
+                if len(n) == 2:
+                    self.taskname = n[0]
+                elif n[-2] not in ["com", "edu", "ac", "net", "org", "gov"]:  # 带地域标签的域名
+                    self.taskname = n[-2]
+                else:
+                    self.taskname = n[-3]
+        return
 
 
     def prepare(self):
@@ -107,12 +132,6 @@ class Scanner():
             cookies=self.cookies,
         )
 
-        # 输出报告合并文件夹命名
-        if self.args.name == None:
-            today = datetime.datetime.today()
-            formatted_today = today.strftime('%y%m%d')
-            self.args.name = formatted_today
-        self.name = str(self.args.name)
 
         # 解析配置文件
         config = load_config.Config().readConfig()
@@ -140,25 +159,25 @@ class Scanner():
                 dPayload=self.dPayload,
                 lPayload=self.lPayload,
                 host=self.host,
-                name=self.name
+                name=self.taskname
             )
             c.start()
             return
 
         if self.args.scan:
-            func_scan.Scan(self.args.url, self.REQ, self.name, self.args.crazy).start()
+            func_scan.Scan(self.args.url, self.REQ, self.taskname, self.args.crazy).start()
         if self.args.ports:
-            func_ports.Ports(self.host, self.name, self.args.crazy).start()
+            func_ports.Ports(self.host, self.taskname, self.args.crazy).start()
         if self.args.hosts:
-            func_hosts.Hosts(self.host, self.name).start()
+            func_hosts.Hosts(self.host, self.taskname).start()
         if self.args.login:
-            func_login.Login(self.args.url, self.REQ, self.lPayload, self.name, self.args.crazy).start()
+            func_login.Login(self.args.url, self.REQ, self.lPayload, self.taskname, self.args.crazy).start()
         if self.args.burp:
-            func_burp.Burp(self.args.url, self.bPayload, self.REQ, self.name, self.args.crazy).start()
+            func_burp.Burp(self.args.url, self.bPayload, self.REQ, self.taskname, self.args.crazy).start()
         if self.args.domain:
-            func_domain.Domain(self.args.url, self.dPayload, self.REQ, self.name, self.args.crazy).start()
+            func_domain.Domain(self.args.url, self.dPayload, self.REQ, self.taskname, self.args.crazy).start()
         if self.args.sqlscan:
-            func_sqli.Sql(self.args.url, self.name, self.args.crazy).start()
+            func_sqli.Sql(self.args.url, self.taskname, self.args.crazy).start()
         else:
             # print("Nothing to do...")
             sys.exit()
@@ -173,7 +192,7 @@ def terminal_input():
         sys.argv.append('-h')
     parser = argparse.ArgumentParser(description='简易扫描器，[]内为可用功能模块，<>内为开启极致模式的简述',add_help=True)
     parser.add_argument('-u','--url', help='扫描对象的url')
-    parser.add_argument('-n','--name', help='任务命名', default=None)
+    parser.add_argument('-n','--name', help='保存结果文本命名', default=None)
     parser.add_argument('-X', '--crazy', help='以极致模式启动功能，比较耗时', action='store_true')
     parser.add_argument('-P', '--ports', help='探测目标主机开放端口[-X]<支持自定义端口范围>', action='store_true')
     parser.add_argument('-H','--hosts', help='探测存活主机', action='store_true')
@@ -195,6 +214,7 @@ def main():
     args = terminal_input()
     x = Scanner(args)
     x.url_check()  # 检查输入url
+    x.setTaskname()
     x.prepare()  # 准备工作
     x.base_report()  # 输出基础报告
     x.run()
