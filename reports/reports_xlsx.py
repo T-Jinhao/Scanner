@@ -8,7 +8,7 @@ from openpyxl import Workbook,load_workbook
 from lib.color_output import *
 
 class Report:
-    def __init__(self, report, taskname, sheetname, banner, suc_msg='保存成功', err_msg='保存出错'):
+    def __init__(self, report, taskname, sheetname, banner, suc_msg='保存成功', err_msg='保存出错', cut=':'):
         '''
         保存xlsx格式的结果
         :param report: 报告内容,list
@@ -17,6 +17,7 @@ class Report:
         :param banner: 工作页第一行信息表,list
         :param suc_msg: 保存成功输出文本
         :param err_msg: 保存失败输出文本
+        :param cut: 用作文本切割
         '''
         self.report = report
         self.taskname = taskname
@@ -24,6 +25,7 @@ class Report:
         self.banner = banner
         self.suc_msg = suc_msg
         self.err_msg = err_msg
+        self.cut = cut
         self.Output = ColorOutput()
 
     def save(self):
@@ -115,7 +117,7 @@ class Report:
         :param text:
         :return:
         '''
-        L = text.split(":")
+        L = text.split(self.cut)
         return [x.strip() for x in L]
 
 
