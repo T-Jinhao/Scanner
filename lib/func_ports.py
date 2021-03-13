@@ -4,7 +4,7 @@
 
 from socket import *
 from concurrent.futures import ThreadPoolExecutor
-from reports import reports_txt
+from reports import reports_txt,reports_xlsx
 from .load_config import Config
 from .color_output import *
 
@@ -48,6 +48,8 @@ class Ports():
         config = Config().readConfig()
         self.max_workers = config.getint("Ports", "max_workers")
         self.timeout = config.getfloat("Ports", "timeout")
+        system = platform.system()
+        self.saveType = config.get("Result", system)
 
     def start(self):
         print(self.Output.fuchsia('>>>>>PortsScan' + '-' * 40))
@@ -59,11 +61,24 @@ class Ports():
             ports = self.scan_ports()
         print(self.Output.blue('[ schedule ] ') + self.Output.cyan('准备就绪，开始扫描'))
         report = self.run(ports)
-        if report:
-            reports_txt.Report(report, self.name, 'port_report.txt', '主机端口扫描报告已存放于', '并没有扫描出主机开放端口').save()
-        else:
-            print(self.Output.blue('[ result ] ') + self.Output.yellow('没有扫描出主机开放端口'))
+        self.saveResult(report)
         print(self.Output.fuchsia('-' * 40 + 'PortsScan<<<<<' + '\n'))
+        return
+
+    def saveResult(self, report):
+        '''
+        保存报告
+        :param report:
+        :return:
+        '''
+        if report == []:
+            print(self.Output.blue('[ result ] ') + self.Output.yellow('没有扫描出主机开放端口'))
+            return
+        if self.saveType == 'xlsx':
+            banner = ['IP', '端口', '服务', 'banner']
+            reports_xlsx.Report(report, self.name, 'Ports', banner).save()
+        else:
+            reports_txt.Report(report, self.name, 'port_report.txt', '主机端口扫描报告已存放于', '并没有扫描出主机开放端口').save()
         return
 
 
@@ -135,14 +150,14 @@ class Ports():
         if result == 0:
             banner = self.getBanner(sock)
             if port in port_dict:
-                msg = "[ {0} : {1}已开启  :  {2}]".format(str(port), port_dict[port], banner)
+                msg = " {0} : {1} : {2}已开启  :  {3}".format(self.host, str(port), port_dict[port], banner)
                 print(self.Output.green('[ result ] ')
                       + self.Output.fuchsia('port:') + self.Output.green(port) + self.Output.interval()
                       + self.Output.fuchsia('server:') + self.Output.green(port_dict[port]) + self.Output.interval()
                       + self.Output.fuchsia('banner:') + self.Output.green(banner)
                       )
             else:
-                msg = "[ {0} : 已开启  :  {1}]".format(str(port), banner)
+                msg = "{0} : {1} : 已开启  : {2}".format(self.host, str(port), banner)
                 print(self.Output.green('[ result ] ')
                       + self.Output.fuchsia('port:') + self.Output.green(port) + self.Output.interval()
                       + self.Output.fuchsia('banner:') + self.Output.green(banner)

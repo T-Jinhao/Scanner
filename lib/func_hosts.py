@@ -37,7 +37,7 @@ class Hosts:
         system = platform.system()
         saveType = config.get("Result", system)
         if saveType == 'xlsx':
-            banner = ['IP信息', '端口情况']
+            banner = ['C段IP信息', '端口情况']
             reports_xlsx.Report(report, self.name, 'Hosts', banner).save()
         else:    # txt类型为默认格式
             reports_txt.Report(report, self.name, 'c_hosts_report.txt', '主机c段扫描报告已存放于', '并没有扫描出存活主机').save()
@@ -82,7 +82,7 @@ class Hosts:
         sock.settimeout(5)
         result = sock.connect_ex((url,80))
         if result == 0:
-            msg = "[ {} : 80端口已开启 ]".format(url)
+            msg = "{} : 80".format(url)
             print(self.Output.green('[ result ] ') + self.Output.cyan(url))
             m = {'msg':msg,'flag':1}
         else:
