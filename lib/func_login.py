@@ -4,7 +4,7 @@
 
 import os
 from concurrent.futures import ThreadPoolExecutor
-from reports import reports_txt
+from reports import reports_txt,reports_xlsx
 from bs4 import BeautifulSoup
 from .color_output import *
 from .load_config import Config
@@ -26,6 +26,8 @@ class Login:
         config = Config().readConfig()
         self.threads = config.getint("Login", "threads")
         self.timeout = config.getfloat("Login", "timeout")
+        system = platform.system()
+        self.saveType = config.get("Result", system)
 
     def start(self):
         exp = []
@@ -54,11 +56,19 @@ class Login:
                 print(self.Output.blue('[ Load ] ') + self.Output.red('payload导入失败'))
         # print(exp)
         report = self.run(exp)
-        if report:
-            reports_txt.Report(report, self.name, 'login_report.txt', '网站密码fuzz报告已存放于', '没有探测出网站密码').save()
-        else:
-            print(self.Output.blue('[ result ] ') + self.Output.yellow('没有探测出网站密码'))
+        self.saveResult(report)
         print(self.Output.fuchsia('-'*40+'Login_fuzz<<<<<'))
+        return
+
+    def saveResult(self, report):
+        if report == []:
+            print(self.Output.blue('[ result ] ') + self.Output.yellow('没有探测出网站密码'))
+            return
+        if self.saveType == 'xlsx':
+            banner = []
+            reports_xlsx.Report(report, self.name, 'Login', banner).save()
+        else:
+            reports_txt.Report(report, self.name, 'login_report.txt', '网站密码fuzz报告已存放于', '没有探测出网站密码').save()
         return
 
     def get_args(self):

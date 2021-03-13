@@ -13,7 +13,7 @@ import time
 import json
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
-from reports import reports_txt
+from reports import reports_txt,reports_xlsx
 from concurrent.futures import ThreadPoolExecutor
 from .color_output import *
 from .load_config import Config
@@ -40,6 +40,8 @@ class Domain:
         self.max_workers = config.getint("Domain", "max_workers")
         chkStatus = config.get("Domain", "chkStatus")
         self.chkStatus = json.loads(chkStatus)
+        system = platform.system()
+        self.saveType = config.get("Result", system)
 
 
     def start(self):
@@ -69,10 +71,11 @@ class Domain:
                 self.rapidSearch(self.domain)
                 report = self.RAPID   # 该模块结果
                 if report == []:
-                    print(self.Output.yellow('[ warn ] ') + self.Output.fuchsia('-X模式查询失败，稍后将继续执行'))
+                    print(self.Output.yellow('[ warn ] ') + self.Output.fuchsia('-X模式查询失败，稍后将执行payload爆破'))
                     time.sleep(3)
 
             if report == []:    # 普通模式及rapid获取数据失败的情况下，使用字典爆破
+                self.flag = False   # 更改为普通模式，用作保存时区别
                 onlineReport = self.chinaz_search()  # chinaz在线查询接口获得的数据
                 payload = self.load_payload(onlineReport)  # 合并数据
                 if payload:
@@ -80,23 +83,57 @@ class Domain:
                     report = self.run(payload)
                 else:
                     print(self.Output.blue('[ Load ] ') + self.Output.red('payload导入失败'))
+            self.saveDomainResult(report)
             if report:
                 IP_dict = self.collectIP()
-                if IP_dict != {}:
-                    if self.showIP:
-                        print()
-                        print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('IP分布情况'))
-                        for x in IP_dict:
-                            print(self.Output.green('[ IP_result ] ') + self.Output.cyan(x) + " : " + self.Output.fuchsia(IP_dict[x]))
-                    ip_result = [str(x)+" : "+str(y) for x, y in IP_dict.items()]
-                    reports_txt.Report(ip_result, self.name, 'IP_collect_report.txt', '网站子域名IP分布报告已存放于', '保存出错').save()
-                # color_list_output(report, color='GREEN')   # 统一输出
-                reports_txt.Report(report, self.name, 'domain_report.txt', '网站子域名挖掘报告已存放于', '保存出错').save()
+                self.saveIpResult(IP_dict)
             elif report == []:
                 print(self.Output.blue('[ result ] ') + self.Output.yellow('[ 未能挖掘出网站子域名 ]'))
         else:
             print(self.Output.yellow('[ warn ] ') + self.Output.cyan("[ {}不支持子域名挖掘 ]".format(self.url)))
         print(self.Output.fuchsia('-' * 40 + 'domain<<<<<' + '\n'))
+        return
+
+    def saveDomainResult(self, report):
+        '''
+        保存域名结果
+        :param report:
+        :return:
+        '''
+        if report == []:
+            print(self.Output.blue('[ result ] ') + self.Output.yellow('[ 未能挖掘出网站子域名 ]'))
+            return
+        if self.saveType == 'xlsx':
+            if self.flag:    # 修改banner等信息
+                banner = ['状态码', '域名解析类型', '标题', '跳转记录', '最终URL']
+                sheetname = 'subDomain-X'
+                cut = ' : '
+            else:       # 普通格式
+                banner = ['状态码', '跳转记录', '标题', '最终URL']
+                sheetname = 'subDomain'
+                cut = ' | '
+            reports_xlsx.Report(report, self.name, sheetname, banner, cut=cut).save()
+        else:
+            reports_txt.Report(report, self.name, 'domain_report.txt', '网站子域名挖掘报告已存放于', '保存出错').save()
+        return
+
+    def saveIpResult(self, report_dict):
+        '''
+        保存子域名IP分布情况
+        :param report_dict:
+        :return:
+        '''
+        if report_dict == {}:
+            return
+        if self.showIP:   # 是否需要输出
+            print()
+            print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('IP分布情况'))
+        ip_result = [str(x) + " : " + str(y) for x, y in report_dict.items()]
+        if self.saveType == 'xlsx':
+            banner = ['子域名IP', '分布数量']
+            reports_xlsx.Report(ip_result, self.name, 'subDomain_IP', banner).save()
+        else:
+            reports_txt.Report(ip_result, self.name, 'IP_collect_report.txt', '网站子域名IP分布报告已存放于', '保存出错').save()
         return
 
     def url_check(self,url):
@@ -194,7 +231,7 @@ class Domain:
                     url_list.append(r.url)
                     title = util.getTitle(r.text)
                     self.addToList(r.url)
-                    msg = "状态码：{status} | 跳转记录：{history} | 标题：{title} | 最终URL：{url} ".format(
+                    msg = "{status} | {history} | {title} | {url} ".format(
                         status=r.status_code,
                         history=r.history,
                         title=title,
