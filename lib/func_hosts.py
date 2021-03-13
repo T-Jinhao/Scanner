@@ -2,10 +2,12 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
+import platform
 from socket import *
 from concurrent.futures import ThreadPoolExecutor
-from reports import reports_txt
+from reports import reports_txt,reports_xlsx
 from .color_output import *
+from .load_config import Config
 
 class Hosts:
     def __init__(self, host, name):
@@ -18,12 +20,27 @@ class Hosts:
         print(self.Output.blue('[ schedule ] ') + self.Output.cyan('开始扫描开放主机'))
         url = self.c_hosts()
         report = self.run(url)
-        if report:
-            reports_txt.Report(report, self.name, 'c_hosts_report.txt', '主机c段扫描报告已存放于', '并没有扫描出存活主机').save()
-        else:
-            print(self.Output.green('[ result ] ') + self.Output.yellow('没有扫描出开放主机'))
+        self.saveResult(report)
         print(self.Output.fuchsia('-'*40+'hosts<<<<<'))
         return report
+
+    def saveResult(self, report):
+        '''
+        保存报告
+        :param report:
+        :return:
+        '''
+        if report == []:
+            print(self.Output.green('[ result ] ') + self.Output.yellow('没有扫描出开放主机'))
+            return
+        config = Config().readConfig()
+        system = platform.system()
+        saveType = config.get("Result", system)
+        if saveType == 'xlsx':
+            banner = ['IP信息', '端口情况']
+            reports_xlsx.Report(report, self.name, 'Hosts', banner).save()
+        else:    # txt类型为默认格式
+            reports_txt.Report(report, self.name, 'c_hosts_report.txt', '主机c段扫描报告已存放于', '并没有扫描出存活主机').save()
 
 
     def c_hosts(self):
