@@ -11,8 +11,9 @@ from urllib.parse import urljoin
 from modules import util
 from .color_output import *
 from .load_config import Config
+from reports import reports_xlsx,reports_txt
 
-wrong_web_list = ['javascript:void(0)',None,'###','#']
+wrong_web_list = ['javascript:void(0)', None, '###', '#']
 
 class Scan():
     def __init__(self, url, REQ, name, crazy):
@@ -32,6 +33,8 @@ class Scan():
         self.ICPUrl = config.get("Scan", "ICPUrl")
         self.checkWebStatus = config.getboolean("Scan", "checkWebStatus")
         self.checkJsStatus = config.getboolean("Scan", "checkJsStatus")
+        system = platform.system()
+        self.saveType = config.get("Result", system)
 
     def start(self):
         print(self.Output.fuchsia(">>>>>scan" + "-" * 40))
@@ -41,13 +44,14 @@ class Scan():
         if web:   # 检测爬取链接的存活性
             if self.checkWebStatus:
                 web += self.crazyRun(web)
-                ret = self.statusCheck(web)
-                self.scan_report(ret, 'web')
+                res = self.statusCheck(web)
+                self.saveResult(res, sheetname='webScan', txtFilename='webScan_report.txt', cut=' | ')
             else:
                 print(self.Output.blue('[ Setting ] ') + self.Output.fuchsia('checkWebStatus ')
                       + self.Output.yellow(self.checkWebStatus))
                 for x in web:
                     print(self.Output.green('[ webURL ] ') + x)
+                self.saveResult(web, sheetname='webScanWithoutCheck', txtFilename='webScanWithoutCheck_report.txt', cut=' | ').save()
         else:
             print(self.Output.blue('[ result ] ') + self.Output.yellow('没有扫描到网站链接'))
 
@@ -61,11 +65,13 @@ class Scan():
             print(self.Output.green('[ output ] ') + self.Output.cyan('手机号码'))
             for x in self.Phone:
                 print(self.Output.blue('[ result ] ') + self.Output.green(x))
+            self.saveResult(self.Phone, 'phone', 'phone.txt', cut=' | ')
         if self.Email != []:
             print()
             print(self.Output.green('[ output ] ') + self.Output.cyan('邮箱'))
             for x in self.Email:
                 print(self.Output.blue('[ result ] ') + self.Output.green(x))
+            self.saveResult(self.Email, 'email', 'email.txt', cut=' | ')
         if self.ICP != []:
             print()
             print(self.Output.green('[ output ] ') + self.Output.cyan('备案号'))
@@ -79,8 +85,30 @@ class Scan():
                 # }
                 # r = self.REQ.autoPostAccess(url=self.ICPUrl, data=data)
                 # print(r.text)
+            self.saveResult(self.ICP, 'icp', 'icp.txt', cut=' | ')
         print(self.Output.fuchsia("-" * 40 + "<<<<<scan" + "\n"))
         return
+
+    def saveResult(self, report, sheetname='', txtFilename='', cut=':'):
+        if report == []:
+            print(self.Output.blue('[ result ] ') + self.Output.yellow("[ {}扫描结果为空 ]".format(sheetname)))
+            return
+        if self.saveType == 'xlsx':
+            if sheetname == 'webScan':
+                banner = ['状态码', '文本长度', '标题', 'URL']
+            elif sheetname == 'webScanWithoutCheck':
+                banner = ['URL']
+            elif sheetname == 'phone':
+                banner = ['手机号码', '捕获页面']
+            elif sheetname == 'email':
+                banner = ['邮箱', '捕获页面']
+            elif sheetname == 'icp':
+                banner = ['备案号', '捕获页面']
+            else:
+                banner = []
+            reports_xlsx.Report(report, self.name, sheetname, banner, cut=cut).save()
+        else:
+            reports_txt.Report(report, self.name, txtFilename, '网页扫描报告已存放于', '并没有扫描出网页链接').save()
 
 
     def crazyRun(self,urls):
@@ -129,9 +157,9 @@ class Scan():
         '''
         try:
             res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
-            self.match_Email(res.text)   # 匹配邮箱
-            self.match_Phone(res.text)   # 匹配电话
-            self.match_ICP(res.content.decode('utf-8'))   # 匹配备案号
+            self.match_Email(res.text, url)   # 匹配邮箱
+            self.match_Phone(res.text, url)   # 匹配电话
+            self.match_ICP(res.content.decode('utf-8'), url)   # 匹配备案号
             web_sites = []  # 网站链接
             js_sites = []  # js脚本链接
             soup = BeautifulSoup(res.text, 'html.parser')
@@ -168,23 +196,25 @@ class Scan():
         :param urls: 爬取到的url
         :return:
         '''
-        Gurls = []
+        result = []
         for url in list(set(urls)):
             print()
             print(self.Output.fuchsia('[ Test ]') + url)
             try:
                 res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
+                title = util.getTitle(res.text)
                 print(self.Output.green('[ Info ] ')
                       + self.Output.fuchsia('状态码') + self.Output.green(res.status_code) + self.Output.interval()
                       + self.Output.fuchsia('文本长度') + self.Output.green(len(res.content)) + self.Output.interval()
-                      + self.Output.fuchsia('标题') + self.Output.green(util.getTitle(res.text))
+                      + self.Output.fuchsia('标题') + self.Output.green(title)
                       )
                 if res.status_code != 404 and len(res.content) != 0:
-                    Gurls.append(url)
+                    msg = " | ".join([str(res.status_code), str(len(res.content)), str(title), url])
+                    result.append(msg)
             except:
                 print(self.Output.green('[ Info ] ') + self.Output.yellow('访问失败'))
             time.sleep(0.5)   # 防止过于频繁导致网站崩溃
-        return Gurls
+        return result
 
     def js_analysis(self, url):
         '''
@@ -197,8 +227,8 @@ class Scan():
         try:
             res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
             content = str(res.content.decode('utf-8'))
-            self.match_Phone(res.text)
-            self.match_Email(res.text)
+            self.match_Phone(res.text, url)
+            self.match_Email(res.text, url)
             self.reg_str(res.text)
             ret = compile_CN.findall(content)
             if ret != []:
@@ -209,7 +239,7 @@ class Scan():
             pass
         return
 
-    def match_Phone(self, text):
+    def match_Phone(self, text, url):
         '''
         匹配手机号码
         :param text:
@@ -220,10 +250,11 @@ class Scan():
         if ret != []:
             for x in ret:
                 if x not in self.Phone:
-                    self.Phone.append(x)
+                    p = " | ".join([str(x), url])
+                    self.Phone.append(p)
         return
 
-    def match_ICP(self, text):
+    def match_ICP(self, text, url):
         '''
         匹配ICP备案号
         :param text:
@@ -233,12 +264,13 @@ class Scan():
         ret = compile_ICP.search(text)
         try:
             if ret != None and ret[0] not in self.ICP and ret[0] != []:
-                self.ICP.append(ret[0])
+                i = " | ".join([ret[0], url])
+                self.ICP.append(i)
         except:
             pass
         return
 
-    def match_Email(self, text):
+    def match_Email(self, text, url):
         '''
         匹配邮箱
         :param content:
@@ -249,7 +281,8 @@ class Scan():
         if ret != []:
             for x in ret:
                 if x not in self.Email and x.split('.')[-1] != 'png':
-                    self.Email.append(x)
+                    e = " | ".join([x, url])
+                    self.Email.append(e)
         return
 
     def reg_str(self, text):
@@ -295,25 +328,6 @@ class Scan():
                         resultUrls.append(u)
 
 
-    def scan_report(self, report, flag):
-        '''
-        对爬取结果进行处理
-        :return:
-        '''
-        path = os.path.dirname(__file__)
-        dirpath = "{0}/{1}/{2}".format(path,"../reports", self.name)
-        filepath = "{0}/{1}".format(dirpath,"scan_{}_report.txt".format(flag))
-        if not os.path.exists(dirpath):
-            os.mkdir(dirpath)
-        F = open(filepath, "a")
-        try:
-            for m in report:
-                F.write(m+"\n")
-            print(self.Output.blue('[ result ] ') + self.Output.cyan("[ 网站{1}链接已保存于：{0}]".format(filepath,flag)))
-        except:
-            print(self.Output.blue('[ result ] ') + self.Output.yellow("[ 并没有扫描到{}链接 ]".format(flag)))
-        F.close()
-        return
 
 class celery_scan:
     '''
