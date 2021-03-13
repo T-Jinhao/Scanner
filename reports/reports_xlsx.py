@@ -96,9 +96,10 @@ class Report:
         sheets = wb.sheetnames
         if self.sheetname in sheets:
             ws = wb[self.sheetname]
-            today = datetime.datetime.today()
-            formatted_today = today.strftime('%y%m%d')
-            ws.append(["修改日期："+formatted_today])
+            ws.append([])
+            # today = datetime.datetime.today()
+            # formatted_today = today.strftime('%y%m%d')
+            # ws.append(["修改日期："+formatted_today])
         else:
             ws = wb.create_sheet(title=self.sheetname)
             ws.append(self.banner)
