@@ -4,7 +4,7 @@
 
 import os
 import re
-from reports import reports_txt
+from reports import reports_txt,reports_xlsx
 from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor
 from .color_output import *
@@ -25,6 +25,8 @@ class Burp():
         config = Config().readConfig()
         self.threads = config.getint("Burp", "threads")
         self.timeout = config.getfloat("Burp", "timeout")
+        system = platform.system()
+        self.saveType = config.get("Result", system)
 
     def start(self):
         url = self.url
@@ -43,14 +45,22 @@ class Burp():
         if payloads:
             print(self.Output.blue('[ Load ] ') + self.Output.green('payload导入完成，数量：{}'.format(len(payloads))))
             report = self.run(payloads)
-            if report:
-                # color_list_output(report, color='GREEN')
-                reports_txt.Report(report, self.name, 'burp_report.txt', '网站目录爆破报告已存放于', '并没有扫描出可疑后台').save()
-            else:
-                print(self.Output.blue('[ result ] ') + self.Output.yellow("[ 并没有扫描出可疑后台 ]"))
+            self.saveResult(report)
         else:
             print(self.Output.blue('[ Load ]') + self.Output.red('payload导入失败'))
         print(self.Output.fuchsia('-' * 40 + 'burp<<<<<' + '\n'))
+        return
+
+    def saveResult(self, report):
+        if report == []:
+            print(self.Output.blue('[ result ] ') + self.Output.yellow("[ 并没有扫描出可疑后台 ]"))
+            return
+        if self.saveType == 'xlsx':
+            banner = ['网页状态码', '文本长度', '页面标题', 'URL']
+            cut = ' : '    # 文本切割符
+            reports_xlsx.Report(report, self.name, 'Burp', banner, cut=cut).save()
+        else:
+            reports_txt.Report(report, self.name, 'burp_report.txt', '网站目录爆破报告已存放于', '并没有扫描出可疑后台').save()
         return
 
 
