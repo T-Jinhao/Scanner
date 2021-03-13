@@ -19,6 +19,7 @@ Django==3.0.7
 django-filter==2.3.0
 djangorestframework==3.11.0
 dnspython==2.0.0
+et-xmlfile==1.0.1
 fasteners==0.15
 filelock==3.0.12
 Flask==1.1.2
@@ -28,6 +29,7 @@ Flask-SQLAlchemy==2.4.3
 gevent==20.9.0
 greenlet==0.4.17
 grequests==0.6.0
+HackRequests==1.2
 idna==2.9
 itsdangerous==1.1.0
 Jinja2==2.11.2
@@ -36,6 +38,7 @@ lib==3.0.0
 MarkupSafe==1.1.1
 monotonic==1.5
 multidict==5.0.2
+openpyxl==3.0.7
 pycparser==2.20
 PyMySQL==0.9.3
 PySocks==1.7.1
