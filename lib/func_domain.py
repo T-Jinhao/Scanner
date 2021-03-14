@@ -107,7 +107,7 @@ class Domain:
             if self.flag:    # 修改banner等信息
                 banner = ['状态码', '域名解析类型', '标题', '跳转记录', '最终URL']
                 sheetname = 'subDomain-X'
-                cut = ' : '
+                cut = ' | '
             else:       # 普通格式
                 banner = ['状态码', '跳转记录', '标题', '最终URL']
                 sheetname = 'subDomain'
@@ -352,7 +352,7 @@ class Domain:
                 title = util.getTitle(r.text)
                 self.addToList(r.url)
                 if m['Domain'] == m['Address']:
-                    msg = "{status} : {Type} : {title} : {Domain} : {url}".format(
+                    msg = "{status} | {Type} | {title} | {Domain} | {url}".format(
                         status=r.status_code,
                         Type=m['Type'],
                         title=title,
@@ -371,7 +371,7 @@ class Domain:
                     print(output)
                     sys.stdout.flush()
                 elif m['Type'] in ['A', 'AAAA']:
-                    msg = "{status} : {Type} : {title} : {Domain} ==> {Address} : {url}".format(
+                    msg = "{status} | {Type} | {title} | {Domain} ==> {Address} | {url}".format(
                         status=r.status_code,
                         Type=m['Type'],
                         title=title,
@@ -392,7 +392,7 @@ class Domain:
                     sys.stdout.flush()
                 else:
                     hostname = util.getHostname(m['Address'])
-                    msg = "{status} : {Type} : {title} :{Domain} ==> {Address} ==> {hostname} : {url}".format(
+                    msg = "{status} | {Type} | {title} | {Domain} ==> {Address} ==> {hostname} | {url}".format(
                         status=r.status_code,
                         Type=m['Type'],
                         title=title,
