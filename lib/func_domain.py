@@ -425,14 +425,23 @@ class Domain:
         if self.Domain_List == []:
             return
         with ThreadPoolExecutor(max_workers=self.max_workers) as pool:
-            results = pool.map(socket.gethostbyname, self.Domain_List)
+            results = pool.map(self.getHostByName, self.Domain_List)
             for i in results:
+                if i == None:
+                    continue
                 if i not in IP_dict.keys():
                     IP_dict[i] = 1
                 else:
                     IP_dict[i] += 1
         return IP_dict
 
+
+    def getHostByName(self, domain):
+        try:
+            host = socket.gethostbyname(domain)
+            return host
+        except:
+            return None
 
 
     def addToList(self, url):
