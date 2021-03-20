@@ -32,7 +32,7 @@ grequests==0.6.0
 HackRequests==1.2
 idna==2.9
 itsdangerous==1.1.0
-Jinja2==2.11.2
+Jinja2==2.11.3
 kombu==4.6.11
 lib==3.0.0
 MarkupSafe==1.1.1
