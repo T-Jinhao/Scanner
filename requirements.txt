@@ -17,7 +17,7 @@ colorama==0.4.3
 distlib==0.3.1
 Django==3.0.7
 django-filter==2.3.0
-djangorestframework==3.11.0
+djangorestframework==3.11.2
 dnspython==2.0.0
 et-xmlfile==1.0.1
 fasteners==0.15
