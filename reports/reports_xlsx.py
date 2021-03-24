@@ -20,7 +20,7 @@ class Report:
         :param cut: 用作文本切割
         '''
         self.report = report
-        self.taskname = taskname
+        self.taskname = str(taskname)
         self.sheetname = sheetname
         self.banner = banner
         self.suc_msg = suc_msg
@@ -83,7 +83,12 @@ class Report:
             wb.save(file)
             isS = True
         except:
-            isS = False
+            try:
+                bakFile = self.getAbsolutePath(self.taskname + '_bak')
+                wb.save(filename=bakFile)
+                isS = True
+            except:
+                isS = False
         return isS
 
     def appendWorkbook(self, file):
@@ -109,7 +114,12 @@ class Report:
             wb.save(file)
             isS = True
         except:
-            isS = False
+            try:
+                bakFile = self.getAbsolutePath(self.taskname+'_bak')
+                wb.save(filename=bakFile)
+                isS = True
+            except:
+                isS = False
         return isS
 
     def str2list(self, text):
