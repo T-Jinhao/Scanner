@@ -3,18 +3,16 @@
 #author:Jinhao
 
 import grequests
-from modules import config
 import urllib3
 import sys
 from lib.color_output import color_output
+from lib.load_config import Config
 from gevent import monkey
 
 urllib3.disable_warnings()
 monkey.patch_all(select=False, thread=False)
 sys.setrecursionlimit(1000000)
 
-HEADER = config.HEADERS
-PROXY = config.PROXY
 
 
 class Concurrent:
@@ -23,10 +21,24 @@ class Concurrent:
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
         }
         self.cookies = cookies
-        self.proxies = PROXY
-        # self.timeout = timeout
-        # self.threads = threads
         self.debug = debug
+        self.proxies = self.preProxies()
+
+    def preProxies(self):
+        config = Config().readConfig()
+        isProxy = config.getboolean("Proxy", "isProxy")
+        if isProxy:
+            http_protocol = config.get("Proxy", "http_protocol")
+            http = config.get("Proxy", "http")
+            https_protocol = config.get("Proxy", "https_protocol")
+            https = config.get("Proxy", "https")
+            proxies = {
+                'http': http_protocol + http,
+                'https': https_protocol + https
+            }
+            return proxies
+        else:
+            return {}
 
     def autoGetAccess(self, url, threads=5, timeout=5):
         if url.startswith('http://') or url.startswith('https://'):
@@ -41,7 +53,8 @@ class Concurrent:
                 url=url,
                 headers=self.headers,
                 cookies=self.cookies,
-                timeout=timeout
+                timeout=timeout,
+                proxies=self.proxies
             )]
             ret = grequests.map(res, exception_handler=self.err_handler, size=threads)
             return ret[0]
@@ -61,7 +74,8 @@ class Concurrent:
                     url='http://' + u.split('://')[-1],
                     headers=self.headers,
                     cookies=self.cookies,
-                    timeout=timeout
+                    timeout=timeout,
+                    proxies=self.proxies
                 ) for u in urls
             ]
             ret = grequests.map(res, exception_handler=self.err_handler, size=threads)
@@ -84,7 +98,8 @@ class Concurrent:
                 headers=self.headers,
                 cookies=self.cookies,
                 timeout=timeout,
-                data=data
+                data=data,
+                proxies=self.proxies
             )]
             ret = grequests.map(res, exception_handler=self.err_handler, size=threads)
             return ret[0]
