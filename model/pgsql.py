@@ -46,7 +46,7 @@ def drop_table(model):
         model.drop_table()
 
 
-def insert(model, data, instrument_id):
+def insert(model, data):
     '''
     向表中插入数据
     :param model: 对象模型
@@ -54,9 +54,6 @@ def insert(model, data, instrument_id):
     '''
     # 如果表不存在，创建表
     create_table(model)
-    # # 增加时间
-    # nowtime = datetime.datetime.utcnow()
-    data['instrument_id'] = instrument_id
     # print(data)
     # 向表中插入数据
     model.insert_many(data).execute()
