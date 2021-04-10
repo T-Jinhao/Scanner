@@ -18,6 +18,7 @@ from lib import celery_run,func_base,load_config
 from modules import _requests
 from modules import check
 from lib.color_output import *
+from interactive import app
 
 
 class Scanner():
@@ -214,7 +215,8 @@ def terminal_input():
 def main():
     args = terminal_input()
     if args.interactive:   # 控制台模式
-        print('xxx')
+        i = app.Interactive()
+        i.getInput()
     else:
         x = Scanner(args)
         x.url_check()  # 检查输入url
