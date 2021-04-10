@@ -1,7 +1,7 @@
 #coding ='utf-8'
 
 import urllib.request,urllib.error,urllib.parse
-from Sqliscan import useragents
+from modules.Sqliscan import useragents
 
 def gethtml(url, lastURL=False):
     """
