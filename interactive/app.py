@@ -6,7 +6,7 @@ from lib.color_output import *
 from interactive.funcs import main_actions
 
 Commands = {
-    'main': ['help', 'usemodule', 'search', 'exit', 'main', 'works'],
+    'main': ['help', 'usemodule', 'exit', 'main', 'works'],
     'burp': ['main', 'help', 'info', 'set'],
     'domain': ['main', 'help', 'info', 'set'],
     'scan': ['main', 'help', 'info', 'set'],
