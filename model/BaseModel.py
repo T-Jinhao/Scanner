@@ -1,6 +1,6 @@
 import json
 from peewee import *
-from sql.pgsql import get_connect
+from model.pgsql import get_connect
 from lib.load_config import Config
 
 
