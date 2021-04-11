@@ -4,6 +4,8 @@
 
 import sys
 from interactive.funcs import util
+from interactive.funcs import redisUtil
+r = redisUtil.Redis()
 
 Commands = {
     'info': ['Ip', 'Timeout', 'Ports', 'Workers', 'Taskname'],

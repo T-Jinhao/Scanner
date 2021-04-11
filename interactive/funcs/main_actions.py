@@ -48,9 +48,13 @@ def checkIn(enter):
     elif words[0] == 'info':      # 打印信息
         util.printInfo(words, Info)
     elif words[0] == 'set':
-        print('set')
+        setOption(words)
     return workbench
 
-
+def setOption(words):
+    if len(words) < 3:
+        util.printError('Please specify an option value')
+    else:
+        r.save()
 
 

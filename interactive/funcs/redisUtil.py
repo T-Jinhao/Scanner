@@ -6,27 +6,24 @@ import redis
 from lib.load_config import Config
 
 class Redis:
-    def __init__(self, taskname=''):
+    def __init__(self):
         config = Config().readConfig()
         host = config.get("Redis", "host")
         port = config.get("Redis", "port")
         password = config.get("Redis", "password")
         pool = redis.ConnectionPool(host=host, port=port, decode_responses=True, password=password)
         self.r = redis.Redis(connection_pool=pool)
-        self.taskname = taskname
 
     def query(self, key):
-        k = self.taskname + '_' + key
         try:
-            res = self.r.get(k)
+            res = self.r.get(key)
             return res
         except:
             return None
 
     def save(self, key, value):
-        k = self.taskname + '_' + key
         try:
-            self.r.set(k, value)
+            self.r.set(key, value)
         except:
             pass
 
