@@ -49,5 +49,5 @@ def checkIn(enter):
     elif words[0] == 'run':
         print('run')
     elif words[0] == 'info':
-        util.printInfo(Info)
+        util.printInfo(words, Info)
     return workbench

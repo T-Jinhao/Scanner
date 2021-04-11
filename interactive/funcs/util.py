@@ -24,12 +24,13 @@ def printBanner(*args):
     return
 
 def printHelp(words, Usage):
-    printBanner('Commands', 'Description')
     if len(words) == 1 or len(words) > 2:
+        printBanner('Commands', 'Description')
         for k,v in sorted(Usage.items()):
             output(k, v)
     else:
         if words[1] in Usage.keys():
+            printBanner('Commands', 'Description')
             output(words[1], Usage[words[1]])
         else:
             print("*** No help on {}".format(words[1]))
@@ -52,10 +53,17 @@ def printWarn(s):
     print(out.yellow('[!] Warn: {}'.format(s)))
     return
 
-def printInfo(Info):
-    printBanner('Name', 'Required', 'Value', 'Description')
-    for k, v in sorted(Info.items()):
-        output(k, v[0], v[1], v[2])
+def printInfo(words, Info):
+    if len(words) == 1 or len(words) > 2:
+        printBanner('Name', 'Required', 'Value', 'Description')
+        for k, v in sorted(Info.items()):
+            output(k, v[0], v[1], v[2])
+    else:
+        if words[1] in Info.keys():
+            printBanner('Name', 'Required', 'Value', 'Description')
+            output(words[1], Info[words[1]][0], Info[words[1]][1], Info[words[1]][2])
+        else:
+            print("*** No option on {}".format(words[1]))
     return
 
 def getConfigIni(model, name):
