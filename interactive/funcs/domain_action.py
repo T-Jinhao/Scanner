@@ -49,7 +49,7 @@ def checkIn(enter):
     elif words[0] == 'run':
         print('run')
     elif words[0] == 'info':
-        print('info')
+        util.printInfo(Info)
     return workbench
 
 

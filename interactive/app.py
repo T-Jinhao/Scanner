@@ -36,5 +36,7 @@ class Interactive():
         # 分配工作区
         if enter.split(' ')[0] in main_completer.Workbench[self.workbench]:
             self.workbench = Func[self.workbench].checkIn(enter)
+        elif enter == '':
+            pass
         else:
             self.workbench = Func[self.workbench].checkIn(enter='help')
