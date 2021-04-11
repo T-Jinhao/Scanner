@@ -9,7 +9,7 @@ out = ColorOutput()
 def output(*args):
     s = ''
     for x in args:
-        s += '{0:15}   '.format(x)
+        s += '{0:15}   '.format(str(x))
     print(s)
     return
 
@@ -17,7 +17,7 @@ def printBanner(*args):
     banner = ''
     interval = ''
     for x in args:
-        banner += "{0:15}   ".format(x)
+        banner += "{0:15}   ".format(str(x))
         interval += "{0:15}   ".format('-' * len(str(x)))
     print(banner)
     print(interval)

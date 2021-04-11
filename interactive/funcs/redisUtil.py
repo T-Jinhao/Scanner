@@ -32,6 +32,14 @@ class Redis:
 
     def initTask(self):
         try:
-            self.r.set('current_taskname', '')  # 每次启动前清空上次任务
+            self.r.set('current_Taskname', '')  # 每次启动前清空上次任务
         except:
             pass
+
+    def queryInitKey(self, key):
+        k = 'current_' + key
+        try:
+            res = self.r.get(k)
+            return res
+        except:
+            return
