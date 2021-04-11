@@ -6,7 +6,7 @@ import readline
 from lib.color_output import *
 from interactive.funcs import main_actions, burp_action, domain_action, port_action
 from interactive.completer import main_completer
-from interactive.funcs import redisUtil,util
+from interactive.funcs import redisUtil, util
 
 Func = {
     'main': main_actions,
@@ -29,7 +29,7 @@ class Interactive():
         readline.parse_and_bind("tab: complete")
         while 1:
             readline.set_completer(main_completer.Completer(Func[self.workbench].Commands).completer)  # 自动补全
-            enter = input("(Scanner\{}) > ".format(self.workbench))
+            enter = input("(Scanner\{}) > ".format(self.Output.green(self.workbench)))
             if enter == 'exit':
                 break
             self.checkIn(enter)

@@ -28,9 +28,9 @@ Usage = {
 }
 
 Info = {
-    'Ip': ['True', '', 'Target ip.'],
+    'Ip': ['False', '', 'Target ip.'],
     'Url': ['True', '', 'Target url.'],
-    'Taskname': ['False', '', 'The uniquely identifies of current work.']
+    'Taskname': ['True', '', 'The uniquely identifies of current work.']
 }
 
 def checkIn(enter):
