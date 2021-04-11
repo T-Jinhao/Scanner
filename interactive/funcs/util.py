@@ -2,6 +2,9 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
+from lib.color_output import ColorOutput
+out = ColorOutput()
+
 def output(key, value):
     print("{0:10}   {1:10}".format(key, value))
 
@@ -19,3 +22,13 @@ def printHelp(words, Usage):
             output(words[1], Usage[words[1]])
         else:
             print("*** No help on {}".format(words[1]))
+
+def usemodule(workbench, words, CMD=[]):
+    if len(words) != 2:
+        print(out.red('[!] Error: Invaild Module'))
+    elif words[1] not in CMD:
+        print(out.red('[!] Error: Invaild Module'))
+    else:
+        # print('use module', words[1])
+        workbench = words[1]
+    return workbench

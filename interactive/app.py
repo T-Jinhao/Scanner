@@ -3,7 +3,7 @@
 #author:Jinhao
 
 from lib.color_output import *
-from interactive.funcs import main_actions
+from interactive.funcs import main_actions, burp_action
 
 Commands = {
     'main': ['help', 'usemodule', 'exit', 'main', 'works'],
@@ -15,7 +15,8 @@ Commands = {
 }
 
 Func = {
-    'main': main_actions
+    'main': main_actions,
+    'burp': burp_action
 }
 
 class Interactive():
@@ -28,7 +29,7 @@ class Interactive():
 
     def getInput(self):
         while 1:
-            enter = input("({}) > ".format(self.workbench))
+            enter = input("(Scanner\{}) > ".format(self.workbench))
             if enter == 'exit':
                 break
             self.checkIn(enter)
@@ -36,6 +37,6 @@ class Interactive():
     def checkIn(self, enter, keywords=[]):
         # 分配工作区
         if enter.split(' ')[0] in Commands[self.workbench]:
-            Func[self.workbench].checkIn(enter)
+            self.workbench = Func[self.workbench].checkIn(enter)
         else:
-            Func[self.workbench].checkIn(enter='help')
+            self.workbench = Func[self.workbench].checkIn(enter='help')
