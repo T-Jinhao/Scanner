@@ -5,6 +5,7 @@
 import sys
 from interactive.funcs import util
 from interactive.funcs import redisUtil
+from interactive.check import common
 r = redisUtil.Redis()
 
 Commands = {
@@ -56,10 +57,21 @@ def setOption(words):
     if len(words) < 3:
         util.printError('Please specify an option value')
     else:
-        if words[1] in Commands['set']:
+        if checkSetValue(words[1], words[2]):
             key = 'current_' + words[1]
             r.save(key, words[2])
     return
+
+def checkSetValue(key, value):
+    if key not in Commands['set']:
+        return False
+    obj = common.Common()
+    if key == 'Url':
+        return obj.checkUrl(value)
+    elif key == 'Taskname':
+        return obj.checkTaskname(value)
+    elif key == 'Ip':
+        return obj.checkIp(value)
 
 def updateInfo():
     # 刷新数值
