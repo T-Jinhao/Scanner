@@ -3,7 +3,7 @@
 #author:Jinhao
 
 from lib.color_output import *
-from interactive.funcs import main_actions, burp_action, domain_action
+from interactive.funcs import main_actions, burp_action, domain_action, port_action
 
 Commands = {
     'main': ['help', 'usemodule', 'exit', 'main', 'works'],
@@ -17,7 +17,8 @@ Commands = {
 Func = {
     'main': main_actions,
     'burp': burp_action,
-    'domain': domain_action
+    'domain': domain_action,
+    'port': port_action
 }
 
 class Interactive():
