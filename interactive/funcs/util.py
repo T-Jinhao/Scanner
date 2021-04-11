@@ -12,7 +12,7 @@ def printBanner(banner):
 def printHelp(words, Usage):
     printBanner('Commands')
     if len(words) == 1 or len(words) > 2:
-        for k,v in Usage.items():
+        for k,v in sorted(Usage.items()):
             output(k, v)
     else:
         if words[1] in Usage.keys():
