@@ -7,11 +7,11 @@ from interactive.funcs import main_actions, burp_action
 
 Commands = {
     'main': ['help', 'usemodule', 'exit', 'main', 'works'],
-    'burp': ['main', 'help', 'info', 'set'],
-    'domain': ['main', 'help', 'info', 'set'],
-    'scan': ['main', 'help', 'info', 'set'],
-    'port': ['main', 'help', 'info', 'set'],
-    'search': ['main', 'help', 'info', 'reset', 'set']
+    'burp': ['main', 'help', 'info', 'set', 'run', 'exit', 'usemodule'],
+    'domain': ['main', 'help', 'info', 'set', 'usemodule'],
+    'scan': ['main', 'help', 'info', 'set', 'usemodule'],
+    'port': ['main', 'help', 'info', 'set', 'usemodule'],
+    'search': ['main', 'help', 'info', 'reset', 'set', 'usemodule']
 }
 
 Func = {
@@ -34,7 +34,7 @@ class Interactive():
                 break
             self.checkIn(enter)
 
-    def checkIn(self, enter, keywords=[]):
+    def checkIn(self, enter):
         # 分配工作区
         if enter.split(' ')[0] in Commands[self.workbench]:
             self.workbench = Func[self.workbench].checkIn(enter)

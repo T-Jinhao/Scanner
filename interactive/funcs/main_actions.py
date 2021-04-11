@@ -10,7 +10,8 @@ Commands = {
     'usemodule': ['burp', 'scan', 'domain', 'port'],
     'help': ['usemodule', 'exit', 'main', 'works'],
     'exit': [],
-    'main': []
+    'main': [],
+    'works':[]
 }
 
 Usage = {
@@ -31,7 +32,7 @@ def checkIn(enter):
     elif words[0] == 'exit':
         sys.exit(0)
     elif words[0] == 'main':
-        print('main')
+        workbench = 'main'
     elif words[0] == 'help':
         util.printHelp(words, Usage)
     return workbench
