@@ -22,9 +22,9 @@ Usage = {
     'info': 'Display burp module options.',
     'help': 'Displays the help menu.',
     'exit': 'Exit Scanner.',
-    'set': 'Set a burp option.',
+    'set': 'Set a port option.',
     'main': 'Back to the main menu.',
-    'run': 'Start the given burp module.',
+    'run': 'Start the given port module.',
     'usemodule': 'Use a Scanner module.',
 }
 
