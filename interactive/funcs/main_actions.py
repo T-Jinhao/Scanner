@@ -4,6 +4,7 @@
 
 import readline
 import sys
+from interactive.funcs import util
 
 Commands = {
     'usemodule': ['burp', 'scan', 'domain', 'port'],
@@ -29,11 +30,9 @@ def checkIn(enter):
     elif words[0] == 'main':
         print('main')
     elif words[0] == 'help':
-        printHelp(words)
+        util.printHelp(words, Usage)
 
 
-def output(key, value):
-    print("{0:10}   {1:10}".format(key, value))
 
 # def completer(text, state, CMD=[]):
 #     options = [cmd for cmd in CMD if cmd.startswith(text)]
@@ -45,17 +44,3 @@ def output(key, value):
 # readline.parse_and_bind("tab: complete")
 # readline.set_completer(completer)
 
-def printBanner(banner):
-    print("{0}\n{1}".format(banner, '='*len(banner)))
-    return
-
-def printHelp(words):
-    printBanner('Commands')
-    if len(words) == 1 or len(words) > 2:
-        for k,v in Usage.items():
-            output(k, v)
-    else:
-        if words[1] in Usage.keys():
-            output(words[1], Usage[words[1]])
-        else:
-            print("*** No help on {}".format(words[1]))
