@@ -7,9 +7,9 @@ import readline
 Workbench = {
     'main': ['help', 'usemodule', 'exit', 'main', 'set', 'info'],
     'burp': ['main', 'help', 'info', 'set', 'run', 'exit', 'usemodule'],
-    'domain': ['main', 'help', 'info', 'set', 'usemodule', 'exit'],
-    'scan': ['main', 'help', 'info', 'set', 'usemodule', 'exit'],
-    'port': ['main', 'help', 'info', 'set', 'usemodule', 'exit'],
+    'domain': ['main', 'help', 'info', 'set', 'usemodule', 'exit', 'run'],
+    'scan': ['main', 'help', 'info', 'set', 'usemodule', 'exit', 'run'],
+    'port': ['main', 'help', 'info', 'set', 'usemodule', 'exit', 'run'],
     'search': ['main', 'help', 'info', 'reset', 'set', 'usemodule', 'exit']
 }
 class Completer:

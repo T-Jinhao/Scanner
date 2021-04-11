@@ -5,6 +5,7 @@
 import sys
 from interactive.funcs import util
 from interactive.check import port, set
+from interactive.run import Port
 from interactive.funcs import redisUtil
 r = redisUtil.Redis()
 
@@ -50,7 +51,7 @@ def checkIn(enter):
     elif words[0] == 'help':
         util.printHelp(words, Usage)
     elif words[0] == 'run':
-        print('run')
+        run()
     elif words[0] == 'info':
         util.printInfo(words, Info)
     return workbench
@@ -85,3 +86,7 @@ def checkSetValue(key, value):
             Info[key][1] = ip
             r.save(k, ip)
         return False  # 独立保存
+
+def run():
+    obj = Port.port()
+    obj.checkRequired(Info)
