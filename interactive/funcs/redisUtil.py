@@ -27,9 +27,9 @@ class Redis:
         except:
             pass
 
-    def initTask(self):
+    def initTask(self, ran_str):
         try:
-            self.r.set('current_Taskname', '')  # 每次启动前清空上次任务
+            self.r.set('current_Taskname', ran_str)
         except:
             pass
 

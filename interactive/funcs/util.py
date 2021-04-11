@@ -2,6 +2,8 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
+import random
+import string
 from lib.load_config import Config
 from lib.color_output import ColorOutput
 out = ColorOutput()
@@ -70,3 +72,7 @@ def getConfigIni(model, name):
     config = Config().readConfig()
     res = config.get(model, name)
     return res
+
+def getRangeStr(len=6):
+    ran_str = ''.join(random.sample(string.ascii_letters + string.digits, len))
+    return ran_str
