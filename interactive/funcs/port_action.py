@@ -6,7 +6,7 @@ import sys
 from interactive.funcs import util
 
 Commands = {
-    'info': [],
+    'info': ['Ip', 'Timeout', 'Ports', 'Workers', 'Taskname'],
     'set': ['Ip', 'Ports', 'Timeout', 'Workers', 'Taskname'],
     'usemodule': ['burp', 'scan', 'domain', 'port'],
     'run': [],
