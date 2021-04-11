@@ -2,16 +2,15 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
-import readline
 import sys
 from interactive.funcs import util
 
 Commands = {
-    'usemodule': ['burp', 'scan', 'domain', 'port'],
-    'help': ['usemodule', 'exit', 'main', 'works'],
-    'exit': [],
-    'main': [],
-    'works': []
+    'usemodule': ['burp', 'scan', 'domain', 'port'],  # 功能模块
+    'help': ['usemodule', 'exit', 'main', 'works'],   # 帮助
+    'exit': [],   # 退出程序
+    'main': [],   # 回到主页面
+    'works': []   # 查看后台工作
 }
 
 Usage = {
@@ -39,13 +38,4 @@ def checkIn(enter):
 
 
 
-# def completer(text, state, CMD=[]):
-#     options = [cmd for cmd in CMD if cmd.startswith(text)]
-#     if state < len(options):
-#         return options[state]
-#     else:
-#         return None
-#
-# readline.parse_and_bind("tab: complete")
-# readline.set_completer(completer)
 
