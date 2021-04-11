@@ -17,7 +17,7 @@ class Completer:
         self.option = option
 
     def completer(self, text, state):
-        options = [cmd for cmd in self.option if cmd.startswith(text)]
+        options = [cmd for cmd in sorted(self.option) if cmd.startswith(text)]
         if state < len(options):
             return options[state]
         else:
