@@ -40,6 +40,8 @@ def checkIn(enter):
         util.printHelp(words, Usage)
     elif words[0] == 'run':
         print('run')
+    elif words[0] == 'info':
+        print('info')
     return workbench
 
 

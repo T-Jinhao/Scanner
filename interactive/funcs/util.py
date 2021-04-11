@@ -38,3 +38,7 @@ def usemodule(workbench, words, CMD=[]):
         # print('use module', words[1])
         workbench = words[1]
     return workbench
+
+def printError(str):
+    print(out.red('[!] Error: {}'.format(str)))
+    return
