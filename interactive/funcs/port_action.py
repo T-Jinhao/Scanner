@@ -7,7 +7,7 @@ from interactive.funcs import util
 
 Commands = {
     'info': [],
-    'set': ['Ip', 'Ports', 'Timeout', 'Workers'],
+    'set': ['Ip', 'Ports', 'Timeout', 'Workers', 'Taskname'],
     'usemodule': ['burp', 'scan', 'domain', 'port'],
     'run': [],
     'exit': [],
@@ -27,9 +27,10 @@ Usage = {
 
 Info = {
     'Ip': ['True', '', 'Target ip.'],
-    'Ports': ['False', 'Comman Ports', 'Target port range.'],
-    'Timeout': ['False', '5', 'Timeout of a socket connect.'],
-    'Workers': ['False', '50', 'Max number of workers'],
+    'Ports': ['False', 'Common', 'Target port range.'],
+    'Timeout': ['False', util.getConfigIni('Ports', 'timeout'), 'Timeout of a socket connect.'],
+    'Workers': ['False', util.getConfigIni('Ports', 'max_workers'), 'Max number of workers'],
+    'Taskname': ['False', '', 'The uniquely identifies of current work.']
 }
 
 def checkIn(enter):

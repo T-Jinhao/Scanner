@@ -2,13 +2,14 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
+from lib.load_config import Config
 from lib.color_output import ColorOutput
 out = ColorOutput()
 
 def output(*args):
     s = ''
     for x in args:
-        s += '{0:10}   '.format(x)
+        s += '{0:15}   '.format(x)
     print(s)
     return
 
@@ -16,8 +17,8 @@ def printBanner(*args):
     banner = ''
     interval = ''
     for x in args:
-        banner += "{0:10}   ".format(x)
-        interval += "{0:10}   ".format('-' * len(str(x)))
+        banner += "{0:15}   ".format(x)
+        interval += "{0:15}   ".format('-' * len(str(x)))
     print(banner)
     print(interval)
     return
@@ -50,3 +51,8 @@ def printError(s):
 def printWarn(s):
     print(out.yellow('[!] Warn: {}'.format(s)))
     return
+
+def getConfigIni(model, name):
+    config = Config().readConfig()
+    res = config.get(model, name)
+    return res
