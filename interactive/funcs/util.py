@@ -8,12 +8,18 @@ out = ColorOutput()
 def output(key, value):
     print("{0:10}   {1:10}".format(key, value))
 
-def printBanner(banner):
-    print("{0}\n{1}".format(banner, '='*len(banner)))
+def printBanner(*args):
+    banner = ''
+    interval = ''
+    for x in args:
+        banner += "{0:10}   ".format(x)
+        interval += "{0:10}   ".format('=' * len(str(x)))
+    print(banner)
+    print(interval)
     return
 
 def printHelp(words, Usage):
-    printBanner('Commands')
+    printBanner('Commands', 'Description')
     if len(words) == 1 or len(words) > 2:
         for k,v in sorted(Usage.items()):
             output(k, v)
