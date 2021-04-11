@@ -27,9 +27,9 @@ Usage = {
 }
 
 Info = {
-    'Ip': ['True', r.queryInitKey('Ip'), 'Target ip.'],
-    'Url': ['True', r.queryInitKey('Url'), 'Target url.'],
-    'Taskname': ['False', r.queryInitKey('Taskname'), 'The uniquely identifies of current work.']
+    'Ip': ['True', '', 'Target ip.'],
+    'Url': ['True', '', 'Target url.'],
+    'Taskname': ['False', '', 'The uniquely identifies of current work.']
 }
 
 def checkIn(enter):
@@ -46,6 +46,7 @@ def checkIn(enter):
     elif words[0] == 'help':      # 打印帮助信息
         util.printHelp(words, Usage)
     elif words[0] == 'info':      # 打印信息
+        updateInfo()
         util.printInfo(words, Info)
     elif words[0] == 'set':
         setOption(words)
@@ -55,6 +56,15 @@ def setOption(words):
     if len(words) < 3:
         util.printError('Please specify an option value')
     else:
-        r.save()
+        if words[1] in Commands['set']:
+            key = 'current_' + words[1]
+            r.save(key, words[2])
+    return
+
+def updateInfo():
+    # 刷新数值
+    for i in Info:
+        Info[i][1] = r.queryInitKey(i)
+    return
 
 

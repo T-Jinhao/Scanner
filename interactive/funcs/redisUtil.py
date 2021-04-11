@@ -30,6 +30,8 @@ class Redis:
     def initTask(self, ran_str):
         try:
             self.r.set('current_Taskname', ran_str)
+            self.r.set('current_Url', '')
+            self.r.set('current_Ip', '')
         except:
             pass
 
