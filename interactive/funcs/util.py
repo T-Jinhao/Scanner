@@ -31,14 +31,18 @@ def printHelp(words, Usage):
 
 def usemodule(workbench, words, CMD=[]):
     if len(words) != 2:
-        print(out.red('[!] Error: Invaild Module'))
+        printError('Invaild Module')
     elif words[1] not in CMD:
-        print(out.red('[!] Error: Invaild Module'))
+        printError('Invaild Module')
     else:
         # print('use module', words[1])
         workbench = words[1]
     return workbench
 
-def printError(str):
-    print(out.red('[!] Error: {}'.format(str)))
+def printError(s):
+    print(out.red('[!] Error: {}'.format(s)))
+    return
+
+def printWarn(s):
+    print(out.yellow('[!] Warn: {}'.format(s)))
     return
