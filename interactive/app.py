@@ -26,7 +26,7 @@ class Interactive():
     def getInput(self):
         readline.parse_and_bind("tab: complete")
         while 1:
-            readline.set_completer(main_completer.Completer(Func[self.workbench].Commands.keys()).completer)  # 自动补全
+            readline.set_completer(main_completer.Completer(Func[self.workbench].Commands).completer)  # 自动补全
             enter = input("(Scanner\{}) > ".format(self.workbench))
             if enter == 'exit':
                 break

@@ -25,15 +25,15 @@ Usage = {
 def checkIn(enter):
     workbench = 'main'
     words = enter.split(' ')
-    if words[0] == 'usemodule':
+    if words[0] == 'usemodule':   # 调用其他模块
         workbench = util.usemodule('main', words, Commands['usemodule'])
-    elif words[0] == 'works':
+    elif words[0] == 'works':     # 查看运行中任务
         print('works')
-    elif words[0] == 'exit':
+    elif words[0] == 'exit':      # 退出程序
         sys.exit(0)
-    elif words[0] == 'main':
+    elif words[0] == 'main':      # 回到主控制台页面
         workbench = 'main'
-    elif words[0] == 'help':
+    elif words[0] == 'help':      # 打印帮助信息
         util.printHelp(words, Usage)
     return workbench
 

@@ -17,7 +17,11 @@ class Completer:
         self.option = option
 
     def completer(self, text, state):
-        options = [cmd for cmd in sorted(self.option) if cmd.startswith(text)]
+        keys = self.option.keys()
+        buffer = readline.get_line_buffer()   # 获取当前命令行缓存的内容
+        if buffer.split(' ')[0] in sorted(self.option.keys()):
+            keys = self.option[buffer.split(' ')[0]]
+        options = [cmd for cmd in sorted(keys) if cmd.startswith(text)]
         if state < len(options):
             return options[state]
         else:
