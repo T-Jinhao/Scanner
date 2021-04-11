@@ -7,7 +7,7 @@ from interactive.funcs import util
 
 Commands = {
     'info': [],
-    'set': ['Url', 'Payload', 'Timeout'],
+    'set': ['Url', 'Payload', 'Timeout', 'Workers'],
     'usemodule': ['burp', 'scan', 'domain', 'port'],
     'run': [],
     'exit': [],

@@ -7,7 +7,7 @@ from interactive.funcs import util
 
 Commands = {
     'info': [],
-    'set': ['Url', 'Payload', 'Timeout', 'Workers'],
+    'set': ['Url', 'Ports', 'Timeout', 'Workers'],
     'usemodule': ['burp', 'scan', 'domain', 'port'],
     'run': [],
     'exit': [],
@@ -26,10 +26,10 @@ Usage = {
 }
 
 def checkIn(enter):
-    workbench = 'domain'
+    workbench = 'port'
     words = enter.split(' ')
     if words[0] == 'usemodule':
-        workbench = util.usemodule('domain', words, Commands['usemodule'])
+        workbench = util.usemodule('port', words, Commands['usemodule'])
     elif words[0] == 'set':
         print('set')
     elif words[0] == 'exit':
