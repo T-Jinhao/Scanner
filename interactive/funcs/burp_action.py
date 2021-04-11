@@ -7,7 +7,7 @@ from interactive.funcs import util
 
 Commands = {
     'info': [],
-    'set': ['Url', 'Payload', 'Timeout', 'Workers'],
+    'set': ['Url', 'Payload', 'Timeout', 'Workers', 'Taskname'],
     'usemodule': ['burp', 'scan', 'domain', 'port'],
     'run': [],
     'exit': [],
@@ -23,6 +23,14 @@ Usage = {
     'main': 'Back to the main menu.',
     'run': 'Start the given burp module.',
     'usemodule': 'Use a Scanner module.',
+}
+
+Info = {
+    'Url': ['True', '', 'Target url.'],
+    'Timeout': ['False', util.getConfigIni('Burp', 'timeout'), 'Timeout of a requests connect.'],
+    'Workers': ['False', util.getConfigIni('Burp', 'threads'), 'Max number of workers'],
+    'Payload': ['False', '', 'The path of the record text file.'],
+    'Taskname': ['False', '', 'The uniquely identifies of current work.']
 }
 
 def checkIn(enter):
@@ -41,7 +49,7 @@ def checkIn(enter):
     elif words[0] == 'run':
         print('run')
     elif words[0] == 'info':
-        print('info')
+        util.printInfo(Info)
     return workbench
 
 

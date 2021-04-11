@@ -49,14 +49,5 @@ def checkIn(enter):
     elif words[0] == 'run':
         print('run')
     elif words[0] == 'info':
-        info()
+        util.printInfo(Info)
     return workbench
-
-def info():
-    util.printBanner('Name', 'Required', 'Value', 'Description')
-    for k, v in sorted(Info.items()):
-        util.output(k, v[0], v[1], v[2])
-    return
-
-
-

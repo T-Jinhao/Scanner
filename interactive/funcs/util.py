@@ -52,6 +52,12 @@ def printWarn(s):
     print(out.yellow('[!] Warn: {}'.format(s)))
     return
 
+def printInfo(Info):
+    printBanner('Name', 'Required', 'Value', 'Description')
+    for k, v in sorted(Info.items()):
+        output(k, v[0], v[1], v[2])
+    return
+
 def getConfigIni(model, name):
     config = Config().readConfig()
     res = config.get(model, name)
