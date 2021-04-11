@@ -6,7 +6,7 @@ import readline
 from lib.color_output import *
 from interactive.funcs import main_actions, burp_action, domain_action, port_action
 from interactive.completer import main_completer
-
+from interactive.funcs import redisUtil
 
 Func = {
     'main': main_actions,
@@ -21,6 +21,7 @@ class Interactive():
         self.url = ''
         self.action = ''
         self.workbench = 'main'
+        redisUtil.Redis().initTask()   # 初始化
         print(self.Output.green("[ Scanner Console Start ]"))
 
     def getInput(self):

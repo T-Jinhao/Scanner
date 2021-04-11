@@ -6,7 +6,7 @@ import redis
 from lib.load_config import Config
 
 class Redis:
-    def __init__(self, taskname):
+    def __init__(self, taskname=''):
         config = Config().readConfig()
         host = config.get("Redis", "host")
         port = config.get("Redis", "port")
@@ -27,5 +27,11 @@ class Redis:
         k = self.taskname + '_' + key
         try:
             self.r.set(k, value)
+        except:
+            pass
+
+    def initTask(self):
+        try:
+            self.r.set('current_taskname', '')  # 每次启动前清空上次任务
         except:
             pass
