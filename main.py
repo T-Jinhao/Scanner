@@ -103,7 +103,7 @@ class Scanner():
             if res:    # ip形式的名称，需要改名
                 today = datetime.datetime.today()
                 formatted_today = today.strftime('%y%m%d')
-                self.name = formatted_today
+                self.taskname = formatted_today
             else:
                 n = netloc.split(".")
                 if len(n) == 2:

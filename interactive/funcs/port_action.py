@@ -89,4 +89,6 @@ def checkSetValue(key, value):
 
 def run():
     obj = Port.port()
-    obj.checkRequired(Info)
+    if obj.checkRequired(Info):
+        obj.run(Info)
+
