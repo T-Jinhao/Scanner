@@ -11,7 +11,7 @@ Commands = {
     'help': ['usemodule', 'exit', 'main', 'works'],
     'exit': [],
     'main': [],
-    'works':[]
+    'works': []
 }
 
 Usage = {

@@ -2,17 +2,11 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
+import readline
 from lib.color_output import *
 from interactive.funcs import main_actions, burp_action, domain_action, port_action
+from interactive.completer import main_completer
 
-Commands = {
-    'main': ['help', 'usemodule', 'exit', 'main', 'works'],
-    'burp': ['main', 'help', 'info', 'set', 'run', 'exit', 'usemodule'],
-    'domain': ['main', 'help', 'info', 'set', 'usemodule'],
-    'scan': ['main', 'help', 'info', 'set', 'usemodule'],
-    'port': ['main', 'help', 'info', 'set', 'usemodule'],
-    'search': ['main', 'help', 'info', 'reset', 'set', 'usemodule']
-}
 
 Func = {
     'main': main_actions,
@@ -30,7 +24,9 @@ class Interactive():
         print(self.Output.green("[ Scanner Console Start ]"))
 
     def getInput(self):
+        readline.parse_and_bind("tab: complete")
         while 1:
+            readline.set_completer(main_completer.Completer(Func[self.workbench].Commands.keys()).completer)  # 自动补全
             enter = input("(Scanner\{}) > ".format(self.workbench))
             if enter == 'exit':
                 break
@@ -38,7 +34,7 @@ class Interactive():
 
     def checkIn(self, enter):
         # 分配工作区
-        if enter.split(' ')[0] in Commands[self.workbench]:
+        if enter.split(' ')[0] in main_completer.Workbench[self.workbench]:
             self.workbench = Func[self.workbench].checkIn(enter)
         else:
             self.workbench = Func[self.workbench].checkIn(enter='help')
