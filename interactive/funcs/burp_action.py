@@ -41,7 +41,7 @@ def checkIn(enter):
     if words[0] == 'usemodule':
         workbench = util.usemodule('burp', words, Commands['usemodule'])
     elif words[0] == 'set':
-        print('set')
+        setOption(words)
     elif words[0] == 'exit':
         sys.exit(0)
     elif words[0] == 'main':
@@ -54,5 +54,13 @@ def checkIn(enter):
         util.printInfo(words, Info)
     return workbench
 
-
+def setOption(words):
+    if len(words) < 3:
+        util.printError('Please specify an option value')
+    else:
+        if words[1] in Commands['set']:
+            key = 'current_' + words[1]
+            Info[words[1]][1] = words[2]
+            r.save(key, words[2])
+    return
 
