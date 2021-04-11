@@ -4,6 +4,7 @@
 
 import sys
 from interactive.funcs import util
+from interactive.check import port
 from interactive.funcs import redisUtil
 r = redisUtil.Redis()
 
@@ -28,8 +29,8 @@ Usage = {
 }
 
 Info = {
-    'Ip': ['True', '', 'Target ip.'],
-    'Ports': ['False', 'Common', 'Target port range.'],
+    'Ip': ['True', '', 'Target ip,if input an url,it will parse to ip'],
+    'Ports': ['False', 'Common', 'Target port range,example:1-80;or 80,443,3306'],
     'Timeout': ['False', util.getConfigIni('Ports', 'timeout'), 'Timeout of a socket connect.'],
     'Workers': ['False', util.getConfigIni('Ports', 'max_workers'), 'Max number of workers'],
     'Taskname': ['False', '', 'The uniquely identifies of current work.']
@@ -58,8 +59,23 @@ def setOption(words):
     if len(words) < 3:
         util.printError('Please specify an option value')
     else:
-        if words[1] in Commands['set']:
+        if checkSetValue(words[1], words[2]):
             key = 'current_' + words[1]
             Info[words[1]][1] = words[2]
             r.save(key, words[2])
     return
+
+def checkSetValue(key, value):
+    if key not in Commands['set']:
+        return False
+    obj = port.port()
+    if key == 'Timeout':
+        return obj.checkTimeout(value)
+    elif key == 'Ports':
+        return obj.checkPort(value)
+    elif key == 'Workers':
+        return obj.checkWorkers(value)
+    elif key == 'Taskname':
+        return obj.checkTaskname(value)
+    elif key == 'Ip':
+        return obj.checkIp(value)
