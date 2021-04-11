@@ -7,7 +7,7 @@ from interactive.funcs import util
 
 Commands = {
     'info': [],
-    'set': ['Url', 'Ports', 'Timeout', 'Workers'],
+    'set': ['Ip', 'Ports', 'Timeout', 'Workers'],
     'usemodule': ['burp', 'scan', 'domain', 'port'],
     'run': [],
     'exit': [],
@@ -23,6 +23,13 @@ Usage = {
     'main': 'Back to the main menu.',
     'run': 'Start the given burp module.',
     'usemodule': 'Use a Scanner module.',
+}
+
+Info = {
+    'Ip': ['True', '', 'Target ip.'],
+    'Ports': ['False', 'Comman Ports', 'Target port range.'],
+    'Timeout': ['False', '5', 'Timeout of a socket connect.'],
+    'Workers': ['False', '50', 'Max number of workers'],
 }
 
 def checkIn(enter):
@@ -41,8 +48,14 @@ def checkIn(enter):
     elif words[0] == 'run':
         print('run')
     elif words[0] == 'info':
-        print('info')
+        info()
     return workbench
+
+def info():
+    util.printBanner('Name', 'Required', 'Value', 'Description')
+    for k, v in sorted(Info.items()):
+        util.output(k, v[0], v[1], v[2])
+    return
 
 
 

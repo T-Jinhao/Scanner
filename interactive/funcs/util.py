@@ -5,15 +5,19 @@
 from lib.color_output import ColorOutput
 out = ColorOutput()
 
-def output(key, value):
-    print("{0:10}   {1:10}".format(key, value))
+def output(*args):
+    s = ''
+    for x in args:
+        s += '{0:10}   '.format(x)
+    print(s)
+    return
 
 def printBanner(*args):
     banner = ''
     interval = ''
     for x in args:
         banner += "{0:10}   ".format(x)
-        interval += "{0:10}   ".format('=' * len(str(x)))
+        interval += "{0:10}   ".format('-' * len(str(x)))
     print(banner)
     print(interval)
     return
