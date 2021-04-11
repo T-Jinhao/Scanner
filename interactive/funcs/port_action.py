@@ -4,7 +4,7 @@
 
 import sys
 from interactive.funcs import util
-from interactive.check import port
+from interactive.check import port, set
 from interactive.funcs import redisUtil
 r = redisUtil.Redis()
 
@@ -78,4 +78,10 @@ def checkSetValue(key, value):
     elif key == 'Taskname':
         return obj.checkTaskname(value)
     elif key == 'Ip':
-        return obj.checkIp(value)
+        obj.checkIp(value)
+        ip = set.getIp(value)
+        if ip != False:
+            k = 'current_' + key
+            Info[key][1] = ip
+            r.save(k, ip)
+        return False  # 独立保存

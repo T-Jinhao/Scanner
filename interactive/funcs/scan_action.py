@@ -4,7 +4,7 @@
 
 import sys
 from interactive.funcs import util
-from interactive.check import scan
+from interactive.check import scan, set
 from interactive.funcs import redisUtil
 r = redisUtil.Redis()
 
@@ -76,6 +76,12 @@ def checkSetValue(key, value):
     elif key == 'Cookie':
         return obj.setCookie(value)
     elif key == 'Url':
-        return obj.checkUrl(value)
+        obj.checkUrl(value)
+        url = set.checkUrl(value)
+        if url != False:
+            k = 'current_' + key
+            Info[key][1] = url
+            r.save(k, url)
+        return False  # 独立保存
     elif key == 'Workers':
         return obj.checkWorkers(value)

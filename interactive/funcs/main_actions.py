@@ -5,7 +5,7 @@
 import sys
 from interactive.funcs import util
 from interactive.funcs import redisUtil
-from interactive.check import common
+from interactive.check import common, set
 r = redisUtil.Redis()
 
 Commands = {
@@ -67,11 +67,23 @@ def checkSetValue(key, value):
         return False
     obj = common.Common()
     if key == 'Url':
-        return obj.checkUrl(value)
+        obj.checkUrl(value)
+        url = set.checkUrl(value)
+        if url != False:
+            k = 'current_' + key
+            Info[key][1] = url
+            r.save(k, url)
+        return False  # 独立保存
     elif key == 'Taskname':
         return obj.checkTaskname(value)
     elif key == 'Ip':
-        return obj.checkIp(value)
+        obj.checkIp(value)
+        ip = set.getIp(value)
+        if ip != False:
+            k = 'current_' + key
+            Info[key][1] = ip
+            r.save(k, ip)
+        return False  # 独立保存
 
 def updateInfo():
     # 刷新数值

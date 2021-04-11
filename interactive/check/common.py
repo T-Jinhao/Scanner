@@ -53,7 +53,6 @@ class Common:
         if re.match('(http|https)://(.*?)\.(.*)',url):     # 匹配以http|https开头的网站
             return True
         elif re.match('(.*?)\.(.*)',url):                  # 匹配xxx.xxx...规则的网站
-            self.args.url = "http://"+url                # 添加协议头
             return True
         util.printError('Invaild Url')
         return False

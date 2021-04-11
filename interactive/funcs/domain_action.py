@@ -4,7 +4,7 @@
 
 import sys
 from interactive.funcs import util
-from interactive.check import common
+from interactive.check import common, set
 from interactive.funcs import redisUtil
 r = redisUtil.Redis()
 
@@ -74,8 +74,19 @@ def checkSetValue(key, value):
     elif key == 'Taskname':
         return obj.checkTaskname(value)
     elif key == 'Ip':
-        return obj.checkIp(value)
+        ip = set.getIp(value)
+        if ip != False:
+            k = 'current_' + key
+            Info[key][1] = ip
+            r.save(k, ip)
+        return False  # 独立保存
     elif key == 'Workers':
         return obj.checkWorkers(value)
     elif key == 'Url':
-        return obj.checkUrl(value)
+        obj.checkUrl(value)
+        url = set.checkUrl(value)
+        if url != False:
+            k = 'current_' + key
+            Info[key][1] = url
+            r.save(k, url)
+        return False  # 独立保存
