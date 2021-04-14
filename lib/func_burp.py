@@ -2,14 +2,13 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
-import os
 import re
 from reports import reports_txt,reports_xlsx
 from urllib.parse import urlparse
-from concurrent.futures import ThreadPoolExecutor
 from .color_output import *
 from .load_config import Config
-from modules import util
+from modules.func import util
+
 
 class Burp():
     def __init__(self, url, payload, REQ, name, flag):

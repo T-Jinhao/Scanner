@@ -2,14 +2,9 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
-import sys,os
 from urllib.parse import urlparse
-from sqlmapapi import *
 from reports import reports_txt
-from Sqliscan import std
-from Sqliscan import sqlerrors
-from Sqliscan import web
-from Sqliscan import serverinfo
+from modules.Sqliscan import sqlerrors, web
 import threading,time,requests,json
 from .color_output import *
 

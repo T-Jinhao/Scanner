@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from reports import reports_txt,reports_xlsx
 from .load_config import Config
 from .color_output import *
+from modules.func import sniffPort
 
 port_dict = {
     21:'ftp',
@@ -60,8 +61,9 @@ class Ports():
         else:
             ports = self.scan_ports()
         print(self.Output.blue('[ schedule ] ') + self.Output.cyan('准备就绪，开始扫描'))
-        report = self.run(ports)
-        self.saveResult(report)
+        report = self.run(ports)   # 获取开放端口
+        new_report = self.showReport(report)
+        self.saveResult(new_report)
         print(self.Output.fuchsia('-' * 40 + 'PortsScan<<<<<' + '\n'))
         return
 
@@ -124,63 +126,36 @@ class Ports():
 
     def run(self,port):
         '''
-        调用线程池开始探测
+        调用异步开始探测
         :param port:
         :return:
         '''
-        reports = []
-        with ThreadPoolExecutor(max_workers=self.max_workers) as pool:
-            results = pool.map(self.scan, port)
-            for result in results:
-                if result['flag']:
-                    # color_output(result['msg'], color='GREEN')
-                    reports.append(result['msg'])
+        sniff = sniffPort.ScanPort(
+            ip=self.host,
+            port=port,
+            time_out=self.timeout,
+            concurrency=self.max_workers
+        )
+        sniff.loop.run_until_complete(sniff.start())
+        reports = sniff.retResult()
         return reports
 
-
-    def scan(self,port):
-        '''
-        扫描端口
-        :param port: 需要扫描的端口
-        :return:
-        '''
-        sock = socket(AF_INET, SOCK_STREAM)
-        sock.settimeout(self.timeout)
-        result = sock.connect_ex((self.host, port))
-        if result == 0:
-            banner = self.getBanner(sock)
-            if port in port_dict:
-                msg = " {0} : {1} : {2}已开启  :  {3}".format(self.host, str(port), port_dict[port], banner)
-                print(self.Output.green('[ result ] ')
-                      + self.Output.fuchsia('port:') + self.Output.green(port) + self.Output.interval()
-                      + self.Output.fuchsia('server:') + self.Output.green(port_dict[port]) + self.Output.interval()
-                      + self.Output.fuchsia('banner:') + self.Output.green(banner)
-                      )
+    def showReport(self, reports):
+        new_report = []
+        for r in reports:
+            if r['port'] in port_dict:
+                service = port_dict[r['port']]
             else:
-                msg = "{0} : {1} : 已开启  : {2}".format(self.host, str(port), banner)
-                print(self.Output.green('[ result ] ')
-                      + self.Output.fuchsia('port:') + self.Output.green(port) + self.Output.interval()
-                      + self.Output.fuchsia('banner:') + self.Output.green(banner)
-                      )
-            m = {'msg':msg,'flag':1}
-            return m
-        else:
-            m = {'flag':0}
-            return m
+                service = 'unrecognized'
+            print(self.Output.green('[ result ] ')
+                  + self.Output.fuchsia('port: ') + self.Output.green(r['port']) + self.Output.interval()
+                  + self.Output.fuchsia('server: ') + self.Output.green(service) + self.Output.interval()
+                  + self.Output.fuchsia('banner: ') + self.Output.green(r['banner'])
+                  )
+            msg = "{0} : {1} : {2}  : {3}".format(self.host, str(r['port']), service, str(r['banner']))
+            new_report.append(msg)
+        return new_report
 
-    def getBanner(self, sock):
-        '''
-        获取端口banner信息
-        :param sock:
-        :return:
-        '''
-        try:
-            banner = sock.recv(1024)
-            banner = banner.strip()
-        except:
-            banner = ''
-        sock.close()  # 关闭连接
-        return banner
 
 
 

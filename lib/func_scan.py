@@ -2,13 +2,11 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
-import sys
 import re
-import os
 import time
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-from modules import util
+from modules.func import util
 from .color_output import *
 from .load_config import Config
 from reports import reports_xlsx,reports_txt

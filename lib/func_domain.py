@@ -2,7 +2,6 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
-import os
 import re
 import hashlib
 import dns.resolver
@@ -17,7 +16,8 @@ from reports import reports_txt,reports_xlsx
 from concurrent.futures import ThreadPoolExecutor
 from .color_output import *
 from .load_config import Config
-from modules import util
+from modules.func import util
+
 
 class Domain:
     def __init__(self, url, payload, REQ, name, flag):

@@ -2,23 +2,22 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
-import grequests   # 入口文件必须添加，防止monkey报错
 import argparse
-import sys
-import os
 import re
 import threading
 import time
 import datetime
+import warnings
 from urllib import parse
 from urllib.parse import urlparse
 import socket
 from lib import func_sqli,func_hosts,func_domain,func_ports,func_burp,func_scan,func_login
 from lib import celery_run,func_base,load_config
-from modules import _requests
-from modules import check
+from modules.func import check, _requests
 from lib.color_output import *
+from interactive import app
 
+warnings.filterwarnings('ignore')
 
 class Scanner():
     def __init__(self, args):
@@ -192,6 +191,7 @@ def terminal_input():
         sys.argv.append('-h')
     parser = argparse.ArgumentParser(description='简易扫描器，[]内为可用功能模块，<>内为开启极致模式的简述',add_help=True)
     parser.add_argument('-u','--url', help='扫描对象的url')
+    parser.add_argument('-i', '--interactive', help='交互式控制台', action='store_true')
     parser.add_argument('-n','--name', help='保存结果文本命名', default=None)
     parser.add_argument('-X', '--crazy', help='以极致模式启动功能，比较耗时', action='store_true')
     parser.add_argument('-P', '--ports', help='探测目标主机开放端口[-X]<支持自定义端口范围>', action='store_true')
@@ -212,12 +212,16 @@ def terminal_input():
 
 def main():
     args = terminal_input()
-    x = Scanner(args)
-    x.url_check()  # 检查输入url
-    x.setTaskname()
-    x.prepare()  # 准备工作
-    x.base_report()  # 输出基础报告
-    x.run()
+    if args.interactive:   # 控制台模式
+        i = app.Interactive()
+        i.getInput()
+    else:
+        x = Scanner(args)
+        x.url_check()  # 检查输入url
+        x.setTaskname()
+        x.prepare()  # 准备工作
+        x.base_report()  # 输出基础报告
+        x.run()
 
 if __name__ == "__main__":
     main()

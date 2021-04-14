@@ -4,8 +4,7 @@ import multiprocessing
 import bs4
 from urllib.parse import urlparse
 
-from Sqliscan import std
-from Sqliscan import web
+from modules.Sqliscan import web
 
 
 def init():
