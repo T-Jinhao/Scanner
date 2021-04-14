@@ -23,7 +23,7 @@ class port(common.Common):
             minus = input.split('-')
             interval = input.split(',')
             if len(minus) > 1:
-                ports = [i for i in range(int(minus[0], int(minus[1])+1))]
+                ports = [i for i in range(int(minus[0]), int(minus[1])+1)]
             else:
                 ports = interval
         return ports
