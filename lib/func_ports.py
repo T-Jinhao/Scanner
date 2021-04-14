@@ -101,7 +101,6 @@ class Ports():
         自定义扫描端口范围
         :return:
         '''
-        ports = []
         start_port = input("请输入开始时扫描的端口[默认全扫]\n")
         if start_port:
             end_port = input("请输入结束时扫描的端口[回车即扫描单个端口]\n")
@@ -120,8 +119,7 @@ class Ports():
         except:
             start_port = 1
             end_port = 65535
-        for i in range(start_port, end_port+1):
-            ports.append(i)
+        ports = [i for i in range(start_port, end_port+1)]
         return ports
 
     def run(self,port):
