@@ -18,7 +18,7 @@ class req:
                 await r.parse(response)
                 return r  # 返回页面解码后的信息
         except:
-            pass
+            return None
 
 
     async def main(self, url, semaphore):
@@ -28,7 +28,7 @@ class req:
                     resp = await self.fetch(session, url)  # 相当于 yield from
                     return resp
             except:
-                pass
+                return None
 
     async def run(self, URLs):
         if type(URLs) != list:
