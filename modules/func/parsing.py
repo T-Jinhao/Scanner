@@ -8,6 +8,7 @@ class Parsing:
         self.url = ''
         self.history = ''
         self.ip = ''
+        self.content_length = ''
 
     async def parse(self, res):
         self.text = await res.text()
@@ -15,6 +16,7 @@ class Parsing:
         self.url = res.url
         self.history = res.history
         self.ip = await self.getIp(self.url)
+        self.content_length = res.content_length
 
     async def getIp(self, url):
         host = yarl.URL(url).host
