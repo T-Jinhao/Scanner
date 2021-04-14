@@ -72,7 +72,7 @@ class Async:
         :param kwargs:
         :return:
         '''
-        if type(URLs) != 'list':
+        if type(URLs) != list:
             URLs = [URLs]
         timeout = kwargs.get('timeout', 3)
         kwargs['timeout'] = aiohttp.ClientTimeout(total=timeout)
