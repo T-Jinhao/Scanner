@@ -14,7 +14,8 @@ class port(common.Common):
             flag=0
         )
         r.load_config()
-        r.run(port=ports)
+        report = r.run(port=ports)
+        r.showReport(report)
 
     def getPorts(self, input):
         if input == 'Common':
