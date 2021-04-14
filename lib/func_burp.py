@@ -8,7 +8,8 @@ from urllib.parse import urlparse
 from .color_output import *
 from .load_config import Config
 from modules.func import util
-
+from modules.func import parsing
+from modules.func import asyncReq
 
 class Burp():
     def __init__(self, url, payload, REQ, name, flag):
@@ -186,17 +187,15 @@ class Burp():
         return 0
 
 
-    def run(self,payloads):
+    def run(self, payloads):
         '''
         调用线程池
         :param payloads: 导入的payload
         :return:
         '''
-        URL = []
+        URL = [self.url+x for x in payloads]
         reports = []
-        for x in payloads:
-            url = self.url + x
-            URL.append(url)
+
         if self.scan_mode:
             results = self.text_scan(URL)
         else:
