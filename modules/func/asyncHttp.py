@@ -4,15 +4,12 @@
 
 import aiohttp
 import asyncio
-import yarl
-import sys
-import socket
-from asyncio import Queue, TimeoutError, gather
 from modules.func import parsing
 
 class req:
-    def __init__(self, timeout=3):
+    def __init__(self, timeout=3, workers=500):
         self.timeout = timeout
+        self.workers = workers
 
     async def fetch(self, session, url):
         try:
@@ -33,10 +30,10 @@ class req:
             except:
                 pass
 
-    async def run(self, URLs, workers=500):
+    async def run(self, URLs):
         if type(URLs) != list:
             URLs = [URLs]
-        semaphore = asyncio.Semaphore(workers)  # 限制并发量为500,这里windows需要进行并发限制，
+        semaphore = asyncio.Semaphore(self.workers)  # 限制并发量为500,这里windows需要进行并发限制，
         to_get = [self.main(u, semaphore) for u in URLs]
         await asyncio.wait(to_get)
 
