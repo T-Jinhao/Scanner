@@ -42,4 +42,5 @@ class Interactive():
         elif enter == '':
             pass
         else:
+            util.printWarn(f'No Commands: {enter}')
             self.workbench = Func[self.workbench].checkIn(enter='help')
