@@ -5,7 +5,9 @@
 import aiohttp
 import asyncio
 import yarl
+import sys
 import socket
+from asyncio import Queue, TimeoutError, gather
 from lib.load_config import Config
 
 class Async:
@@ -40,22 +42,24 @@ class Async:
             url += 'http://'
         return url
 
-    async def getMethod(self, url, **kwargs):
+    async def getMethod(self, url, timeout=3, **kwargs):
         u = self.parseUrl(url)
+        timeout = aiohttp.ClientTimeout(total=timeout)
         try:
-            async with aiohttp.ClientSession(**kwargs) as session:
-                async with session.get(u, **kwargs) as res:
-                    r = Parsing()
-                    await r.parse(res)
-                    return r
+            async with asyncio.Semaphore(500):
+                async with aiohttp.ClientSession(timeout=timeout) as session:
+                    async with session.get(u, **kwargs) as res:
+                        r = Parsing()
+                        await r.parse(res)
+                        return r
         except:
             pass
 
-    async def postMethod(self, url, **kwargs):
+    async def postMethod(self, url, timeout=3, data={}, **kwargs):
         u = self.parseUrl(url)
-        data = kwargs.get('data', {})
+        timeout = aiohttp.ClientTimeout(total=timeout)
         try:
-            async with aiohttp.ClientSession(**kwargs) as session:
+            async with aiohttp.ClientSession(timeout=timeout) as session:
                 async with session.post(u, data=data, **kwargs) as res:
                     r = Parsing()
                     await r.parse(res)
@@ -63,7 +67,7 @@ class Async:
         except:
             pass
 
-    async def autoRun(self, URLs, Method='GET', **kwargs):
+    async def autoRun(self, URLs, Method='GET', timeout=3, data={}, **kwargs):
         '''
         主要调用方法
         异步请求
@@ -74,14 +78,27 @@ class Async:
         '''
         if type(URLs) != list:
             URLs = [URLs]
-        timeout = kwargs.get('timeout', 3)
-        kwargs['timeout'] = aiohttp.ClientTimeout(total=timeout)
         if Method == 'POST':
-            tasks = [asyncio.create_task(self.postMethod(u)) for u in URLs]
+            tasks = [asyncio.create_task(self.postMethod(u, timeout=timeout, data=data, **kwargs)) for u in URLs]
         else:
-            tasks = [asyncio.create_task(self.getMethod(u)) for u in URLs]
+            tasks = [asyncio.create_task(self.getMethod(u, timeout=timeout, **kwargs)) for u in URLs]
         results = await asyncio.gather(*tasks)
         return results
+
+    @staticmethod
+    def get_event_loop():
+        """
+        判断不同平台使用不同的事件循环实现
+
+        :return:
+        """
+        if sys.platform == 'win32':
+            from asyncio import ProactorEventLoop
+            # 用 "I/O Completion Ports" (I O C P) 构建的专为Windows 的事件循环
+            return ProactorEventLoop()
+        else:
+            from asyncio import SelectorEventLoop
+            return SelectorEventLoop()
 
 class Parsing:
     def __init__(self):

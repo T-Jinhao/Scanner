@@ -13,7 +13,7 @@ class ScanPort(object):
             raise ValueError(f'wrong ip! {ip}')
         self.ip = ip
         self.port = port
-        self.result: List[int] = []
+        self.result = []
         self.loop = self.get_event_loop()
         # 队列的事件循环需要用同一个，如果不用同一个会报错，这里还有一点不明白
         self.queue = Queue(loop=self.loop)
