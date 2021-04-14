@@ -2,24 +2,22 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
-import grequests   # 入口文件必须添加，防止monkey报错
 import argparse
-import sys
-import os
 import re
 import threading
 import time
 import datetime
+import warnings
 from urllib import parse
 from urllib.parse import urlparse
 import socket
 from lib import func_sqli,func_hosts,func_domain,func_ports,func_burp,func_scan,func_login
 from lib import celery_run,func_base,load_config
-from modules import _requests
-from modules import check
+from modules.func import check, _requests
 from lib.color_output import *
 from interactive import app
 
+warnings.filterwarnings('ignore')
 
 class Scanner():
     def __init__(self, args):
