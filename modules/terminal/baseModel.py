@@ -2,11 +2,13 @@
 # -*- encoding:utf8 -*-
 #author:Jinhao
 
+from lib.color_output import ColorOutput
+
 class BaseModel:
     def __init__(self):
-        pass
+        self.Output = ColorOutput()
 
-    def filter(self, resp):
+    async def filter(self, resp):
         # base过滤器
         if resp == None:
             return

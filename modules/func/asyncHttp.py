@@ -5,11 +5,13 @@
 import aiohttp
 import asyncio
 from modules.func import parsing
+from modules.terminal import baseModel
 
 class req:
-    def __init__(self, timeout=3, workers=500):
+    def __init__(self, timeout=3, workers=500, handler=baseModel.BaseModel()):
         self.timeout = timeout
         self.workers = workers
+        self.handler = handler
 
     async def fetch(self, session, url):
         try:
@@ -26,8 +28,10 @@ class req:
             try:
                 async with aiohttp.ClientSession() as session:
                     resp = await self.fetch(session, url)  # 相当于 yield from
-                    return resp
-            except:
+                    rep = await self.handler.filter(resp)
+                    return rep
+            except Exception as e:
+                print(e)
                 return None
 
     async def run(self, URLs):
