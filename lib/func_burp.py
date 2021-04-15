@@ -180,117 +180,29 @@ class Burp():
         用bad_payload去访问，获取出错页面的情况
         :return:
         '''
-        # impossible_payload = ['/aaaaaaaaaaaaaaaaaaaa','/bbbbbbbbbbbbbbbb','/asodhpfpowehrpoadosjfho']   # 无中生有的payload
-        # res = self.run(impossible_payload)
-        # if res:
-        #     self.scan_mode = 1
-        #     return 1
+        impossible_payload = ['/aaaaaaaaaaaaaaaa','/bbbbbbbbbbbbbbbb','/asodhpfpowehrpoadosjfho']   # 无中生有的payload
+        res = self.run(impossible_payload)
+        if res:
+            self.scan_mode = 1
+            return 1
         return 0
 
 
     def run(self, payloads):
         '''
-        调用线程池
+        调用异步请求
         :param payloads: 导入的payload
         :return:
         '''
         URL = [self.url+x for x in payloads]
-        reports = []
-        handler = burpTerminal.Terminal()
-        REQ = asyncHttp.req(handler=handler)
-
+        handler = burpTerminal.Terminal(scanmode=self.scan_mode)  # 获取文本处理对象+分类检测
+        REQ = asyncHttp.req(handler=handler)   # 申请异步
         loop = asyncio.get_event_loop()
         loop.run_until_complete(REQ.run(URL))
-        loop.close()
-        # asyncReq.run(URL)
-        exit()
-        if self.scan_mode:
-            results = self.text_scan(URL)
-        else:
-            results = self.status_scan(URL)
+        results = REQ.results   # 获取结果
+        # loop.close()
+        return results
 
-        for result in results:
-            if result['flag'] != 0:  # 选择性输出
-                if result['flag'] == 1:
-                    reports.append(result['msg'])
-                else:
-                    pass
-
-        return reports
-
-
-    def status_scan(self, url):
-        '''
-        根据网站状态码识别后台
-        :param url:
-        :return:
-        '''
-        report = []
-        exist_list = []
-        resp = self.REQ.mGetAsyncAccess(url, threads=self.threads, timeout=self.timeout)
-        for r in resp:
-            m = {'flag': 0}
-            try:
-                status = r.status_code
-                if status == 200 or status == 302 or status == 500 or status == 502:
-                    check_msg = {r.url: r.headers.get('Content-Length')}
-                    if check_msg not in exist_list:
-                        exist_list.append(check_msg.copy())
-                        msg = "{status} : {len} : {title} : {url}".format(
-                            status=status,
-                            len=r.headers.get('Content-Length'),
-                            title=util.getTitle(r.text),
-                            url=r.url
-                        )
-                        print(self.Output.green('[ result ] ')
-                              + self.Output.fuchsia('status_code:') + self.Output.green(status) + self.Output.interval()
-                              + self.Output.fuchsia('url:') + r.url + self.Output.interval()
-                              + self.Output.fuchsia('Content-Length:') + self.Output.green(r.headers.get('Content-Length')) + self.Output.interval()
-                              + self.Output.fuchsia('title:') + self.Output.green(util.getTitle(r.text)))
-                        m = {'msg': msg, 'flag': 1}
-            except:
-                pass
-            report.append(m.copy())
-        return report
-
-    def text_scan(self, url):
-        '''
-        根据页面信息检测网站，用于判断自定义错误页面的网站
-        :param url:
-        :return:
-        '''
-        exist_list = []
-        report = []
-        bm = []
-        bad_msg = ['404','页面不存在','不可访问','page can\'t be found','无法加载模块']    # 用于检测页面自定义报错的信息
-        resp = self.REQ.mGetAsyncAccess(url, threads=self.threads, timeout=self.timeout)
-        for r in resp:
-            try:
-                for msg in bad_msg:
-                    if msg in r.text:
-                        bm.append(msg)
-                check_msg = {r.url: r.headers.get('Content-Length')}
-                if check_msg not in exist_list:
-                    exist_list.append(check_msg.copy())
-                    if len(bm) > 5:                        # 若报错信息超过一定数量可视为文章自带内容
-                        msg = "{status} : {len} : {title} : {url}".format(
-                            status=r.status_code,
-                            len=len(r.get('Content-Length')),
-                            title=util.getTitle(r.text),
-                            url=url
-                        )
-                        print(self.Output.green('[ result ] ')
-                              + self.Output.fuchsia('status_code:') + self.Output.green(r.status_code) + self.Output.interval()
-                              + self.Output.fuchsia('url:') + r.url + self.Output.interval()
-                              + self.Output.fuchsia('Content-Length:') + self.Output.green(r.headers.get('Content-Length')) + self.Output.interval()
-                              + self.Output.fuchsia('title:') + self.Output.green(util.getTitle(r.text)))
-                        m = {'flag':1, 'msg':msg}
-                    else:
-                        m = {'flag':0, 'msg':bm}
-                    report.append(m.copy())
-            except:
-                pass
-        return report
 
 
 class celery_burp:
