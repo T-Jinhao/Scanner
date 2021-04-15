@@ -27,7 +27,7 @@ class req:
     async def main(self, url, semaphore):
         async with semaphore:  # 这里进行执行asyncio.Semaphore，
             try:
-                async with aiohttp.ClientSession() as session:
+                async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
                     resp = await self.fetch(session, url)  # 相当于 yield from
                     rep = await self.handler.filter(resp)
                     if rep != None:
