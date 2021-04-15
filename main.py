@@ -8,8 +8,7 @@ import threading
 import time
 import datetime
 import warnings
-from urllib import parse
-from urllib.parse import urlparse
+import yarl
 import socket
 from lib import func_sqli,func_hosts,func_domain,func_ports,func_burp,func_scan,func_login
 from lib import celery_run,func_base,load_config
@@ -40,21 +39,15 @@ class Scanner():
             sys.exit(1)
 
     def getHostname(self):
-        try:
-            name = parse.urlparse(self.args.url).hostname
-            host = socket.gethostbyname(name)
-            return host
-        except:
-            pass
-        try:
-            netloc = 'www.{}'.format(urlparse(self.args.url).netloc)
-            name = netloc
-            host = socket.gethostbyname(name)
-            return host
-        except Exception:
-            print(self.Output.red('[ Error ] ') + self.Output.cyan("{}:该域名未查询到绑定IP".format(self.args.url)))
-            exit(0)
-
+        host = yarl.URL(self.args.url).host
+        if host is not None:
+            try:
+                ip = socket.gethostbyname(host)
+                return ip
+            except Exception as e:
+                print(e)
+        print(self.Output.red('[ Error ] ') + self.Output.cyan("{}:该域名未查询到绑定IP".format(self.args.url)))
+        exit(0)
 
 
     def base_report(self):
@@ -96,7 +89,7 @@ class Scanner():
             self.taskname = self.args.name
         else:
             ip = re.compile('[\d]{1,3}\.[\d]{1,3}\.[\d]{1,3}\.[\d]{1,3}')
-            netloc = urlparse(self.args.url).netloc
+            netloc = yarl.URL(self.args.url).host
             res = ip.match(netloc)
             if res:    # ip形式的名称，需要改名
                 today = datetime.datetime.today()
