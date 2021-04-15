@@ -3,13 +3,14 @@
 #author:Jinhao
 
 import re
+import asyncio
 from reports import reports_txt,reports_xlsx
 from urllib.parse import urlparse
 from .color_output import *
 from .load_config import Config
 from modules.func import util
-from modules.func import parsing
-from modules.func import asyncReq
+from modules.terminal import burpTerminal
+from modules.func import asyncHttp
 
 class Burp():
     def __init__(self, url, payload, REQ, name, flag):
@@ -179,11 +180,11 @@ class Burp():
         用bad_payload去访问，获取出错页面的情况
         :return:
         '''
-        impossible_payload = ['/aaaaaaaaaaaaaaaaaaaa','/bbbbbbbbbbbbbbbb','/asodhpfpowehrpoadosjfho']   # 无中生有的payload
-        res = self.run(impossible_payload)
-        if res:
-            self.scan_mode = 1
-            return 1
+        # impossible_payload = ['/aaaaaaaaaaaaaaaaaaaa','/bbbbbbbbbbbbbbbb','/asodhpfpowehrpoadosjfho']   # 无中生有的payload
+        # res = self.run(impossible_payload)
+        # if res:
+        #     self.scan_mode = 1
+        #     return 1
         return 0
 
 
@@ -195,7 +196,14 @@ class Burp():
         '''
         URL = [self.url+x for x in payloads]
         reports = []
+        handler = burpTerminal.Terminal()
+        REQ = asyncHttp.req(handler=handler)
 
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(REQ.run(URL))
+        loop.close()
+        # asyncReq.run(URL)
+        exit()
         if self.scan_mode:
             results = self.text_scan(URL)
         else:
