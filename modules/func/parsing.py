@@ -2,13 +2,14 @@ import socket
 import yarl
 
 class Parsing:
-    def __init__(self):
+    def __init__(self, protourl=''):
         self.text = ''
         self.status = ''
         self.url = ''
         self.history = ''
         self.ip = ''
         self.content_length = ''
+        self.protourl = protourl
 
     async def parse(self, res):
         self.text = await res.text()

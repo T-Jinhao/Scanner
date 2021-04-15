@@ -17,7 +17,7 @@ class req:
     async def fetch(self, session, url):
         try:
             async with session.get(url) as response:  # session.get(url)获取页面
-                r = parsing.Parsing()
+                r = parsing.Parsing(protourl=url)
                 await r.parse(response)
                 return r  # 返回页面解码后的信息
         except:
