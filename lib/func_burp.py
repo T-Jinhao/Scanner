@@ -4,6 +4,7 @@
 
 import re
 import asyncio
+import yarl
 from reports import reports_txt,reports_xlsx
 from urllib.parse import urlparse
 from .color_output import *
@@ -15,6 +16,7 @@ from modules.func import asyncHttp
 class Burp():
     def __init__(self, url, payload, REQ, name, flag):
         self.url = self.url_parse(url).rstrip('/')
+        self.proto_url = url
         self.flag = flag
         self.name = name
         self.payload = payload
@@ -34,8 +36,8 @@ class Burp():
         print(self.Output.fuchsia('>>>>>burp' + '-' * 40))
         print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('开始分析网站: ') + self.Output.cyan(self.url))
         self.load_config()
-        web_type = self.web_indetify(url)
-        if not web_type:
+        web_type = self.web_indetify(self.proto_url)   # 静态匹配后缀名
+        if web_type == '':
             web_type = self.web_auto_indetify(url)
         print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('网站类型: ') + self.Output.cyan(web_type))
         mode_msg = self.scan_mode_indetify()
@@ -95,17 +97,12 @@ class Burp():
         :param url:
         :return: 网站类型
         '''
-        parse_url = urlparse(url)
-        path = parse_url.path
-        path = path.rsplit('/', 1)
+        u = yarl.URL(url)
         try:
-            s = re.match('(.*?)\.(.*)', path[1])
-        except:
-            return ''      # 识别无path情况的url
-        if s == None:
+            name = u.name.split('.')[-1]   # 可能为空格
+            return name
+        except :
             return ''
-        else:
-            return s.group(2)
 
 
     def web_auto_indetify(self,url):
@@ -114,23 +111,16 @@ class Burp():
         :param url:
         :return:
         '''
-        web_type = []
-        for i in ['/index.php','/index.asp','/index.aspx','/index.mdb','/index.jsp']:
-            URL = "{0}{1}".format(url, i)
-            try:
-                res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
-                if res.status_code == 200:
-                    m = self.web_indetify(URL)
-                    web_type.append(m)
-            except:
-                pass
-        if len(web_type) == 0 or len(web_type) > 1:
+        # web_type = []
+        sites = ['/index.php', '/index.asp', '/index.aspx', '/index.mdb', '/index.jsp']
+        res = self.run(sites)
+        if len(res) > 1 or res == []:
             return '未能识别'
         else:
-            return web_type[0]
+            web_type = self.web_indetify(res[0].split(' : ')[-1].strip())
+            return web_type
 
-
-    def load_payload(self,type):
+    def load_payload(self, type):
         '''
         根据网站类型加载相应payload
         :param type: 网站类型
@@ -182,7 +172,7 @@ class Burp():
         '''
         impossible_payload = ['/aaaaaaaaaaaaaaaa','/bbbbbbbbbbbbbbbb','/asodhpfpowehrpoadosjfho']   # 无中生有的payload
         res = self.run(impossible_payload)
-        if res:
+        if res != []:
             self.scan_mode = 1
             return 1
         return 0
