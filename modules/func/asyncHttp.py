@@ -12,6 +12,7 @@ class req:
         self.timeout = timeout
         self.workers = workers
         self.handler = handler
+        self.results = []
 
     async def fetch(self, session, url):
         try:
@@ -29,10 +30,11 @@ class req:
                 async with aiohttp.ClientSession() as session:
                     resp = await self.fetch(session, url)  # 相当于 yield from
                     rep = await self.handler.filter(resp)
-                    return rep
+                    if rep != None:
+                        self.results.append(rep)
             except Exception as e:
                 print(e)
-                return None
+
 
     async def run(self, URLs):
         if type(URLs) != list:
@@ -40,6 +42,7 @@ class req:
         semaphore = asyncio.Semaphore(self.workers)  # 限制并发量为500,这里windows需要进行并发限制，
         to_get = [self.main(u, semaphore) for u in URLs]
         await asyncio.wait(to_get)
+        return
 
 if __name__ == '__main__':
     x = req()
