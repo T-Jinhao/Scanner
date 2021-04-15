@@ -6,7 +6,6 @@ class Parsing:
         self.text = ''
         self.status = ''
         self.url = ''
-        self.history = ''
         self.ip = ''
         self.content_length = ''
         self.protourl = protourl
@@ -15,7 +14,6 @@ class Parsing:
         self.text = await res.text()
         self.status = res.status
         self.url = res.url
-        self.history = res.history
         self.ip = await self.getIp(self.url)
         self.content_length = res.content_length
 
