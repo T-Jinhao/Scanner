@@ -7,13 +7,10 @@ import hashlib
 import dns.resolver
 import aiohttp
 import asyncio
-import socket
-import time
 import json
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from reports import reports_txt,reports_xlsx
-from concurrent.futures import ThreadPoolExecutor
 from .color_output import *
 from .load_config import Config
 from modules.func import util
@@ -30,6 +27,7 @@ class Domain:
         self.name = name
         self.url = url
         self.Domain_List = []
+        self.IP_list = {}
         self.scanmode = 0
         self.Output = ColorOutput()
 
@@ -68,7 +66,7 @@ class Domain:
                     print(self.Output.yellow('[ warn ] ') + self.Output.fuchsia('-X模式查询失败，稍后将执行payload爆破'))
                 else:
                     report = self.run(urls)
-            exit()
+
             # 普通模式及rapid获取数据失败的情况下，使用字典爆破
             if report == []:
                 self.flag = False   # 更改为普通模式，用作保存时区别
@@ -76,14 +74,14 @@ class Domain:
                 payload = self.load_payload(onlineReport)  # 合并数据
                 if payload:
                     print(self.Output.blue('[ Load ] ') + self.Output.green('payload导入完成，数量：{}'.format(len(payload))))
-                    exit()
                     report = self.run(payload)   # 运行爆破
                 else:
                     print(self.Output.blue('[ Load ] ') + self.Output.red('payload导入失败'))
             self.saveDomainResult(report)
-            # if report:
-            #     IP_dict = self.collectIP()
-            #     self.saveIpResult(IP_dict)
+            if self.IP_list:
+                self.saveIpResult(self.IP_list)
+                # IP_dict = self.collectIP()
+                # self.saveIpResult(IP_dict)
             # elif report == []:
             #     print(self.Output.blue('[ result ] ') + self.Output.yellow('[ 未能挖掘出网站子域名 ]'))
         else:
@@ -178,7 +176,6 @@ class Domain:
                     break
                 for d in domains:
                     if d.group() not in report:
-                        # color_output(d.group(), color='GREEN')  # 未知是否存活，不输出
                         report.append(d.group())
             except:
                 pass
@@ -219,6 +216,7 @@ class Domain:
         loop = asyncio.get_event_loop()
         loop.run_until_complete(REQ.run(URL))
         results = REQ.results   # 获取结果
+        self.IP_list = handler.IP_list   # 获取IP结果
         return results
 
 
@@ -297,132 +295,6 @@ class Domain:
                     cname_list.append(m[2])     # 收集被指向子域名，过多重复可不再重复收录
                 Urls.append(m[1])
         return Urls
-
-    # def multiScan(self, ret_dict):
-    #     '''
-    #     处理字典中的数据
-    #     :param ret_dict:
-    #     :return:
-    #     '''
-    #     url_dict = [m['Domain'] for m in ret_dict]
-    #     res = self.REQ.mGetAsyncAccess(url_dict, threads=self.threads, timeout=self.timeout)   # 获取访问结果
-    #     i = -1   # 下标
-    #     for r in res:
-    #         i += 1
-    #         if r == None:
-    #             continue
-    #         if r.status_code in self.chkStatus:
-    #             m = ret_dict[i]
-    #             title = util.getTitle(r.text)
-    #             self.addToList(r.url)
-    #             if m['Domain'] == m['Address']:
-    #                 msg = "{status} | {Type} | {title} | {Domain} | {url}".format(
-    #                     status=r.status_code,
-    #                     Type=m['Type'],
-    #                     title=title,
-    #                     Domain=m['Domain'],
-    #                     url=r.url
-    #                 )
-    #                 output = "".join([
-    #                     self.Output.green('[ result ] ')
-    #                     , self.Output.fuchsia('status_code:'), self.Output.green(
-    #                         r.status_code), self.Output.interval()
-    #                     , self.Output.fuchsia('URL:'), r.url, self.Output.interval()
-    #                     , self.Output.fuchsia('Type:'), self.Output.green(m['Type']), self.Output.interval()
-    #                     , self.Output.fuchsia('Title:'), self.Output.green(title), self.Output.interval()
-    #                     , self.Output.fuchsia('Domain'), self.Output.green(m['Domain'])
-    #                 ])
-    #                 print(output)
-    #                 sys.stdout.flush()
-    #             elif m['Type'] in ['A', 'AAAA']:
-    #                 msg = "{status} | {Type} | {title} | {Domain} ==> {Address} | {url}".format(
-    #                     status=r.status_code,
-    #                     Type=m['Type'],
-    #                     title=title,
-    #                     Domain=m['Domain'],
-    #                     Address=m['Address'],
-    #                     url=r.url
-    #                 )
-    #                 output = "".join([
-    #                     self.Output.green('[ result ] ')
-    #                     , self.Output.fuchsia('status_code:'), self.Output.green(
-    #                         r.status_code), self.Output.interval()
-    #                     , self.Output.fuchsia('URL:'), r.url, self.Output.interval()
-    #                     , self.Output.fuchsia('Type:'), self.Output.green(m['Type']), self.Output.interval()
-    #                     , self.Output.fuchsia('Title:'), self.Output.green(title), self.Output.interval()
-    #                     , self.Output.green(m['Domain']), self.Output.white('==>'), self.Output.green(m['Address'])
-    #                 ])
-    #                 print(output)
-    #                 sys.stdout.flush()
-    #             else:
-    #                 hostname = util.getHostname(m['Address'])
-    #                 msg = "{status} | {Type} | {title} | {Domain} ==> {Address} ==> {hostname} | {url}".format(
-    #                     status=r.status_code,
-    #                     Type=m['Type'],
-    #                     title=title,
-    #                     Domain=m['Domain'],
-    #                     Address=m['Address'],
-    #                     hostname=hostname,
-    #                     url=r.url
-    #                 )
-    #                 output = "".join([
-    #                     self.Output.green('[ result ] ')
-    #                     , self.Output.fuchsia('status_code:'), self.Output.green(r.status_code), self.Output.interval()
-    #                     , self.Output.fuchsia('URL:'), r.url, self.Output.interval()
-    #                     , self.Output.fuchsia('Type:'), self.Output.green(m['Type']), self.Output.interval()
-    #                     , self.Output.fuchsia('Title:'), self.Output.green(title), self.Output.interval()
-    #                     , self.Output.green(m['Domain']), self.Output.white('==>'), self.Output.green(m['Address'])
-    #                     , self.Output.white('==>'), self.Output.green(hostname)])
-    #                 print(output)
-    #                 sys.stdout.flush()
-    #             self.RAPID.append(msg)
-    #     return
-
-    def collectIP(self):
-        '''
-        收集IP
-        :param url:
-        :return:
-        '''
-        IP_dict = {}
-        # print(self.Domain_List)
-        if self.Domain_List == []:
-            return
-        with ThreadPoolExecutor(max_workers=self.max_workers) as pool:
-            results = pool.map(self.getHostByName, self.Domain_List)
-            for i in results:
-                if i == None:
-                    continue
-                if i not in IP_dict.keys():
-                    IP_dict[i] = 1
-                else:
-                    IP_dict[i] += 1
-        return IP_dict
-
-
-    def getHostByName(self, domain):
-        try:
-            host = socket.gethostbyname(domain)
-            return host
-        except:
-            return None
-
-
-    def addToList(self, url):
-        '''
-        存储子域名
-        :param url:
-        :return:
-        '''
-        if not self.domain2IP:
-            return
-        try:
-            domain = urlparse(url).hostname
-            if domain not in self.Domain_List:
-                self.Domain_List.append(domain)
-        except:
-            pass
-        return
 
 
 class celery_domain:
