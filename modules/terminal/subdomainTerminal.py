@@ -29,6 +29,11 @@ class Terminal(BaseModel):
                     self.Output.fuchsia('标题:'), self.Output.green(title), self.Output.interval(),
                     self.Output.fuchsia('最终URL:'), str(resp.url),
                 ])
+                if resp.ip is not None:
+                    if resp.ip not in self.IP_list:
+                        self.IP_list[resp.ip] = 0
+                    else:
+                        self.IP_list[resp.ip] += 1
                 print(output)
                 # sys.stdout.flush()
                 return msg

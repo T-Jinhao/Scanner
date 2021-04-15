@@ -11,6 +11,8 @@ class BaseModel:
         # burp模块
         self.title_list = []
         self.length_list = []
+        # subdomain模块
+        self.IP_list = {}
 
     async def filter(self, resp):
         # base过滤器
