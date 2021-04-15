@@ -49,8 +49,8 @@ class Domain:
     def start(self):
         self.load_config()
         print(self.Output.fuchsia('>>>>>domain' + '-' * 40))
-        report = []
         if self.domain:
+            report = []
             # 检测是否存在泛解析
             pan = self.panAnalysis(self.domain)
             if pan == True:    # 泛解析处理块
@@ -63,11 +63,12 @@ class Domain:
             if self.flag:
                 print(self.Output.blue('[ schedule ] ') + self.Output.cyan('正在运行在线查询，请耐心等待'))
                 print(self.Output.yellow('[ warn ] ') + self.Output.fuchsia('该过程请挂载代理，否则可能会访问超时，导致获取数据失败'))
-                self.rapidSearch(self.domain)
-                report = self.RAPID   # 该模块结果
-                if report == []:
+                urls = self.rapidSearch(self.domain)
+                if urls == []:
                     print(self.Output.yellow('[ warn ] ') + self.Output.fuchsia('-X模式查询失败，稍后将执行payload爆破'))
-
+                else:
+                    report = self.run(urls)
+            exit()
             # 普通模式及rapid获取数据失败的情况下，使用字典爆破
             if report == []:
                 self.flag = False   # 更改为普通模式，用作保存时区别
@@ -191,11 +192,10 @@ class Domain:
         :param report: 在线子域名数据
         :return:
         '''
+        if self.payload:  # 已设置好payload
+            return self.payload
         payload = []
         path = os.path.dirname(__file__)
-        if self.payload:   # 已设置好payload
-            return self.payload
-
         file = 'dict.txt'
         filepath = "{0}/{1}/{2}".format(path, r'../dict/domain', file)
         F = open(filepath, 'r')
@@ -261,10 +261,10 @@ class Domain:
         url = f'https://rapiddns.io/subdomain/{domain}?full=1&down=1'
         loop = asyncio.get_event_loop()
         task = loop.create_task(self.rapidDns(url))
-        loop.run_until_complete(task)
+        result = loop.run_until_complete(task)
+        return result
 
     async def rapidDns(self, url):
-        self.RAPID = []
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(url) as res:
@@ -272,10 +272,10 @@ class Domain:
                     ret_dict = await self.resultParse(text)  # 获取页面解析数据
                     if ret_dict != []:
                         print(self.Output.blue('[ Load ] ') + self.Output.cyan('获取数据成功，即将开始存活性筛选'))
-                        self.multiScan(ret_dict)
+                        return ret_dict
         except Exception as e:
             print(e)
-        return
+        return []
 
     async def resultParse(self, text):
         '''
@@ -283,7 +283,7 @@ class Domain:
         :param text:
         :return:
         '''
-        ret_dict = []
+        Urls = []
         cname_list = []
         soup = BeautifulSoup(text, 'html.parser')
         td_links = soup.find_all('tr')
@@ -295,14 +295,8 @@ class Domain:
             if m[-1] in ['CNAME', 'A', 'AAAA'] and m[2] not in cname_list:  # 目前只嗅探3种类型的DNS记录
                 if m[-1] in ['CNAME'] and m[2] not in cname_list:
                     cname_list.append(m[2])     # 收集被指向子域名，过多重复可不再重复收录
-                ret = {
-                    '#': m[0],
-                    'Domain': m[1],
-                    'Address': m[2],
-                    'Type': m[-1]
-                }
-                ret_dict.append(ret.copy())
-        return ret_dict
+                Urls.append(m[1])
+        return Urls
 
     # def multiScan(self, ret_dict):
     #     '''
