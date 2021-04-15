@@ -8,6 +8,7 @@ import threading
 import time
 import datetime
 import warnings
+from urllib import parse
 from urllib.parse import urlparse
 import socket
 from lib import func_sqli,func_hosts,func_domain,func_ports,func_burp,func_scan,func_login
@@ -39,12 +40,12 @@ class Scanner():
             sys.exit(1)
 
     def getHostname(self):
-        # try:
-        #     name = parse.urlparse(self.args.url).hostname
-        #     host = socket.gethostbyname(name)
-        #     return host
-        # except:
-        #     pass
+        try:
+            name = parse.urlparse(self.args.url).hostname
+            host = socket.gethostbyname(name)
+            return host
+        except:
+            pass
         try:
             netloc = 'www.{}'.format(urlparse(self.args.url).netloc)
             name = netloc
