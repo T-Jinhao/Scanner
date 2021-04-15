@@ -31,7 +31,7 @@ class Terminal(BaseModel):
                 ])
                 if resp.ip is not None:
                     if resp.ip not in self.IP_list:
-                        self.IP_list[resp.ip] = 0
+                        self.IP_list[resp.ip] = 1
                     else:
                         self.IP_list[resp.ip] += 1
                 print(output)
