@@ -56,23 +56,23 @@ class Scan():
 
     def output(self):
         if self.Phone != []:
-            print()
+            phone = list(set(self.Phone))
             print(self.Output.green('[ output ] ') + self.Output.cyan('手机号码'))
-            for x in self.Phone:
+            for x in phone:
                 print(self.Output.blue('[ result ] ') + self.Output.green(x))
-            self.saveResult(self.Phone, 'phone', 'phone.txt', cut=' | ')
+            self.saveResult(phone, 'phone', 'phone.txt', cut=' | ')
         if self.Email != []:
-            print()
+            email = list(set(self.Email))
             print(self.Output.green('[ output ] ') + self.Output.cyan('邮箱'))
-            for x in self.Email:
+            for x in email:
                 print(self.Output.blue('[ result ] ') + self.Output.green(x))
-            self.saveResult(self.Email, 'email', 'email.txt', cut=' | ')
+            self.saveResult(email, 'email', 'email.txt', cut=' | ')
         if self.ICP != []:
-            print()
+            icp = list(set(self.ICP))
             print(self.Output.green('[ output ] ') + self.Output.cyan('备案号'))
-            for x in self.ICP:
+            for x in icp:
                 print(self.Output.blue('[ result ] ') + self.Output.green(x))
-            self.saveResult(self.ICP, 'icp', 'icp.txt', cut=' | ')
+            self.saveResult(icp, 'icp', 'icp.txt', cut=' | ')
         return
 
     def saveResult(self, report, sheetname='', txtFilename='', cut=':'):
@@ -102,10 +102,10 @@ class Scan():
         :return:
         '''
         if self.Web != []:   # 进入时判断当前页面是否爬取到链接
-            web_sites = self.Web  # 创建新数组
-            js_sites = self.Js
+            web_sites = set(self.Web)  # 创建新数组
+            js_sites = set(self.Js)
             Cycles = 1
-            new_urls = util.filter_Url(self.Web)
+            new_urls = util.filter_Url(list(set(self.Web)))
             while 1 and Cycles <= self.Cycles and new_urls != []:
                 print(self.Output.blue('[ schedule ] ') +
                       self.Output.fuchsia(f'第{Cycles}轮遍历爬取 ') +
@@ -113,17 +113,21 @@ class Scan():
                       )
                 Cycles += 1  # 防止无限运行
                 self.webScan(new_urls)  # 运行后self.Web会刷新结果
-                new_urls = []           # 重置
-                new_js = []
+                new_urls = set()           # 重置
+                new_js = set()
+                # 处理web链接
                 for x in self.Web:
                     if x not in web_sites:
-                        web_sites.append(x)
-                        new_urls.append(x)
+                        web_sites.add(x)
+                        new_urls.add(x)
                 new_urls = util.filter_Url(self.Web)
+                # 处理js链接
                 for m in self.Js:
                     if m not in js_sites:
-                        js_sites.append(m)
-                        new_js.append(m)
+                        js_sites.add(m)
+                        new_js.add(m)
+                new_urls = list(new_urls)
+                new_js = list(new_js)
                 self.jsScan(new_js)
 
 
