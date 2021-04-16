@@ -2,6 +2,7 @@
 # -*- encoding:utf8 -*-
 #author:Jinhao
 
+import re
 from lib.color_output import ColorOutput
 
 class BaseModel:
