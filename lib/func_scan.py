@@ -36,7 +36,6 @@ class Scan():
         self.timeout = config.getfloat("Scan", "timeout")
         self.threads = config.getint("Scan", "threads")
         self.ICPUrl = config.get("Scan", "ICPUrl")
-        self.checkWebStatus = config.getboolean("Scan", "checkWebStatus")
         self.checkJsStatus = config.getboolean("Scan", "checkJsStatus")
         system = platform.system()
         self.saveType = config.get("Result", system)
@@ -47,7 +46,10 @@ class Scan():
         print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('开始爬取网页链接:') + self.url)
         self.webScan(self.url)   # 扫描
         self.jsScan(self.Js)
+        self.output()   # 输出
+        print(self.Output.fuchsia("-" * 40 + "<<<<<scan" + "\n"))
 
+    def output(self):
         if self.Phone != []:
             print()
             print(self.Output.green('[ output ] ') + self.Output.cyan('手机号码'))
@@ -65,16 +67,7 @@ class Scan():
             print(self.Output.green('[ output ] ') + self.Output.cyan('备案号'))
             for x in self.ICP:
                 print(self.Output.blue('[ result ] ') + self.Output.green(x))
-                # 暂不启用
-                # data = {
-                #     'pageNo': 1,
-                #     'pageSize': 20,
-                #     'Kw': x.split('-')[0]
-                # }
-                # r = self.REQ.autoPostAccess(url=self.ICPUrl, data=data)
-                # print(r.text)
             self.saveResult(self.ICP, 'icp', 'icp.txt', cut=' | ')
-        print(self.Output.fuchsia("-" * 40 + "<<<<<scan" + "\n"))
         return
 
     def saveResult(self, report, sheetname='', txtFilename='', cut=':'):
@@ -149,35 +142,6 @@ class Scan():
         loop = asyncio.get_event_loop()
         loop.run_until_complete(REQ.run(url))
         return
-
-
-    def statusCheck(self,urls):
-        '''
-        测试链接是否可用
-        :param urls: 爬取到的url
-        :return:
-        '''
-        result = []
-        for url in list(set(urls)):
-            print()
-            print(self.Output.fuchsia('[ Test ]') + url)
-            try:
-                res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
-                title = util.getTitle(res.text)
-                print(self.Output.green('[ Info ] ')
-                      + self.Output.fuchsia('状态码') + self.Output.green(res.status_code) + self.Output.interval()
-                      + self.Output.fuchsia('文本长度') + self.Output.green(len(res.content)) + self.Output.interval()
-                      + self.Output.fuchsia('标题') + self.Output.green(title)
-                      )
-                if res.status_code != 404 and len(res.content) != 0:
-                    msg = " | ".join([str(res.status_code), str(len(res.content)), str(title), url])
-                    result.append(msg)
-            except:
-                print(self.Output.green('[ Info ] ') + self.Output.yellow('访问失败'))
-            time.sleep(0.5)   # 防止过于频繁导致网站崩溃
-        return result
-
-
 
 
 class celery_scan:
