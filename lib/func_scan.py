@@ -57,21 +57,24 @@ class Scan():
     def output(self):
         if self.Phone != []:
             phone = list(set(self.Phone))
+            phone = self.dealData(phone)
             print(self.Output.green('[ output ] ') + self.Output.cyan('手机号码'))
             for x in phone:
-                print(self.Output.blue('[ result ] ') + self.Output.green(x))
+                print(self.Output.blue('[ result ] ') + self.Output.green(x) + self.Output.interval() + phone[x])
             self.saveResult(phone, 'phone', 'phone.txt', cut=' | ')
         if self.Email != []:
             email = list(set(self.Email))
+            email = self.dealData(email)
             print(self.Output.green('[ output ] ') + self.Output.cyan('邮箱'))
             for x in email:
-                print(self.Output.blue('[ result ] ') + self.Output.green(x))
+                print(self.Output.blue('[ result ] ') + self.Output.green(x) + self.Output.interval() + email[x])
             self.saveResult(email, 'email', 'email.txt', cut=' | ')
         if self.ICP != []:
             icp = list(set(self.ICP))
+            icp = self.dealData(icp)
             print(self.Output.green('[ output ] ') + self.Output.cyan('备案号'))
             for x in icp:
-                print(self.Output.blue('[ result ] ') + self.Output.green(x))
+                print(self.Output.blue('[ result ] ') + self.Output.green(x) + self.Output.interval() + icp[x])
             self.saveResult(icp, 'icp', 'icp.txt', cut=' | ')
         return
 
@@ -95,6 +98,16 @@ class Scan():
             reports_xlsx.Report(report, self.name, sheetname, banner, cut=cut).save()
         else:
             reports_txt.Report(report, self.name, txtFilename, '网页扫描报告已存放于', '并没有扫描出网页链接').save()
+
+    def dealData(self, data, cut='|'):
+        DATA = {}
+        for d in data:
+            key = d.split(cut)[0].strip()
+            value = d.split(cut)[1].strip()
+            if key not in DATA.keys():
+                DATA[key] = value
+        return DATA
+
 
     def crazyWebScan(self):
         '''
