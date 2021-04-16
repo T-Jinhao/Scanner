@@ -56,26 +56,26 @@ class Scan():
 
     def output(self):
         if self.Phone != []:
-            phone = list(set(self.Phone))
-            phone = self.dealData(phone)
+            r_phone = list(set(self.Phone))
+            phone = self.dealData(r_phone)
             print(self.Output.green('[ output ] ') + self.Output.cyan('手机号码'))
             for x in phone:
                 print(self.Output.blue('[ result ] ') + self.Output.green(x) + self.Output.interval() + phone[x])
-            self.saveResult(phone, 'phone', 'phone.txt', cut=' | ')
+            self.saveResult(r_phone, 'phone', 'phone.txt', cut=' | ')
         if self.Email != []:
-            email = list(set(self.Email))
-            email = self.dealData(email)
+            r_email = list(set(self.Email))
+            email = self.dealData(r_email)
             print(self.Output.green('[ output ] ') + self.Output.cyan('邮箱'))
             for x in email:
                 print(self.Output.blue('[ result ] ') + self.Output.green(x) + self.Output.interval() + email[x])
-            self.saveResult(email, 'email', 'email.txt', cut=' | ')
+            self.saveResult(r_email, 'email', 'email.txt', cut=' | ')
         if self.ICP != []:
-            icp = list(set(self.ICP))
-            icp = self.dealData(icp)
+            r_icp = list(set(self.ICP))
+            icp = self.dealData(r_icp)
             print(self.Output.green('[ output ] ') + self.Output.cyan('备案号'))
             for x in icp:
                 print(self.Output.blue('[ result ] ') + self.Output.green(x) + self.Output.interval() + icp[x])
-            self.saveResult(icp, 'icp', 'icp.txt', cut=' | ')
+            self.saveResult(r_icp, 'icp', 'icp.txt', cut=' | ')
         return
 
     def saveResult(self, report, sheetname='', txtFilename='', cut=':'):
