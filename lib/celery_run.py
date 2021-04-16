@@ -36,10 +36,10 @@ class RC:
             resh = hosts.delay(self.host, self.name)
             self.status(resh)
         if self.args.burp:
-            result = burp.delay(self.args.url,self.bPayload,self.REQ,self.name,self.args.crazy)
+            result = burp.delay(self.args.url, self.bPayload, self.name, self.args.crazy)
             self.status(result)
         if self.args.domain:
-            resd = domain.delay(self.args.url,self.dPayload, self.REQ, self.name)
+            resd = domain.delay(self.args.url, self.dPayload, self.REQ, self.name)
             self.status(resd)
         if self.args.sqlscan:
             resi = sqli.delay(self.args.url, self.name)

@@ -21,27 +21,27 @@ def spider(url,REQ,name):
 
 
 @app.task(name='tasks.sqli.func_celery')
-def sqli(url,name):
-    func_sqli.Sql(url,name,True).start()
+def sqli(url, name):
+    func_sqli.Sql(url, name, True).start()
     return
 
 @app.task(name='tasks.hosts.func_celery')
-def hosts(host,name):
-    func_hosts.Hosts(host,name).start()
+def hosts(host, name):
+    func_hosts.Hosts(host, name).start()
     return
 
 @app.task(name='tasks.burp.func_celery')
-def burp(url,payload,REQ,name,flag):
-    func_burp.celery_burp(url,payload,REQ,name,flag).run()
+def burp(url, payload, name, flag):
+    func_burp.celery_burp(url, payload, name, flag).run()
     return
 
 @app.task(name='tasks.ports.func_celery')
-def ports(host,name):
-    func_ports.Ports(host,name,False).start()
+def ports(host, name):
+    func_ports.Ports(host, name, False).start()
     return
 
 @app.task(name='tasks.domain.func_celery')
-def domain(url,payload,REQ,name):
-    func_domain.celery_domain(url,payload,REQ,name).run()
+def domain(url, payload, REQ, name):
+    func_domain.celery_domain(url, payload, REQ, name).run()
     return
 
