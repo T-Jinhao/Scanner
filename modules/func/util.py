@@ -76,3 +76,15 @@ def judgingOrigin(originUrl, checkUrl):
     if c_domain == o_domain:
         return True
     return False
+
+def isNumber(s):
+    '''
+    判断输入是否为数字
+    :param s:
+    :return:
+    '''
+    try:
+        int(s)
+        return True
+    except:
+        return False

@@ -16,7 +16,7 @@ from modules.terminal import jsTerminal
 wrong_web_list = ['javascript:void(0)', None, '###', '#']
 
 class Scan():
-    def __init__(self, url, name, crazy, Cycles=5):
+    def __init__(self, url, name, crazy, Cycles=3):
         self.url = url
         self.name = name
         self.crazy = crazy
@@ -106,7 +106,7 @@ class Scan():
             js_sites = self.Js
             Cycles = 1
             new_urls = self.Web   # 初始数据
-            while 1 and Cycles <= self.Cycles:
+            while 1 and Cycles <= self.Cycles and new_urls != []:
                 print(self.Output.blue('[ schedule ] ') +
                       self.Output.fuchsia(f'第{Cycles}轮遍历爬取') +
                       self.Output.green(f'共{len(new_urls)}个链接')
@@ -124,8 +124,6 @@ class Scan():
                         js_sites.append(m)
                         new_js.append(m)
                 self.jsScan(new_js)
-                if new_urls == []:   # 运行至无新页面
-                    break
 
 
     def webScan(self, url):

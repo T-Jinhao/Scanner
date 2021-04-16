@@ -3,6 +3,7 @@
 #author:Jinhao
 
 import re
+import yarl
 from bs4 import BeautifulSoup
 from modules.terminal.baseModel import BaseModel
 from modules.func import util
@@ -13,10 +14,13 @@ class Terminal(BaseModel):
             return
         text = resp.text
         rurl = str(resp.url)  # resp.url为non-str
-        self.match_Url(text, rurl)
         self.match_Email(text, rurl)
         self.match_Phone(text, rurl)
         self.match_ICP(text, rurl)
+        self.match_Url(text, rurl)
+        # 递归爬取，过滤部分页面
+        if self.scanmode:
+            self.capture_Url = self.filter_Url(self.capture_Url)
 
 
     def match_Url(self, text, url):
@@ -45,3 +49,13 @@ class Terminal(BaseModel):
                 u = util.splicingUrl(url, z)
                 if u != None and u.startswith('http'):
                     self.capture_Js.append(u)
+
+    def filter_Url(self, url):
+        ignore_name = ['html', 'htm']   # 这些静态页面暂时过滤
+        for u in url:
+            name = yarl.URL(u).name.split('.')[-1]
+            if name in ignore_name:     # 忽略静态页面
+                url.remove(u)
+            if util.isNumber(name):     # 移除页面，xxx.com/2等页码网址
+                url.remove(u)
+        return url
