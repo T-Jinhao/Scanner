@@ -10,11 +10,24 @@ class Terminal(BaseModel):
     async def filter(self, resp, url=''):
         if resp == None:
             return
-        if self.scanmode:   # 泛解析处理
-            print('pan')
-        else:
+        flag = True
+        # 泛解析处理
+        if self.scanmode:
+            flag = False
             try:
-                title = util.getTitle(resp.text).replace(' | ', ' || ')
+                title = util.getTitle(resp.text).strip()
+                if title not in self.title_list:  # 判断重复标题
+                    self.title_list.append(title)
+                    flag = True
+                elif resp.content_length not in self.length_list:  # 判断重复文本
+                    self.length_list.append(resp.content_length)
+                    flag = True
+            except:
+                pass
+        # 输出
+        if flag == True:
+            try:
+                title = util.getTitle(resp.text).replace(' | ', ' || ')   # 防止保存时切割错误
                 msg = "{status} | {protourl} | {title} | {ip} | {url}".format(
                     status=resp.status,
                     protourl=resp.protourl,

@@ -212,7 +212,7 @@ class Domain:
         :return:
         '''
         URL = ['http://'+u for u in payload]  # 需要添加协议头
-        handler = subdomainTerminal.Terminal()  # 申请文本处理起
+        handler = subdomainTerminal.Terminal(scanmode=self.scanmode)  # 申请文本处理起
         REQ = asyncHttp.req(handler=handler)
         loop = asyncio.get_event_loop()
         loop.run_until_complete(REQ.run(URL))
