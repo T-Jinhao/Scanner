@@ -13,6 +13,11 @@ class BaseModel:
         self.length_list = []
         # subdomain模块
         self.IP_list = {}
+        # scan模块
+        self.capture_Email = []
+        self.capture_Phone = []
+        self.capture_ICP = []
+        self.capture_js = {}
 
     async def filter(self, resp):
         # base过滤器
