@@ -10,19 +10,20 @@ import asyncio
 import json
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
-from reports import reports_txt,reports_xlsx
+from reports import reports_txt, reports_xlsx
 from .color_output import *
 from .load_config import Config
 from modules.func import util
 from modules.terminal import subdomainTerminal
 from modules.func import asyncHttp
+from modules.func import _requests
 
 
 class Domain:
-    def __init__(self, url, payload, REQ, name, flag):
+    def __init__(self, url, payload,  name, flag):
         self.domain = self.url_check(url)
         self.payload = payload
-        self.REQ = REQ
+        self.REQ = _requests.Concurrent()
         self.flag = flag
         self.name = name
         self.url = url
@@ -298,12 +299,11 @@ class Domain:
 
 
 class celery_domain:
-    def __init__(self,url,payload,REQ,name):
+    def __init__(self, url, payload, name):
         self.url = url
         self.payload = payload
-        self.REQ = REQ
         self.name = name
 
     def run(self):
-        x = Domain(self.url, self.payload, self.REQ, self.name, False).start()
+        x = Domain(self.url, self.payload, self.name, False).start()
         return
