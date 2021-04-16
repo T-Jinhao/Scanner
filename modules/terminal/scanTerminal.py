@@ -11,6 +11,7 @@ class Terminal(BaseModel):
     async def filter(self, resp, url=''):
         if resp == None:
             return
+        # 多层爬取模式
         if self.scanmode:
             print('scanmode')
         else:
@@ -85,7 +86,8 @@ class Terminal(BaseModel):
             if y not in wrong_list:
                 u = util.splicingUrl(url, y)
                 if u != None and u.startswith('http'):
-                    self.capture_Url.append(u)  # 处理获取到的url
+                    if util.judgingOrigin(url, u):
+                        self.capture_Url.append(u)  # 处理获取到的url
 
         for k in js_links:
             z = k.get('src')
@@ -93,7 +95,3 @@ class Terminal(BaseModel):
                 u = util.splicingUrl(url, z)
                 if u != None and u.startswith('http'):
                     self.capture_Js.append(u)
-
-
-    def judgingOrigin(self):
-        pass
