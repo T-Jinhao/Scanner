@@ -14,6 +14,7 @@ class Terminal(BaseModel):
         rurl = str(resp.url)
         self.js_analysis(text, rurl)
         self.reg_str(text, rurl)
+        print()
 
     def reg_str(self, text, rurl):
         '''
@@ -50,14 +51,13 @@ class Terminal(BaseModel):
         compile_str = re.compile(regex_str, re.VERBOSE)
         ret = compile_str.findall(text)
         if ret != []:
-            print(self.Output.fuchsia('[ schedule ] ') + self.Output.cyan('JS链接爬取: ') + rurl)
+            print(self.Output.fuchsia('[ Scan ] ') + self.Output.cyan('JS链接爬取: ') + rurl)
             for x in ret:
                 for m in x:
                     u = util.splicingUrl(rurl, m)
                     if u not in resultUrls and u:
                         print(self.Output.green('[ result_js ] ') + u)
                         resultUrls.append(u)
-            print()
 
     def js_analysis(self, text, url):
         '''

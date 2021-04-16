@@ -47,27 +47,6 @@ class Scan():
         print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('开始爬取网页链接:') + self.url)
         self.webScan(self.url)   # 扫描
         self.jsScan(self.Js)
-        exit()
-
-
-        # if web:   # 检测爬取链接的存活性
-        #     if self.checkWebStatus:
-        #         web += self.crazyRun(web)
-        #         res = self.statusCheck(web)
-        #         self.saveResult(res, sheetname='webScan', txtFilename='webScan_report.txt', cut=' | ')
-        #     else:
-        #         print(self.Output.blue('[ Setting ] ') + self.Output.fuchsia('checkWebStatus ')
-        #               + self.Output.yellow(self.checkWebStatus))
-        #         for x in web:
-        #             print(self.Output.green('[ webURL ] ') + x)
-        #         self.saveResult(web, sheetname='webScanWithoutCheck', txtFilename='webScanWithoutCheck_report.txt', cut=' | ').save()
-        # else:
-        #     print(self.Output.blue('[ result ] ') + self.Output.yellow('没有扫描到网站链接'))
-        #
-        # if js and self.checkJsStatus:    # 寻找js文件内的中文字符
-        #     print(self.Output.blue('[ schedule ] ') + self.Output.cyan('JS文件分析'))
-        #     for u in js:
-        #         self.js_analysis(u)    # 寻找敏感信息
 
         if self.Phone != []:
             print()
