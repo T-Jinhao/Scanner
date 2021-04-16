@@ -165,7 +165,7 @@ class Scanner():
         if self.args.login:
             func_login.Login(self.args.url, self.REQ, self.lPayload, self.taskname, self.args.crazy).start()
         if self.args.burp:
-            func_burp.Burp(self.args.url, self.bPayload, self.REQ, self.taskname, self.args.crazy).start()
+            func_burp.Burp(self.args.url, self.bPayload, self.taskname, self.args.crazy).start()
         if self.args.domain:
             func_domain.Domain(self.args.url, self.dPayload, self.REQ, self.taskname, self.args.crazy).start()
         if self.args.sqlscan:
