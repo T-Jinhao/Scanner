@@ -64,7 +64,7 @@ class BaseModel:
         :param text:
         :return:
         '''
-        compile_Phone = re.compile(r'1[3456789]\d{9}')
+        compile_Phone = re.compile(r'1[358]\d{9}')
         ret = compile_Phone.findall(text)
         if ret != []:
             for x in ret:
