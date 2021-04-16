@@ -43,9 +43,14 @@ class Scan():
         print(self.Output.fuchsia(">>>>>scan" + "-" * 40))
         self.load_config()
         print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('开始爬取网页链接:') + self.url)
-        self.webScan(self.url)   # 扫描
+        # 扫描
+        self.webScan(self.url)
         self.jsScan(self.Js)
-        self.output()   # 输出
+        if self.crazy:
+            self.scanmode = 1
+            self.crazyWebScan()
+        # 输出
+        self.output()
         print(self.Output.fuchsia("-" * 40 + "<<<<<scan" + "\n"))
 
     def output(self):
@@ -90,26 +95,22 @@ class Scan():
         else:
             reports_txt.Report(report, self.name, txtFilename, '网页扫描报告已存放于', '并没有扫描出网页链接').save()
 
-
-    # def crazyRun(self,urls):
-    #     '''
-    #     递归各相对路径，尝试找出可疑的302等页面
-    #     :param urls:
-    #     :return:
-    #     '''
-    #     paths = []
-    #     http = re.compile('http')
-    #     for u in urls:
-    #         if http.match(u):  # 属于完整链接
-    #             pass
-    #         else:
-    #             u = u.lstrip('.')  # 除去左端点号
-    #             u = u.lstrip('/')  # 除去左端/号
-    #             for p in range(u.count('/')):
-    #                 x = u.rsplit('/', p + 1)[0]
-    #                 if x not in paths:
-    #                     paths.append(x)
-    #     return paths
+    def crazyWebScan(self):
+        '''
+        循环爬取
+        :return:
+        '''
+        if self.Web != []:   # 进入时判断当前页面是否爬取到链接
+            web_sites = self.Web  # 创建新数组
+            while 1:
+                new_urls = []
+                self.webScan(self.Web)  # 运行后self.Web会刷新结果
+                for x in self.Web:
+                    web_sites.append(x)
+                    new_urls.append(x)
+                self.jsScan(self.Js)
+                if new_urls == []:   # 运行至无新页面
+                    break
 
 
     def webScan(self, url):
@@ -135,10 +136,14 @@ class Scan():
         :param url:
         :return:
         '''
+        if url == []:
+            return
         handler = jsTerminal.Terminal()
         REQ = asyncHttp.req(handler=handler)
         loop = asyncio.get_event_loop()
         loop.run_until_complete(REQ.run(url))
+        self.Email += handler.capture_Email  # 附加
+        self.Phone += handler.capture_Phone  # 附加
         return
 
 

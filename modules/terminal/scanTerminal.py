@@ -13,7 +13,7 @@ class Terminal(BaseModel):
             return
         # 多层爬取模式
         if self.scanmode:
-            print('scanmode')
+            pass
         else:
             text = resp.text
             rurl = str(resp.url)  # resp.url为non-str
