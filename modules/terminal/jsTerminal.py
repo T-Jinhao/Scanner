@@ -12,6 +12,7 @@ class Terminal(BaseModel):
             return
         text = resp.text
         rurl = str(resp.url)
+        self.js_analysis(text, rurl)
         self.reg_str(text, rurl)
 
     def reg_str(self, text, rurl):
@@ -49,10 +50,30 @@ class Terminal(BaseModel):
         compile_str = re.compile(regex_str, re.VERBOSE)
         ret = compile_str.findall(text)
         if ret != []:
-            print(self.Output.green('[ output ] ') + self.Output.cyan('JS链接爬取结果'))
+            print(self.Output.fuchsia('[ schedule ] ') + self.Output.cyan('JS链接爬取: ') + rurl)
             for x in ret:
                 for m in x:
                     u = util.splicingUrl(rurl, m)
                     if u not in resultUrls and u:
                         print(self.Output.green('[ result_js ] ') + u)
                         resultUrls.append(u)
+            print()
+
+    def js_analysis(self, text, url):
+        '''
+        找出js文件内的中文字符
+        :return:
+        '''
+        print(self.Output.fuchsia('[ Scan ] ') + url)
+        try:
+            compile_CN = re.compile(u"[\u4e00-\u9fa5]")  # 匹配中文
+            self.match_Phone(text, url)
+            self.match_Email(text, url)
+            ret = compile_CN.findall(text)
+            if ret != []:
+                print(self.Output.green('[ output ] ') + self.Output.cyan('文件中文爬取'))
+                ret = ''.join(ret)
+                print(self.Output.blue('[ result ] ') + self.Output.green(ret))
+        except Exception as e:
+            print(e)
+        return

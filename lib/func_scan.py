@@ -46,7 +46,7 @@ class Scan():
         self.load_config()
         print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('开始爬取网页链接:') + self.url)
         self.webScan(self.url)   # 扫描
-        print(self.Web)
+        self.jsScan(self.Js)
         exit()
 
 
@@ -198,28 +198,7 @@ class Scan():
             time.sleep(0.5)   # 防止过于频繁导致网站崩溃
         return result
 
-    # def js_analysis(self, url):
-    #     '''
-    #     找出js文件内的中文字符
-    #     :return:
-    #     '''
-    #     compile_CN = re.compile(u"[\u4e00-\u9fa5]")   # 匹配中文
-    #     print()
-    #     print(self.Output.fuchsia('[ Scan ] ') + url)
-    #     try:
-    #         res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
-    #         content = str(res.content.decode('utf-8'))
-    #         self.match_Phone(res.text, url)
-    #         self.match_Email(res.text, url)
-    #         self.reg_str(res.text)
-    #         ret = compile_CN.findall(content)
-    #         if ret != []:
-    #             print(self.Output.green('[ output ] ') + self.Output.cyan('文件中文爬取'))
-    #             ret = ''.join(ret)
-    #             print(self.Output.blue('[ result ] ') + self.Output.green(ret))
-    #     except Exception:
-    #         pass
-    #     return
+
 
 
 class celery_scan:
