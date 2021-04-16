@@ -140,6 +140,8 @@ class Ports():
 
     def showReport(self, reports):
         new_report = []
+        if reports == []:
+            return new_report
         for r in reports:
             if r['port'] in port_dict:
                 service = port_dict[r['port']]
