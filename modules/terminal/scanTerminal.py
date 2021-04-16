@@ -11,16 +11,12 @@ class Terminal(BaseModel):
     async def filter(self, resp, url=''):
         if resp == None:
             return
-        # 多层爬取模式
-        if self.scanmode:
-            pass
-        else:
-            text = resp.text
-            rurl = str(resp.url)  # resp.url为non-str
-            self.match_Url(text, rurl)
-            self.match_Email(text, rurl)
-            self.match_Phone(text, rurl)
-            self.match_ICP(text, rurl)
+        text = resp.text
+        rurl = str(resp.url)  # resp.url为non-str
+        self.match_Url(text, rurl)
+        self.match_Email(text, rurl)
+        self.match_Phone(text, rurl)
+        self.match_ICP(text, rurl)
 
 
     def match_Url(self, text, url):

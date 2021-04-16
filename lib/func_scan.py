@@ -16,10 +16,11 @@ from modules.terminal import jsTerminal
 wrong_web_list = ['javascript:void(0)', None, '###', '#']
 
 class Scan():
-    def __init__(self, url, name, crazy):
+    def __init__(self, url, name, crazy, Cycles=5):
         self.url = url
         self.name = name
         self.crazy = crazy
+        self.Cycles = Cycles   # crazy下的循环最大次数
         self.Output = ColorOutput()
         # 数据区
         self.scanmode = 0
@@ -102,13 +103,27 @@ class Scan():
         '''
         if self.Web != []:   # 进入时判断当前页面是否爬取到链接
             web_sites = self.Web  # 创建新数组
-            while 1:
-                new_urls = []
-                self.webScan(self.Web)  # 运行后self.Web会刷新结果
+            js_sites = self.Js
+            Cycles = 1
+            new_urls = self.Web   # 初始数据
+            while 1 and Cycles <= self.Cycles:
+                print(self.Output.blue('[ schedule ] ') +
+                      self.Output.fuchsia(f'第{Cycles}轮遍历爬取') +
+                      self.Output.green(f'共{len(new_urls)}个链接')
+                      )
+                Cycles += 1  # 防止无限运行
+                self.webScan(new_urls)  # 运行后self.Web会刷新结果
+                new_urls = []           # 重置
+                new_js = []
                 for x in self.Web:
-                    web_sites.append(x)
-                    new_urls.append(x)
-                self.jsScan(self.Js)
+                    if x not in web_sites:
+                        web_sites.append(x)
+                        new_urls.append(x)
+                for m in self.Js:
+                    if m not in js_sites:
+                        js_sites.append(m)
+                        new_js.append(m)
+                self.jsScan(new_js)
                 if new_urls == []:   # 运行至无新页面
                     break
 
@@ -118,7 +133,7 @@ class Scan():
         爬取当前页面的URL
         :return:
         '''
-        handler = scanTerminal.Terminal(scanmode=self.scanmode)
+        handler = scanTerminal.Terminal(scanmode=self.scanmode)  # scanmode暂未实现，保留接口
         REQ = asyncHttp.req(handler=handler)
         loop = asyncio.get_event_loop()
         loop.run_until_complete(REQ.run(url))
@@ -138,7 +153,7 @@ class Scan():
         '''
         if url == []:
             return
-        handler = jsTerminal.Terminal()
+        handler = jsTerminal.Terminal(scanmode=self.scanmode)
         REQ = asyncHttp.req(handler=handler)
         loop = asyncio.get_event_loop()
         loop.run_until_complete(REQ.run(url))
