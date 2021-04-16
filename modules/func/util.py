@@ -4,6 +4,7 @@
 
 import re
 import socket
+import yarl
 from urllib.parse import urljoin
 
 def getHostname(host):
@@ -46,3 +47,32 @@ def splicingUrl(url, u):
     else:     # 拼凑相对地址，转换成绝对地址
         u = urljoin(url, u)
         return u
+
+def judgingOrigin(originUrl, checkUrl):
+    '''
+    判断同源
+    或返回IP
+    :param originUrl:
+    :param checkUrl:
+    :return:
+    '''
+    ourl = yarl.URL(originUrl)
+    curl = yarl.URL(checkUrl)
+    ip = re.compile('[\d]{1,3}\.[\d]{1,3}\.[\d]{1,3}\.[\d]{1,3}')
+    netloc = curl.host
+    res = ip.match(netloc)  # ip均检测
+    if res:
+        return True
+    n = netloc.split('.')
+    if n[-2] not in ["com", "edu", "ac", "net", "org", "gov"]:  # 带地域标签的域名
+        c_domain = n[-2]
+    else:
+        c_domain = n[-3]
+    m = ourl.host.split('.')
+    if m[-2] not in ["com", "edu", "ac", "net", "org", "gov"]:  # 带地域标签的域名
+        o_domain = m[-2]
+    else:
+        o_domain = m[-3]
+    if c_domain == o_domain:
+        return True
+    return False
