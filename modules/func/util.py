@@ -43,10 +43,10 @@ def splicingUrl(url, u):
     if u in err:
         return
     if re.match("(http|https)://.*", u):  # 匹配绝对地址
-        return u
+        return u.split('#')[0]
     else:     # 拼凑相对地址，转换成绝对地址
         u = urljoin(url, u)
-        return u
+        return u.split('#')[0]
 
 def judgingOrigin(originUrl, checkUrl):
     '''
