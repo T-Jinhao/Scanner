@@ -17,7 +17,8 @@ class BaseModel:
         self.capture_Email = []
         self.capture_Phone = []
         self.capture_ICP = []
-        self.capture_js = {}
+        self.capture_Js = []
+        self.capture_Url = []
 
     async def filter(self, resp):
         # base过滤器
