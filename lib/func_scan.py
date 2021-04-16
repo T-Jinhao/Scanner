@@ -4,12 +4,13 @@
 
 import re
 import time
-from bs4 import BeautifulSoup
-from urllib.parse import urljoin
+import asyncio
 from modules.func import util
 from .color_output import *
 from .load_config import Config
 from reports import reports_xlsx,reports_txt
+from modules.func import asyncHttp
+from modules.terminal import scanTerminal
 
 wrong_web_list = ['javascript:void(0)', None, '###', '#']
 
@@ -19,10 +20,15 @@ class Scan():
         self.REQ = REQ
         self.name = name
         self.crazy = crazy
+        self.Output = ColorOutput()
+        # 数据区
+        self.scanmode = 0
         self.Phone = []
         self.Email = []
         self.ICP = []
-        self.Output = ColorOutput()
+        self.Js = []
+        self.Web = []
+
 
     def load_config(self):
         config = Config().readConfig()
@@ -38,25 +44,29 @@ class Scan():
         print(self.Output.fuchsia(">>>>>scan" + "-" * 40))
         self.load_config()
         print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('开始爬取网页链接:') + self.url)
-        web, js = self.scan(self.url)
-        if web:   # 检测爬取链接的存活性
-            if self.checkWebStatus:
-                web += self.crazyRun(web)
-                res = self.statusCheck(web)
-                self.saveResult(res, sheetname='webScan', txtFilename='webScan_report.txt', cut=' | ')
-            else:
-                print(self.Output.blue('[ Setting ] ') + self.Output.fuchsia('checkWebStatus ')
-                      + self.Output.yellow(self.checkWebStatus))
-                for x in web:
-                    print(self.Output.green('[ webURL ] ') + x)
-                self.saveResult(web, sheetname='webScanWithoutCheck', txtFilename='webScanWithoutCheck_report.txt', cut=' | ').save()
-        else:
-            print(self.Output.blue('[ result ] ') + self.Output.yellow('没有扫描到网站链接'))
+        self.scan(self.url)   # 扫描
+        print(self.Web)
+        exit()
 
-        if js and self.checkJsStatus:    # 寻找js文件内的中文字符
-            print(self.Output.blue('[ schedule ] ') + self.Output.cyan('JS文件分析'))
-            for u in js:
-                self.js_analysis(u)    # 寻找敏感信息
+
+        # if web:   # 检测爬取链接的存活性
+        #     if self.checkWebStatus:
+        #         web += self.crazyRun(web)
+        #         res = self.statusCheck(web)
+        #         self.saveResult(res, sheetname='webScan', txtFilename='webScan_report.txt', cut=' | ')
+        #     else:
+        #         print(self.Output.blue('[ Setting ] ') + self.Output.fuchsia('checkWebStatus ')
+        #               + self.Output.yellow(self.checkWebStatus))
+        #         for x in web:
+        #             print(self.Output.green('[ webURL ] ') + x)
+        #         self.saveResult(web, sheetname='webScanWithoutCheck', txtFilename='webScanWithoutCheck_report.txt', cut=' | ').save()
+        # else:
+        #     print(self.Output.blue('[ result ] ') + self.Output.yellow('没有扫描到网站链接'))
+        #
+        # if js and self.checkJsStatus:    # 寻找js文件内的中文字符
+        #     print(self.Output.blue('[ schedule ] ') + self.Output.cyan('JS文件分析'))
+        #     for u in js:
+        #         self.js_analysis(u)    # 寻找敏感信息
 
         if self.Phone != []:
             print()
@@ -131,60 +141,24 @@ class Scan():
         return paths
 
 
-    def url_check(self, url, u):
-        '''
-        检测url完整性，返回绝对地址
-        :param url: 当前扫描的页面url
-        :param u: 获取到的url
-        :return:
-        '''
-        err = ['', None, '/', '\n']
-        if u in err:
-            return
-        if re.match("(http|https)://.*", u):  # 匹配绝对地址
-            return u
-        else:     # 拼凑相对地址，转换成绝对地址
-            u = urljoin(url, u)
-            return u
-
 
     def scan(self, url):
         '''
         爬取当前页面的URL
-        :return:网站相关链接
+        :return:
         '''
-        try:
-            res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
-            self.match_Email(res.text, url)   # 匹配邮箱
-            self.match_Phone(res.text, url)   # 匹配电话
-            self.match_ICP(res.content.decode('utf-8'), url)   # 匹配备案号
-            web_sites = []  # 网站链接
-            js_sites = []  # js脚本链接
-            soup = BeautifulSoup(res.text, 'html.parser')
-            web_links = soup.find_all('a')
-            js_links = soup.find_all('script')
-            for j in web_links:
-                y = j.get('href')  # 提取href后的链接
-                if y != None and y not in wrong_web_list:
-                    u = self.url_check(url, y)
-                    if u != None:
-                        web_sites.append(u)  # 处理获取到的url
-            for k in js_links:
-                z = k.get('src')
-                if z != None:
-                    u = self.url_check(url, z)
-                    if u != None:
-                        js_sites.append(u)
-            if not web_sites:
-                web_sites = ''
-            if not js_sites:
-                js_sites = ''
-            return web_sites, js_sites
+        handler = scanTerminal.Terminal(scanmode=self.scanmode)
+        REQ = asyncHttp.req(handler=handler)
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(REQ.run(url))
+        # 获取结果
+        self.Email += handler.capture_Email  # 附加
+        self.Phone += handler.capture_Phone  # 附加
+        self.ICP += handler.capture_ICP      # 附加
+        self.Web = handler.capture_Url       # 重新赋值
+        self.Js = handler.capture_Js         # 重新赋值
+        return
 
-        except Exception as e:
-            # color_output(e, color='RED')
-            print(self.Output.red('[ Error ] ') + self.Output.yellow('网站访问出现点问题了...'))
-            sys.exit(1)
 
 
 
@@ -237,51 +211,6 @@ class Scan():
             pass
         return
 
-    def match_Phone(self, text, url):
-        '''
-        匹配手机号码
-        :param text:
-        :return:
-        '''
-        compile_Phone = re.compile(r'1[3456789]\d{9}')
-        ret = compile_Phone.findall(text)
-        if ret != []:
-            for x in ret:
-                if x not in self.Phone:
-                    p = " | ".join([str(x), url])
-                    self.Phone.append(p)
-        return
-
-    def match_ICP(self, text, url):
-        '''
-        匹配ICP备案号
-        :param text:
-        :return:
-        '''
-        compile_ICP = re.compile("([\u4e00-\u9fa5]ICP备\d{8}号-([0-9]|10))")
-        ret = compile_ICP.search(text)
-        try:
-            if ret != None and ret[0] not in self.ICP and ret[0] != []:
-                i = " | ".join([ret[0], url])
-                self.ICP.append(i)
-        except:
-            pass
-        return
-
-    def match_Email(self, text, url):
-        '''
-        匹配邮箱
-        :param content:
-        :return:
-        '''
-        compile_Email = re.compile(r'[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]{0,4}')
-        ret = compile_Email.findall(text)
-        if ret != []:
-            for x in ret:
-                if x not in self.Email and x.split('.')[-1] != 'png':
-                    e = " | ".join([x, url])
-                    self.Email.append(e)
-        return
 
     def reg_str(self, text):
         '''
@@ -320,7 +249,7 @@ class Scan():
             print(self.Output.green('[ output ] ') + self.Output.cyan('JS链接爬取结果'))
             for x in ret:
                 for m in x:
-                    u = self.url_check(self.url, m)
+                    u = util.splicingUrl(self.url, m)
                     if u not in resultUrls and u:
                         print(self.Output.green('[ result_js ] ') + u)
                         resultUrls.append(u)
