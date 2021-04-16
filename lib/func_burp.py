@@ -14,14 +14,13 @@ from modules.terminal import burpTerminal
 from modules.func import asyncHttp
 
 class Burp():
-    def __init__(self, url, payload, REQ, name, flag):
+    def __init__(self, url, payload, name, flag):
         self.url = self.url_parse(url).rstrip('/')
         self.proto_url = url
         self.flag = flag
         self.name = name
         self.payload = payload
         self.scan_mode = 0
-        self.REQ = REQ
         self.Output = ColorOutput()
 
     def load_config(self):
@@ -199,15 +198,14 @@ class celery_burp:
     '''
     celery调用模块
     '''
-    def __init__(self, url, payload, REQ, name, flag):
+    def __init__(self, url, payload, name, flag):
         self.url = url
         self.payload = payload
-        self.REQ = REQ
         self.flag = flag
         self.name = name
 
     def run(self):
-        x = Burp(self.url, self.payload, self.REQ, self.name, self.flag).start()    # 线程有所减少
+        x = Burp(self.url, self.payload, self.name, self.flag).start()    # 线程有所减少
         return
 
 
