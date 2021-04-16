@@ -65,10 +65,11 @@ class Terminal(BaseModel):
         :return:
         '''
         print(self.Output.fuchsia('[ Scan ] ') + url)
+        compile_CN = re.compile(u"[\u4e00-\u9fa5]")
+        self.match_Phone(text, url)
+        self.match_Email(text, url)
+        # 匹配中文
         try:
-            compile_CN = re.compile(u"[\u4e00-\u9fa5]")  # 匹配中文
-            self.match_Phone(text, url)
-            self.match_Email(text, url)
             ret = compile_CN.findall(text)
             if ret != []:
                 print(self.Output.green('[ output ] ') + self.Output.cyan('文件中文爬取'))
