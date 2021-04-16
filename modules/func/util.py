@@ -88,3 +88,21 @@ def isNumber(s):
         return True
     except:
         return False
+
+def filter_Url(url):
+    '''
+    筛选url
+    :param url:
+    :return:
+    '''
+    if url == []:
+        return []
+    if type(url) is not list:
+        url = [url]
+    urls = set()
+    ignore_name = ['html', 'htm']   # 这些静态页面暂时过滤
+    for u in url:
+        name = yarl.URL(u).name.split('.')[-1]
+        if name not in ignore_name and not isNumber(name):     # 忽略静态页面
+            urls.add(u)
+    return list(urls)

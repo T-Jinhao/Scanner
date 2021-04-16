@@ -105,10 +105,10 @@ class Scan():
             web_sites = self.Web  # 创建新数组
             js_sites = self.Js
             Cycles = 1
-            new_urls = self.Web   # 初始数据
+            new_urls = util.filter_Url(self.Web)
             while 1 and Cycles <= self.Cycles and new_urls != []:
                 print(self.Output.blue('[ schedule ] ') +
-                      self.Output.fuchsia(f'第{Cycles}轮遍历爬取') +
+                      self.Output.fuchsia(f'第{Cycles}轮遍历爬取 ') +
                       self.Output.green(f'共{len(new_urls)}个链接')
                       )
                 Cycles += 1  # 防止无限运行
@@ -119,6 +119,7 @@ class Scan():
                     if x not in web_sites:
                         web_sites.append(x)
                         new_urls.append(x)
+                new_urls = util.filter_Url(self.Web)
                 for m in self.Js:
                     if m not in js_sites:
                         js_sites.append(m)
