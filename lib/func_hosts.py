@@ -2,10 +2,8 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
-import platform
-from socket import *
-from concurrent.futures import ThreadPoolExecutor
-from reports import reports_txt,reports_xlsx
+from reports import reports_txt, reports_xlsx
+from modules.func import sniffHost
 from .color_output import *
 from .load_config import Config
 
@@ -20,7 +18,8 @@ class Hosts:
         print(self.Output.blue('[ schedule ] ') + self.Output.cyan('开始扫描开放主机'))
         url = self.c_hosts()
         report = self.run(url)
-        self.saveResult(report)
+        new_report = self.showReport(report)
+        self.saveResult(new_report)
         print(self.Output.fuchsia('-'*40+'hosts<<<<<'))
         return report
 
@@ -37,11 +36,10 @@ class Hosts:
         system = platform.system()
         saveType = config.get("Result", system)
         if saveType == 'xlsx':
-            banner = ['C段IP信息', '端口情况']
+            banner = ['C段主机', '探测端口']
             reports_xlsx.Report(report, self.name, 'Hosts', banner).save()
         else:    # txt类型为默认格式
             reports_txt.Report(report, self.name, 'c_hosts_report.txt', '主机c段扫描报告已存放于', '并没有扫描出存活主机').save()
-
 
     def c_hosts(self):
         '''
@@ -50,44 +48,37 @@ class Hosts:
         '''
         url = []
         h = self.host.split('.')
-        H = "{0}.{1}.{2}.".format(h[0],h[1],h[2])
-        for i in range(1,256):
+        H = "{0}.{1}.{2}.".format(h[0], h[1], h[2])
+        for i in range(1, 256):
             x = H + str(i)
             url.append(x)
         return url
 
 
-    def run(self,url):
+    def run(self, IPs):
         '''
-        调用线程池
-        :param url:
+        调用异步
+        :param IPs:
         :return:
         '''
-        reports = []
-        with ThreadPoolExecutor(max_workers=255) as pool:
-            results = pool.map(self.scan,url)
-            for result in results:
-                if result['flag'] == 1:
-                    reports.append(result['msg'])
-        return reports
+        sniff = sniffHost.ScanHost(
+            ip=IPs
+        )
+        sniff.loop.run_until_complete(sniff.start())
+        results = sniff.result
+        return results
 
-
-    def scan(self,url):
-        '''
-        扫描主机80端口是否开放
-        :param url:
-        :return:
-        '''
-        sock = socket(AF_INET, SOCK_STREAM)
-        sock.settimeout(5)
-        result = sock.connect_ex((url,80))
-        if result == 0:
-            msg = "{} : 80".format(url)
-            print(self.Output.green('[ result ] ') + self.Output.cyan(url))
-            m = {'msg':msg,'flag':1}
-        else:
-            m = {'flag':0}
-        return m
-
+    def showReport(self, reports):
+        if reports == []:
+            return []
+        new_report = []
+        for r in reports:
+            print(self.Output.green('[ result ]' )
+                  + self.Output.fuchsia('host: ') + self.Output.green(r['host']) + self.Output.interval()
+                  + self.Output.fuchsia('sniffPort: ') + self.Output.green(r['port'])
+                  )
+            msg = "{0}:{1}".format(r['host'], str(r['port']))
+            new_report.append(msg)
+        return new_report
 
 
