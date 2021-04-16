@@ -29,6 +29,7 @@ class Scan():
         self.ICP = []
         self.Js = []
         self.Web = []
+        self.results = []
 
 
     def load_config(self):
@@ -52,6 +53,7 @@ class Scan():
             self.crazyWebScan()
         # 输出
         self.output()
+        self.saveResult(self.results, 'webScan', 'webScan.txt', cut=' | ')
         print(self.Output.fuchsia("-" * 40 + "<<<<<scan" + "\n"))
 
     def output(self):
@@ -159,6 +161,7 @@ class Scan():
         self.ICP += handler.capture_ICP      # 附加
         self.Web = handler.capture_Url       # 重新赋值
         self.Js = handler.capture_Js         # 重新赋值
+        self.results += REQ.results
         return
 
     def jsScan(self, url):

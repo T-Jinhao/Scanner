@@ -18,6 +18,14 @@ class Terminal(BaseModel):
         self.match_Phone(text, rurl)
         self.match_ICP(text, rurl)
         self.match_Url(text, rurl)
+        title = util.getTitle(resp.text).replace(' | ', ' || ')  # 防止保存时切割错误
+        msg = "{status} | {content_lenth} | {title} | {URL}".format(
+            status=resp.status,
+            content_lenth=str(resp.content_length),
+            title=title,
+            URL=str(resp.url)
+        )
+        return msg
 
 
     def match_Url(self, text, url):
