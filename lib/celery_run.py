@@ -27,7 +27,7 @@ class RC:
         '''
         # print(self.args)
         if self.args.scan:
-            ress = spider.delay(self.args.url, self.REQ, self.name)
+            ress = spider.delay(self.args.url, self.name)
             self.status(ress)
         if self.args.ports:
             resp = ports.delay(self.host, self.name)

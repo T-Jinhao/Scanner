@@ -16,9 +16,8 @@ from modules.terminal import jsTerminal
 wrong_web_list = ['javascript:void(0)', None, '###', '#']
 
 class Scan():
-    def __init__(self, url, REQ, name, crazy):
+    def __init__(self, url, name, crazy):
         self.url = url
-        self.REQ = REQ
         self.name = name
         self.crazy = crazy
         self.Output = ColorOutput()
@@ -92,26 +91,25 @@ class Scan():
             reports_txt.Report(report, self.name, txtFilename, '网页扫描报告已存放于', '并没有扫描出网页链接').save()
 
 
-    def crazyRun(self,urls):
-        '''
-        递归各相对路径，尝试找出可疑的302等页面
-        :param urls:
-        :return:
-        '''
-        paths = []
-        http = re.compile('http')
-        for u in urls:
-            if http.match(u):  # 属于完整链接
-                pass
-            else:
-                u = u.lstrip('.')  # 除去左端点号
-                u = u.lstrip('/')  # 除去左端/号
-                for p in range(u.count('/')):
-                    x = u.rsplit('/', p + 1)[0]
-                    if x not in paths:
-                        paths.append(x)
-        return paths
-
+    # def crazyRun(self,urls):
+    #     '''
+    #     递归各相对路径，尝试找出可疑的302等页面
+    #     :param urls:
+    #     :return:
+    #     '''
+    #     paths = []
+    #     http = re.compile('http')
+    #     for u in urls:
+    #         if http.match(u):  # 属于完整链接
+    #             pass
+    #         else:
+    #             u = u.lstrip('.')  # 除去左端点号
+    #             u = u.lstrip('/')  # 除去左端/号
+    #             for p in range(u.count('/')):
+    #                 x = u.rsplit('/', p + 1)[0]
+    #                 if x not in paths:
+    #                     paths.append(x)
+    #     return paths
 
 
     def webScan(self, url):
@@ -149,13 +147,12 @@ class celery_scan:
     celery调用模块
     返回新的url进行递归扫描
     '''
-    def __init__(self,url,REQ,name):
+    def __init__(self, url, name):
         self.url =url
-        self.REQ = REQ
         self.name = name
 
     def run(self):
-        res = Scan(self.url, self.REQ, self.name, '1')
+        res = Scan(self.url, self.name, '1')
         new_url = self.same_check(res)
         return new_url
 

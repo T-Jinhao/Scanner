@@ -157,7 +157,7 @@ class Scanner():
             return
 
         if self.args.scan:
-            func_scan.Scan(self.args.url, self.REQ, self.taskname, self.args.crazy).start()
+            func_scan.Scan(self.args.url, self.taskname, self.args.crazy).start()
         if self.args.ports:
             func_ports.Ports(self.host, self.taskname, self.args.crazy).start()
         if self.args.hosts:

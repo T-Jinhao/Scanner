@@ -15,8 +15,8 @@ celery任务分配
 app = Celery('task',backend='redis://localhost:6379/0',broker='redis://localhost:6379/0')
 
 @app.task(name='tasks.spider.func_celery')
-def spider(url,REQ,name):
-    func_scan.celery_scan(url, REQ, name).run()
+def spider(url, name):
+    func_scan.celery_scan(url, name).run()
     return
 
 
