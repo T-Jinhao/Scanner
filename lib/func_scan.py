@@ -11,6 +11,7 @@ from .load_config import Config
 from reports import reports_xlsx,reports_txt
 from modules.func import asyncHttp
 from modules.terminal import scanTerminal
+from modules.terminal import jsTerminal
 
 wrong_web_list = ['javascript:void(0)', None, '###', '#']
 
@@ -44,7 +45,7 @@ class Scan():
         print(self.Output.fuchsia(">>>>>scan" + "-" * 40))
         self.load_config()
         print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('开始爬取网页链接:') + self.url)
-        self.scan(self.url)   # 扫描
+        self.webScan(self.url)   # 扫描
         print(self.Web)
         exit()
 
@@ -137,12 +138,11 @@ class Scan():
                     x = u.rsplit('/', p + 1)[0]
                     if x not in paths:
                         paths.append(x)
-        # color_output(paths)
         return paths
 
 
 
-    def scan(self, url):
+    def webScan(self, url):
         '''
         爬取当前页面的URL
         :return:
@@ -159,7 +159,17 @@ class Scan():
         self.Js = handler.capture_Js         # 重新赋值
         return
 
-
+    def jsScan(self, url):
+        '''
+        分析当前的js文件
+        :param url:
+        :return:
+        '''
+        handler = jsTerminal.Terminal()
+        REQ = asyncHttp.req(handler=handler)
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(REQ.run(url))
+        return
 
 
     def statusCheck(self,urls):
@@ -188,72 +198,28 @@ class Scan():
             time.sleep(0.5)   # 防止过于频繁导致网站崩溃
         return result
 
-    def js_analysis(self, url):
-        '''
-        找出js文件内的中文字符
-        :return:
-        '''
-        compile_CN = re.compile(u"[\u4e00-\u9fa5]")   # 匹配中文
-        print()
-        print(self.Output.fuchsia('[ Scan ] ') + url)
-        try:
-            res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
-            content = str(res.content.decode('utf-8'))
-            self.match_Phone(res.text, url)
-            self.match_Email(res.text, url)
-            self.reg_str(res.text)
-            ret = compile_CN.findall(content)
-            if ret != []:
-                print(self.Output.green('[ output ] ') + self.Output.cyan('文件中文爬取'))
-                ret = ''.join(ret)
-                print(self.Output.blue('[ result ] ') + self.Output.green(ret))
-        except Exception:
-            pass
-        return
-
-
-    def reg_str(self, text):
-        '''
-        匹配js中的链接
-        感谢：https://github.com/GerbenJavado/LinkFinder
-        :param text: 页面
-        :return:
-        '''
-        resultUrls = []
-        regex_str = r"""
-                      (?:"|')                               # Start newline delimiter
-                      (
-                        ((?:[a-zA-Z]{1,10}://|//)           # Match a scheme [a-Z]*1-10 or //
-                        [^"'/]{1,}\.                        # Match a domainname (any character + dot)
-                        [a-zA-Z]{2,}[^"']{0,})              # The domainextension and/or path
-                        |
-                        ((?:/|\.\./|\./)                    # Start with /,../,./
-                        [^"'><,;| *()(%%$^/\\\[\]]          # Next character can't be...
-                        [^"'><,;|()]{1,})                   # Rest of the characters can't be
-                        |
-                        ([a-zA-Z0-9_\-/]{1,}/               # Relative endpoint with /
-                        [a-zA-Z0-9_\-/]{1,}                 # Resource name
-                        \.(?:[a-zA-Z]{1,4}|action)          # Rest + extension (length 1-4 or action)
-                        (?:[\?|/][^"|']{0,}|))              # ? mark with parameters
-                        |
-                        ([a-zA-Z0-9_\-]{1,}                 # filename
-                        \.(?:php|asp|aspx|jsp|json|
-                             action|html|js|txt|xml)             # . + extension
-                        (?:\?[^"|']{0,}|))                  # ? mark with parameters
-                      )
-                      (?:"|')                               # End newline delimiter
-                    """
-        compile_str = re.compile(regex_str, re.VERBOSE)
-        ret = compile_str.findall(text)
-        if ret != []:
-            print(self.Output.green('[ output ] ') + self.Output.cyan('JS链接爬取结果'))
-            for x in ret:
-                for m in x:
-                    u = util.splicingUrl(self.url, m)
-                    if u not in resultUrls and u:
-                        print(self.Output.green('[ result_js ] ') + u)
-                        resultUrls.append(u)
-
+    # def js_analysis(self, url):
+    #     '''
+    #     找出js文件内的中文字符
+    #     :return:
+    #     '''
+    #     compile_CN = re.compile(u"[\u4e00-\u9fa5]")   # 匹配中文
+    #     print()
+    #     print(self.Output.fuchsia('[ Scan ] ') + url)
+    #     try:
+    #         res = self.REQ.autoGetAccess(url, threads=self.threads, timeout=self.timeout)
+    #         content = str(res.content.decode('utf-8'))
+    #         self.match_Phone(res.text, url)
+    #         self.match_Email(res.text, url)
+    #         self.reg_str(res.text)
+    #         ret = compile_CN.findall(content)
+    #         if ret != []:
+    #             print(self.Output.green('[ output ] ') + self.Output.cyan('文件中文爬取'))
+    #             ret = ''.join(ret)
+    #             print(self.Output.blue('[ result ] ') + self.Output.green(ret))
+    #     except Exception:
+    #         pass
+    #     return
 
 
 class celery_scan:

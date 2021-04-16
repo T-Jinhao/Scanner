@@ -10,16 +10,16 @@ class Terminal(BaseModel):
     async def filter(self, resp, url=''):
         if resp == None:
             return
-        if self.scanmode:
-            print('scanmode')
-        else:
-            pass
+        text = resp.text
+        rurl = str(resp.url)
+        self.reg_str(text, rurl)
 
-    def reg_str(self, text):
+    def reg_str(self, text, rurl):
         '''
         匹配js中的链接
         感谢：https://github.com/GerbenJavado/LinkFinder
         :param text: 页面
+        :param rurl: 原始页面
         :return:
         '''
         resultUrls = []
@@ -52,7 +52,7 @@ class Terminal(BaseModel):
             print(self.Output.green('[ output ] ') + self.Output.cyan('JS链接爬取结果'))
             for x in ret:
                 for m in x:
-                    u = util.splicingUrl('', m)
+                    u = util.splicingUrl(rurl, m)
                     if u not in resultUrls and u:
                         print(self.Output.green('[ result_js ] ') + u)
                         resultUrls.append(u)

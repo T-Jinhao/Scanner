@@ -26,7 +26,7 @@ class RC:
         :return:
         '''
         # print(self.args)
-        if self.args.scan:
+        if self.args.webScan:
             ress = spider.delay(self.args.url, self.REQ, self.name)
             self.status(ress)
         if self.args.ports:
