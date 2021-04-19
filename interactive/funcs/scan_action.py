@@ -6,11 +6,12 @@ import sys
 from interactive.funcs import util
 from interactive.check import check_scan, check_set
 from interactive.funcs import redisUtil
+from interactive.run import Scan
 r = redisUtil.Redis()
 
 Commands = {
     'info': ['Url', 'Timeout', 'Cookie', 'Taskname', 'Workers'],
-    'set': ['Url', 'Cookie', 'Timeout', 'Taskname', 'Workers', 'Cycles'],
+    'set': ['Url', 'Cookie', 'Timeout', 'Taskname', 'Workers', 'Cycles', 'Recursion'],
     'usemodule': ['burp', 'scan', 'domain', 'port'],
     'run': [],
     'exit': [],
@@ -34,7 +35,8 @@ Info = {
     'Cookie': ['False', '', 'Cookie for spider.'],
     'Taskname': ['False', '', 'The uniquely identifies of current work.'],
     'Workers': ['False', util.getConfigIni('Scan', 'threads'), 'Max number of workers.'],
-    'Cycles': ['False', util.getConfigIni('Scan', 'cycles'), 'Maximum number of recursive scans.']
+    'Cycles': ['False', util.getConfigIni('Scan', 'cycles'), 'Maximum number of recursive scans.'],
+    'Recursion': ['False', 'False', 'Open multi-layer crawl.']
 }
 
 def checkIn(enter):
@@ -51,7 +53,7 @@ def checkIn(enter):
     elif words[0] == 'help':
         util.printHelp(words, Usage)
     elif words[0] == 'run':
-        print('run')
+        run()
     elif words[0] == 'info':
         util.printInfo(words, Info)
     return workbench
@@ -87,4 +89,11 @@ def checkSetValue(key, value):
     elif key == 'Workers':
         return obj.checkWorkers(value)
     elif key == 'Cycles':
-        obj.checkCycles(value)
+        return obj.checkCycles(value)
+    elif key == 'Recursion':
+        return obj.checkBool(value)
+
+def run():
+    obj = Scan.scan()
+    if obj.checkRequired(Info):
+        obj.run(Info)
