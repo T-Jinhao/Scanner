@@ -30,7 +30,7 @@ Usage = {
     'usemodule': 'Use a Scanner module.',
 }
 
-P = {}
+P = {'payloads': []}
 
 Info = {
     'Url': ['True', '', 'Target url.'],

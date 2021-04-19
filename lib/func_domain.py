@@ -60,13 +60,7 @@ class Domain:
         # 调用rapiddns.io进行在线获取
         print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('开始爆破域名:') + self.Output.green(self.domain))
         if self.flag:
-            print(self.Output.blue('[ schedule ] ') + self.Output.cyan('正在运行在线查询，请耐心等待'))
-            print(self.Output.yellow('[ warn ] ') + self.Output.fuchsia('该过程请挂载代理，否则可能会访问超时，导致获取数据失败'))
-            urls = self.rapidSearch(self.domain)
-            if urls == []:
-                print(self.Output.yellow('[ warn ] ') + self.Output.fuchsia('-X模式查询失败，稍后将执行payload爆破'))
-            else:
-                report = self.run(urls)
+            report = self.onlineMethod(self.domain)
 
         # 普通模式及rapid获取数据失败的情况下，使用字典爆破
         if report == []:
@@ -83,6 +77,22 @@ class Domain:
             self.saveIpResult(self.IP_list)
         print(self.Output.fuchsia('-' * 40 + 'domain<<<<<' + '\n'))
         return
+
+    def onlineMethod(self, domain):
+        '''
+        在线查询模式
+        :param domain:
+        :return:
+        '''
+        report = []
+        print(self.Output.blue('[ schedule ] ') + self.Output.cyan('正在运行在线查询，请耐心等待'))
+        print(self.Output.yellow('[ warn ] ') + self.Output.fuchsia('该过程请挂载代理，否则可能会访问超时，导致获取数据失败'))
+        urls = self.rapidSearch(domain)
+        if urls == []:
+            print(self.Output.yellow('[ warn ] ') + self.Output.fuchsia('-X模式查询失败，稍后将执行payload爆破'))
+        else:
+            report = self.run(urls)
+        return report
 
     def saveDomainResult(self, report):
         '''
