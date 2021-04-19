@@ -3,6 +3,7 @@
 #author:Jinhao
 
 import re
+import os
 import socket
 from interactive.funcs import util
 
@@ -56,3 +57,22 @@ class Common:
             return True
         util.printError('Invaild Url')
         return False
+
+    def loadPayload(self, input, model):
+        if input == None or input == '':
+            util.printError("File is required")
+            return False
+        if model in ['burp', 'login', 'domain']:   # 根据model判断
+            path = os.path.dirname(__file__)
+            payloadpath = "{0}/{1}/{2}/{3}".format(path, r'../../dict/', model, input)
+        else:
+            payloadpath = input
+        try:
+            F = open(payloadpath, 'r')
+            payloads = ['/'+x.replace('\n', '').replace('//', '/') for x in F]
+            F.close()
+            payloads = list(set(payloads))
+            return payloads
+        except:
+            util.printError("can't read the payload file")
+            return False

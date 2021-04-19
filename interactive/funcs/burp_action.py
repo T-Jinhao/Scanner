@@ -4,7 +4,7 @@
 
 import sys
 from interactive.funcs import util
-from interactive.check import common, check_set
+from interactive.check import check_set, check_burp
 from interactive.funcs import redisUtil
 from interactive.run import Burp
 r = redisUtil.Redis()
@@ -33,7 +33,7 @@ Info = {
     'Url': ['True', '', 'Target url.'],
     'Timeout': ['False', util.getConfigIni('Burp', 'timeout'), 'Timeout of a requests connect.'],
     'Workers': ['False', util.getConfigIni('Burp', 'threads'), 'Max number of workers'],
-    'Payload': ['False', '', 'The path of the record text file.'],
+    'Payload': ['False', 'default', 'The path of the record text file.'],
     'Taskname': ['False', '', 'The uniquely identifies of current work.']
 }
 
@@ -69,7 +69,7 @@ def setOption(words):
 def checkSetValue(key, value):
     if key not in Commands['set']:
         return False
-    obj = common.Common()
+    obj = check_burp.burp()
     if key == 'Timeout':
         return obj.checkTimeout(value)
     elif key == 'Taskname':
@@ -85,7 +85,7 @@ def checkSetValue(key, value):
             r.save(k, url)
         return False  # 独立保存
     elif key == 'Payload':
-        pass
+        obj.checkPayload(value)
 
 def run():
     obj = Burp.burp()
