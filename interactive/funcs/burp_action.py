@@ -30,6 +30,8 @@ Usage = {
     'usemodule': 'Use a Scanner module.',
 }
 
+P = {}
+
 Info = {
     'Url': ['True', '', 'Target url.'],
     'Timeout': ['False', util.getConfigIni('Burp', 'timeout'), 'Timeout of a requests connect.'],
@@ -88,9 +90,7 @@ def checkSetValue(key, value):
     elif key == 'Payload':
         payloads = obj.checkPayload(value)
         if payloads != False:
-            P = {
-                'payloads': payloads
-            }
+            P['payloads'] = payloads
             if platform.system() == 'Windows':
                 Info['Payload'][1] = value.split('\\')[-1]
             else:
@@ -100,4 +100,6 @@ def checkSetValue(key, value):
 def run():
     obj = Burp.burp()
     if obj.checkRequired(Info):
-        obj.run(Info)
+        if Info['Payload'][1] == 'default':   # 获取默认payload
+            checkSetValue('Payload', 'default')
+        obj.run(Info, P)
