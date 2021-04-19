@@ -51,11 +51,7 @@ class Domain:
         if self.domain:
             report = []
             # 检测是否存在泛解析
-            pan = self.panAnalysis(self.domain)
-            if pan == True:    # 泛解析处理块
-                self.scanmode = 1   # 修改判断逻辑
-                print(self.Output.yellow('[ warn ] ') + self.Output.red("{} 存在泛解析 ".format(self.domain)))
-                print(self.Output.yellow('[ warn ] ') + self.Output.cyan('程序将使用差异化进行判断，但结果准确性可能下降'))
+            self.panAnalysis(self.domain)
 
             # 调用rapiddns.io进行在线获取
             print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('开始爆破域名:') + self.Output.green(self.domain))
@@ -248,8 +244,10 @@ class Domain:
         print(self.Output.blue('[ checking ] ') + self.Output.fuchsia('是否存在泛解析'))
         res = self.run([url1, url2])
         if len(res) == 2:   # 泛解析
-            return True
-        return False
+            self.scanmode = 1  # 修改判断逻辑
+            print(self.Output.yellow('[ warn ] ') + self.Output.red("{} 存在泛解析 ".format(self.domain)))
+            print(self.Output.yellow('[ warn ] ') + self.Output.cyan('程序将使用差异化进行判断，但结果准确性可能下降'))
+        return
 
     def rapidSearch(self, domain):
         '''
