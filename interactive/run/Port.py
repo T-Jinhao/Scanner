@@ -7,18 +7,20 @@ from lib import func_ports
 
 class port(common.Common):
     def run(self, Info):
+        # 设置参数配置
         ports = self.getPorts(Info['Ports'][1])
         r = func_ports.Ports(
             host=Info['Ip'][1],
             name=Info['Taskname'][1],
             flag=0
         )
-        # 设置参数配置
         r.load_config()
         r.timeout = float(Info['Timeout'][1])
         r.max_workers = int(Info['Workers'][1])
+        # 运行并保存
         report = r.run(port=ports)
-        r.showReport(report)
+        new_report = r.showReport(report)
+        r.saveResult(new_report)
 
     def getPorts(self, input):
         if input == 'Common':
