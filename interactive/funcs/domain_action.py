@@ -4,7 +4,7 @@
 
 import sys
 from interactive.funcs import util
-from interactive.check import common, check_set
+from interactive.check import check_domain, check_set
 from interactive.funcs import redisUtil
 r = redisUtil.Redis()
 
@@ -19,7 +19,7 @@ Commands = {
 }
 
 Usage = {
-    'info': 'Display burp module options.',
+    'info': 'Display domain module options.',
     'help': 'Displays the help menu.',
     'exit': 'Exit Scanner.',
     'set': 'Set a domain option.',
@@ -28,12 +28,15 @@ Usage = {
     'usemodule': 'Use a Scanner module.',
 }
 
+P = {}
+
 Info = {
     'Url': ['True', '', 'Target url.'],
     'Timeout': ['False', util.getConfigIni('Domain', 'timeout'), 'Timeout of a requests connect.'],
     'Workers': ['False', util.getConfigIni('Domain', 'threads'), 'Max number of workers'],
-    'Payload': ['False', '', 'The path of the record text file.'],
-    'Taskname': ['False', '', 'The uniquely identifies of current work.']
+    'Payload': ['False', 'default', 'The path of the record text file.'],
+    'Taskname': ['False', '', 'The uniquely identifies of current work.'],
+    'Online': ['False', 'True', 'Get records on online platforms first.']
 }
 
 def checkIn(enter):
@@ -68,18 +71,11 @@ def setOption(words):
 def checkSetValue(key, value):
     if key not in Commands['set']:
         return False
-    obj = common.Common()
+    obj = check_domain.domain()
     if key == 'Timeout':
         return obj.checkTimeout(value)
     elif key == 'Taskname':
         return obj.checkTaskname(value)
-    elif key == 'Ip':
-        ip = check_set.getIp(value)
-        if ip != False:
-            k = 'current_' + key
-            Info[key][1] = ip
-            r.save(k, ip)
-        return False  # 独立保存
     elif key == 'Workers':
         return obj.checkWorkers(value)
     elif key == 'Url':
@@ -90,3 +86,5 @@ def checkSetValue(key, value):
             Info[key][1] = url
             r.save(k, url)
         return False  # 独立保存
+    elif key == 'Online':
+        return obj.checkOnline(value)
