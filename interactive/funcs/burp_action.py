@@ -88,12 +88,13 @@ def checkSetValue(key, value):
     elif key == 'Payload':
         payloads = obj.checkPayload(value)
         if payloads != False:
-            P = {}
-            P['payloads'] = payloads
+            P = {
+                'payloads': payloads
+            }
             if platform.system() == 'Windows':
-                P['Payload'][1] = value.split('\\')[-1]
+                Info['Payload'][1] = value.split('\\')[-1]
             else:
-                P['Payload'][1] = value.split('/')[-1]
+                Info['Payload'][1] = value.split('/')[-1]
         return False
 
 def run():
