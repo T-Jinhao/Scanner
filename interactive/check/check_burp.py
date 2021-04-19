@@ -19,4 +19,6 @@ class burp(common.Common):
         payloads = self.loadPayload(input, model)
         if not payloads:
             return False
+        payloads = [x.replace('//', '/') for x in payloads]  # 统一格式，再去重
+        payloads = list(set(payloads))
         return payloads
