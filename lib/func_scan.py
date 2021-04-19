@@ -16,11 +16,10 @@ from modules.terminal import jsTerminal
 wrong_web_list = ['javascript:void(0)', None, '###', '#']
 
 class Scan():
-    def __init__(self, url, name, crazy, Cycles=3):
+    def __init__(self, url, name, crazy):
         self.url = url
         self.name = name
         self.crazy = crazy
-        self.Cycles = Cycles   # crazy下的循环最大次数
         self.Output = ColorOutput()
         # 数据区
         self.scanmode = 0
@@ -40,6 +39,7 @@ class Scan():
         self.checkJsStatus = config.getboolean("Scan", "checkJsStatus")
         system = platform.system()
         self.saveType = config.get("Result", system)
+        self.Cycles = config.getint("Scan", "cycles")
 
     def start(self):
         print(self.Output.fuchsia(">>>>>scan" + "-" * 40))
