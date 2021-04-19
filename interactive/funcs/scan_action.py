@@ -4,7 +4,7 @@
 
 import sys
 from interactive.funcs import util
-from interactive.check import scan, set
+from interactive.check import check_scan, check_set
 from interactive.funcs import redisUtil
 r = redisUtil.Redis()
 
@@ -68,7 +68,7 @@ def setOption(words):
 def checkSetValue(key, value):
     if key not in Commands['set']:
         return False
-    obj = scan.scan()
+    obj = check_scan.scan()
     if key == 'Timeout':
         return obj.checkTimeout(value)
     elif key == 'Taskname':
@@ -77,7 +77,7 @@ def checkSetValue(key, value):
         return obj.setCookie(value)
     elif key == 'Url':
         obj.checkUrl(value)
-        url = set.checkUrl(value)
+        url = check_set.checkUrl(value)
         if url != False:
             k = 'current_' + key
             Info[key][1] = url

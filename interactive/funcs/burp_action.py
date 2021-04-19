@@ -4,8 +4,9 @@
 
 import sys
 from interactive.funcs import util
-from interactive.check import common, set
+from interactive.check import common, check_set
 from interactive.funcs import redisUtil
+from interactive.run import Burp
 r = redisUtil.Redis()
 
 Commands = {
@@ -50,7 +51,7 @@ def checkIn(enter):
     elif words[0] == 'help':
         util.printHelp(words, Usage)
     elif words[0] == 'run':
-        print('run')
+        run()
     elif words[0] == 'info':
         util.printInfo(words, Info)
     return workbench
@@ -73,21 +74,20 @@ def checkSetValue(key, value):
         return obj.checkTimeout(value)
     elif key == 'Taskname':
         return obj.checkTaskname(value)
-    elif key == 'Ip':
-        obj.checkIp(value)
-        ip = set.getIp(value)
-        if ip != False:
-            k = 'current_' + key
-            Info[key][1] = ip
-            r.save(k, ip)
-        return False  # 独立保存
     elif key == 'Workers':
         return obj.checkWorkers(value)
     elif key == 'Url':
         obj.checkUrl(value)
-        url = set.checkUrl(value)
+        url = check_set.checkUrl(value)
         if url != False:
             k = 'current_' + key
             Info[key][1] = url
             r.save(k, url)
         return False  # 独立保存
+    elif key == 'Payload':
+        pass
+
+def run():
+    obj = Burp.burp()
+    if obj.checkRequired(Info):
+        obj.run(Info)

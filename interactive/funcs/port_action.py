@@ -4,7 +4,7 @@
 
 import sys
 from interactive.funcs import util
-from interactive.check import port, set
+from interactive.check import check_port, check_set
 from interactive.run import Port
 from interactive.funcs import redisUtil
 r = redisUtil.Redis()
@@ -69,7 +69,7 @@ def setOption(words):
 def checkSetValue(key, value):
     if key not in Commands['set']:
         return False
-    obj = port.port()
+    obj = check_port.port()
     if key == 'Timeout':
         return obj.checkTimeout(value)
     elif key == 'Ports':
@@ -80,7 +80,7 @@ def checkSetValue(key, value):
         return obj.checkTaskname(value)
     elif key == 'Ip':
         obj.checkIp(value)
-        ip = set.getIp(value)
+        ip = check_set.getIp(value)
         if ip != False:
             k = 'current_' + key
             Info[key][1] = ip
