@@ -14,6 +14,3 @@ class Common:
                 util.printWarn('{} is required'.format(x))
                 return False
         return True
-
-    def loadPayload(self, payload):
-        default_file = ''
