@@ -31,3 +31,4 @@ class scan(common.Common):
         except:
             util.printError('Invaild Value.')
             return False
+

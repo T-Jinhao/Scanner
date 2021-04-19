@@ -14,3 +14,9 @@ class Common:
                 util.printWarn('{} is required'.format(x))
                 return False
         return True
+
+    def getFlag(self, input):
+        if input in ['True', 'true', '1']:
+            return 1
+        else:
+            return 0

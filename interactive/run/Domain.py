@@ -36,10 +36,3 @@ class domain(common.Common):
         r.saveDomainResult(report=report)
         r.saveIpResult(report_dict=ip_list)
 
-
-
-    def getFlag(self, input):
-        if input in ['True', 'true', '1']:
-            return 1
-        else:
-            return 0
