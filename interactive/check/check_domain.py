@@ -25,4 +25,5 @@ class domain(common.Common):
         payloads = self.loadPayload(input, model)
         if not payloads:
             return False
+        payloads = list(set(payloads))
         return payloads
