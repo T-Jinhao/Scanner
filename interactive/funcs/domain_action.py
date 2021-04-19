@@ -89,7 +89,7 @@ def checkSetValue(key, value):
             r.save(k, url)
         return False  # 独立保存
     elif key == 'Online':
-        return obj.checkOnline(value)
+        return obj.checkBool(value)
     elif key == 'Payload':
         payloads = obj.checkPayload(value)
         if payloads != False:

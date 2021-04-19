@@ -75,3 +75,9 @@ class Common:
         except:
             util.printError("can't read the payload file")
             return False
+
+    def checkBool(self, input):
+        if input not in ['True', 'False', 'true', 'false', '0', '1']:
+            util.printError('Invail Value.You can choice 0 or 1.')
+            return False
+        return True
