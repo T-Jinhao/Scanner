@@ -40,7 +40,7 @@ Info = {
 }
 
 def checkIn(enter):
-    workbench = 'burp'
+    workbench = 'scan'
     words = enter.split(' ')
     if words[0] == 'usemodule':
         workbench = util.usemodule('scan', words, Commands['usemodule'])
