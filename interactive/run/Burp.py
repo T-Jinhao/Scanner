@@ -16,8 +16,8 @@ class burp(common.Common):
             flag=0
         )
         r.load_config()
-        r.threads = Info['Workers'][1]
-        r.timeout = Info['Timeout'][1]
+        r.threads = int(Info['Workers'][1])
+        r.timeout = float(Info['Timeout'][1])
         # 运行
         r.scan_mode_indetify()    # 获取Scanmode
         results = r.run(payloads=payloads)  # 运行
