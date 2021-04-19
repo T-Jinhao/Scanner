@@ -3,9 +3,11 @@
 #author:Jinhao
 
 import sys
+import platform
 from interactive.funcs import util
 from interactive.check import check_domain, check_set
 from interactive.funcs import redisUtil
+from interactive.run import Domain
 r = redisUtil.Redis()
 
 Commands = {
@@ -88,3 +90,19 @@ def checkSetValue(key, value):
         return False  # 独立保存
     elif key == 'Online':
         return obj.checkOnline(value)
+    elif key == 'Payload':
+        payloads = obj.checkPayload(value)
+        if payloads != False:
+            P['payloads'] = payloads
+            if platform.system() == 'Windows':
+                Info['Payload'][1] = value.split('\\')[-1]
+            else:
+                Info['Payload'][1] = value.split('/')[-1]
+        return False
+
+def run():
+    obj = Domain.domain()
+    if obj.checkRequired(Info):
+        if Info['Payload'][1] == 'default':   # 获取默认payload
+            checkSetValue('Payload', 'default')
+        obj.run(Info, P)

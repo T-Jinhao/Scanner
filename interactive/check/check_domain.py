@@ -11,3 +11,18 @@ class domain(common.Common):
             util.printError('Invail Value.You can choice 0 or 1.')
             return False
         return True
+
+    def checkPayload(self, input, model=''):
+        '''
+        需要检查输入文件，并返回payloads
+        :param input:
+        :param model:
+        :return:
+        '''
+        if input == 'default':  # 修改默认值
+            input = 'dict.txt'
+            model = 'domain'
+        payloads = self.loadPayload(input, model)
+        if not payloads:
+            return False
+        return payloads
