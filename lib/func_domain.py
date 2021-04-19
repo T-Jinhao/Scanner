@@ -48,41 +48,39 @@ class Domain:
     def start(self):
         self.load_config()
         print(self.Output.fuchsia('>>>>>domain' + '-' * 40))
-        if self.domain:
-            report = []
-            # 检测是否存在泛解析
-            self.panAnalysis(self.domain)
-
-            # 调用rapiddns.io进行在线获取
-            print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('开始爆破域名:') + self.Output.green(self.domain))
-            if self.flag:
-                print(self.Output.blue('[ schedule ] ') + self.Output.cyan('正在运行在线查询，请耐心等待'))
-                print(self.Output.yellow('[ warn ] ') + self.Output.fuchsia('该过程请挂载代理，否则可能会访问超时，导致获取数据失败'))
-                urls = self.rapidSearch(self.domain)
-                if urls == []:
-                    print(self.Output.yellow('[ warn ] ') + self.Output.fuchsia('-X模式查询失败，稍后将执行payload爆破'))
-                else:
-                    report = self.run(urls)
-
-            # 普通模式及rapid获取数据失败的情况下，使用字典爆破
-            if report == []:
-                self.flag = False   # 更改为普通模式，用作保存时区别
-                onlineReport = self.chinaz_search()  # chinaz在线查询接口获得的数据
-                payload = self.load_payload(onlineReport)  # 合并数据
-                if payload:
-                    print(self.Output.blue('[ Load ] ') + self.Output.green('payload导入完成，数量：{}'.format(len(payload))))
-                    report = self.run(payload)   # 运行爆破
-                else:
-                    print(self.Output.blue('[ Load ] ') + self.Output.red('payload导入失败'))
-            self.saveDomainResult(report)
-            if self.IP_list:
-                self.saveIpResult(self.IP_list)
-                # IP_dict = self.collectIP()
-                # self.saveIpResult(IP_dict)
-            # elif report == []:
-            #     print(self.Output.blue('[ result ] ') + self.Output.yellow('[ 未能挖掘出网站子域名 ]'))
-        else:
+        if not self.domain:
             print(self.Output.yellow('[ warn ] ') + self.Output.cyan("[ {}不支持子域名挖掘 ]".format(self.url)))
+            print(self.Output.fuchsia('-' * 40 + 'domain<<<<<' + '\n'))
+            return
+
+        report = []
+        # 检测是否存在泛解析
+        self.panAnalysis(self.domain)
+
+        # 调用rapiddns.io进行在线获取
+        print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('开始爆破域名:') + self.Output.green(self.domain))
+        if self.flag:
+            print(self.Output.blue('[ schedule ] ') + self.Output.cyan('正在运行在线查询，请耐心等待'))
+            print(self.Output.yellow('[ warn ] ') + self.Output.fuchsia('该过程请挂载代理，否则可能会访问超时，导致获取数据失败'))
+            urls = self.rapidSearch(self.domain)
+            if urls == []:
+                print(self.Output.yellow('[ warn ] ') + self.Output.fuchsia('-X模式查询失败，稍后将执行payload爆破'))
+            else:
+                report = self.run(urls)
+
+        # 普通模式及rapid获取数据失败的情况下，使用字典爆破
+        if report == []:
+            self.flag = False   # 更改为普通模式，用作保存时区别
+            onlineReport = self.chinaz_search()  # chinaz在线查询接口获得的数据
+            payload = self.load_payload(onlineReport)  # 合并数据
+            if payload:
+                print(self.Output.blue('[ Load ] ') + self.Output.green('payload导入完成，数量：{}'.format(len(payload))))
+                report = self.run(payload)   # 运行爆破
+            else:
+                print(self.Output.blue('[ Load ] ') + self.Output.red('payload导入失败'))
+        self.saveDomainResult(report)
+        if self.IP_list:
+            self.saveIpResult(self.IP_list)
         print(self.Output.fuchsia('-' * 40 + 'domain<<<<<' + '\n'))
         return
 
