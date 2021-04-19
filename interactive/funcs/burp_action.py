@@ -3,6 +3,7 @@
 #author:Jinhao
 
 import sys
+import platform
 from interactive.funcs import util
 from interactive.check import check_set, check_burp
 from interactive.funcs import redisUtil
@@ -85,7 +86,15 @@ def checkSetValue(key, value):
             r.save(k, url)
         return False  # 独立保存
     elif key == 'Payload':
-        obj.checkPayload(value)
+        payloads = obj.checkPayload(value)
+        if payloads != False:
+            P = {}
+            P['payloads'] = payloads
+            if platform.system() == 'Windows':
+                P['Payload'][1] = value.split('\\')[-1]
+            else:
+                P['Payload'][1] = value.split('/')[-1]
+        return False
 
 def run():
     obj = Burp.burp()

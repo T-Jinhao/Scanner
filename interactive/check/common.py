@@ -69,8 +69,9 @@ class Common:
             payloadpath = input
         try:
             F = open(payloadpath, 'r')
-            payloads = ['/'+x.replace('\n', '').replace('//', '/') for x in F]
+            payloads = ['/'+x.replace('\n', '') for x in F]
             F.close()
+            payloads = [x.replace('//', '/') for x in payloads]  # 统一格式，再去重
             payloads = list(set(payloads))
             return payloads
         except:
