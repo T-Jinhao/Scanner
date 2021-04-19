@@ -13,7 +13,10 @@ class port(common.Common):
             name=Info['Taskname'][1],
             flag=0
         )
+        # 设置参数配置
         r.load_config()
+        r.timeout = float(Info['Timeout'][1])
+        r.max_workers = int(Info['Workers'][1])
         report = r.run(port=ports)
         r.showReport(report)
 
