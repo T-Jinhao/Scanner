@@ -10,7 +10,7 @@ r = redisUtil.Redis()
 
 Commands = {
     'info': ['Url', 'Timeout', 'Cookie', 'Taskname', 'Workers'],
-    'set': ['Url', 'Cookie', 'Timeout', 'Taskname', 'Workers'],
+    'set': ['Url', 'Cookie', 'Timeout', 'Taskname', 'Workers', 'Cycles'],
     'usemodule': ['burp', 'scan', 'domain', 'port'],
     'run': [],
     'exit': [],
@@ -19,7 +19,7 @@ Commands = {
 }
 
 Usage = {
-    'info': 'Display burp module options.',
+    'info': 'Display scan module options.',
     'help': 'Displays the help menu.',
     'exit': 'Exit Scanner.',
     'set': 'Set a scan option.',
@@ -33,7 +33,8 @@ Info = {
     'Timeout': ['False', util.getConfigIni('Scan', 'timeout'), 'Timeout of a requests connect.'],
     'Cookie': ['False', '', 'Cookie for spider.'],
     'Taskname': ['False', '', 'The uniquely identifies of current work.'],
-    'Workers': ['False', util.getConfigIni('Scan', 'threads'), 'Max number of workers'],
+    'Workers': ['False', util.getConfigIni('Scan', 'threads'), 'Max number of workers.'],
+    'Cycles': ['False', util.getConfigIni('Scan', 'cycles'), 'Maximum number of recursive scans.']
 }
 
 def checkIn(enter):
@@ -85,3 +86,5 @@ def checkSetValue(key, value):
         return False  # 独立保存
     elif key == 'Workers':
         return obj.checkWorkers(value)
+    elif key == 'Cycles':
+        obj.checkCycles(value)

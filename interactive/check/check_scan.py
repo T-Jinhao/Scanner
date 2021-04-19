@@ -15,5 +15,19 @@ class scan(common.Common):
                 cookies[name] = value  # 为字典cookies添加内容
             return cookies
         except:
-            util.printError('Invaild Value')
+            util.printError('Invaild Value.')
+            return False
+
+    def checkCycles(self, input):
+        try:
+            cycles = int(input)
+            if cycles < 1:
+                util.printError('Invaild Value.')
+                return False
+            elif cycles > 5:
+                util.printWarn('This can easily lead to errors.')
+                return True
+            return True
+        except:
+            util.printError('Invaild Value.')
             return False
