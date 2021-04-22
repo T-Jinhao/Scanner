@@ -42,3 +42,11 @@ class Redis:
             return res
         except:
             return
+
+    def getTaskname(self):
+        pass
+
+if __name__ == '__main__':
+    r = Redis()
+    u = r.query('current_Url')
+    print(u)

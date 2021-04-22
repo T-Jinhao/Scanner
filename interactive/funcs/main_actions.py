@@ -30,7 +30,7 @@ Usage = {
 Info = {
     'Ip': ['False', '', 'Target ip.'],
     'Url': ['True', '', 'Target url.'],
-    'Taskname': ['True', '', 'The uniquely identifies of current work.']
+    'Taskname': ['True', r.queryInitKey('Taskname'), 'The uniquely identifies of current work.']
 }
 
 def checkIn(enter):
@@ -54,6 +54,7 @@ def checkIn(enter):
     return workbench
 
 def setOption(words):
+    # 插入Info字典，并存入redis
     if len(words) < 3:
         util.printError('Please specify an option value')
     else:
