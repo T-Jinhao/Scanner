@@ -97,7 +97,7 @@ def checkSetValue(key, value):
 
 def updateInfo():
     # 刷新数值
-    for i in Info:
+    for i in ['Ip', 'Taskname', 'Url']:
         Info[i][1] = r.queryInitKey(i)
     return
 

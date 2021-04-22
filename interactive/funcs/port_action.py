@@ -51,9 +51,10 @@ def checkIn(enter):
     elif words[0] == 'help':
         util.printHelp(words, Usage)
     elif words[0] == 'run':
+        updateInfo()
         run()
     elif words[0] == 'info':
-        Info['Taskname'][1] = getTaskname()
+        updateInfo()
         util.printInfo(words, Info)
     return workbench
 
@@ -93,6 +94,8 @@ def run():
     if obj.checkRequired(Info):
         obj.run(Info)
 
-def getTaskname():
-    taskname = r.queryInitKey('Taskname')
-    return taskname
+def updateInfo():
+    # 刷新数值
+    for i in ['Ip', 'Taskname']:
+        Info[i][1] = r.queryInitKey(i)
+    return
