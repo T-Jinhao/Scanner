@@ -68,12 +68,21 @@ def checkSetValue(key, value):
         return False
     obj = common.Common()
     if key == 'Url':
+        # 存入URL
         obj.checkUrl(value)
         url = check_set.checkUrl(value)
         if url != False:
             k = 'current_' + key
             Info[key][1] = url
             r.save(k, url)
+        # 传入URL时，自动获取IP并插入
+        obj.checkIp(value)
+        ip = check_set.getIp(value)
+        if ip != False:
+            key = 'Ip'
+            k = 'current_' + key
+            Info[key][1] = ip
+            r.save(k, ip)
         return False  # 独立保存
     elif key == 'Taskname':
         return obj.checkTaskname(value)
