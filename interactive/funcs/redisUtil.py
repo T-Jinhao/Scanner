@@ -48,5 +48,7 @@ class Redis:
 
 if __name__ == '__main__':
     r = Redis()
-    u = r.query('current_Url')
+    u = r.query('current_Taskname')
     print(u)
+    t = r.query('current_Url')
+    print(t)

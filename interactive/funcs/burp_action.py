@@ -56,6 +56,7 @@ def checkIn(enter):
     elif words[0] == 'run':
         run()
     elif words[0] == 'info':
+        Info['Taskname'][1] = getTaskname()
         util.printInfo(words, Info)
     return workbench
 
@@ -103,3 +104,7 @@ def run():
         if Info['Payload'][1] == 'default':   # 获取默认payload
             checkSetValue('Payload', 'default')
         obj.run(Info, P)
+
+def getTaskname():
+    taskname = r.queryInitKey('Taskname')
+    return taskname

@@ -55,6 +55,7 @@ def checkIn(enter):
     elif words[0] == 'run':
         run()
     elif words[0] == 'info':
+        Info['Taskname'][1] = getTaskname()
         util.printInfo(words, Info)
     return workbench
 
@@ -97,3 +98,7 @@ def run():
     obj = Scan.scan()
     if obj.checkRequired(Info):
         obj.run(Info)
+
+def getTaskname():
+    taskname = r.queryInitKey('Taskname')
+    return taskname
