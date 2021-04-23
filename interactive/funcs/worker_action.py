@@ -47,8 +47,8 @@ def checkIn(enter):
         workbench = 'main'
     elif words[0] == 'help':
         util.printHelp(words, Usage)
-    elif words[0] == 'run':
-        print('run')
+    elif words[0] == 'works':
+        print('works')
     elif words[0] == 'info':
         # updateInfo()
         util.printInfo(words, Info)
