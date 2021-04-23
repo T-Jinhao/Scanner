@@ -6,11 +6,11 @@ import sys
 from interactive.funcs import util
 from interactive.funcs import redisUtil
 from interactive.check import common, check_set
-from interactive.completer import modules
+from interactive.completer import configuration
 r = redisUtil.Redis()
 
 Commands = {
-    'usemodule': modules.usemodule,  # 功能模块
+    'usemodule': configuration.usemodule,  # 功能模块
     'help': ['usemodule', 'exit', 'main', 'works'],   # 帮助
     'set': ['Url', 'Ip', 'Taskname'],
     'info': ['Url', 'Ip', 'Taskname'],

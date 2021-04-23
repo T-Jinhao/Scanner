@@ -6,14 +6,14 @@ import sys
 from interactive.funcs import util
 from interactive.check import check_scan, check_set
 from interactive.funcs import redisUtil
-from interactive.completer import modules
+from interactive.completer import configuration
 from interactive.run import Scan
 r = redisUtil.Redis()
 
 Commands = {
     'info': ['Url', 'Timeout', 'Cookie', 'Taskname', 'Workers'],
     'set': ['Url', 'Cookie', 'Timeout', 'Taskname', 'Workers', 'Cycles', 'Recursion'],
-    'usemodule': modules.usemodule,
+    'usemodule': configuration.usemodule,
     'run': [],
     'exit': [],
     'main': [],

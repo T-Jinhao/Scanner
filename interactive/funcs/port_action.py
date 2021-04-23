@@ -6,14 +6,14 @@ import sys
 from interactive.funcs import util
 from interactive.check import check_port, check_set
 from interactive.run import Port
-from interactive.completer import modules
+from interactive.completer import configuration
 from interactive.funcs import redisUtil
 r = redisUtil.Redis()
 
 Commands = {
     'info': ['Ip', 'Timeout', 'Ports', 'Workers', 'Taskname'],
     'set': ['Ip', 'Ports', 'Timeout', 'Workers', 'Taskname'],
-    'usemodule': modules.usemodule,
+    'usemodule': configuration.usemodule,
     'run': [],
     'exit': [],
     'main': [],

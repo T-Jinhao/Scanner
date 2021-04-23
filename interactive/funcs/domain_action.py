@@ -7,14 +7,14 @@ import platform
 from interactive.funcs import util
 from interactive.check import check_domain, check_set
 from interactive.funcs import redisUtil
-from interactive.completer import modules
+from interactive.completer import configuration
 from interactive.run import Domain
 r = redisUtil.Redis()
 
 Commands = {
     'info': ['Url', 'Timeout', 'Workers', 'Payload', 'Taskname'],
     'set': ['Url', 'Payload', 'Timeout', 'Workers', 'Taskname', 'Online'],
-    'usemodule': modules.usemodule,
+    'usemodule': configuration.usemodule,
     'run': [],
     'exit': [],
     'main': [],

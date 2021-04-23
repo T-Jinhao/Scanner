@@ -4,12 +4,12 @@
 
 import threading
 from interactive.funcs import util
-from interactive.completer import modules
+from interactive.completer import configuration
 
 Commands = {
     'info': [],
     'set': [],
-    'usemodule': modules.usemodule,
+    'usemodule': configuration.usemodule,
     'run': [],
     'main': [],
     'help': [],
