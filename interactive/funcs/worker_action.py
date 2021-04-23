@@ -14,9 +14,9 @@ Commands = {
     'info': [],
     'set': [],
     'usemodule': configuration.usemodule,
-    'run': [],
+    'works': [],
     'main': [],
-    'help': [],
+    'help': ['info', 'set', 'usemodule', 'run', 'main', 'help', 'exit'],
     'exit': []
 }
 
@@ -25,7 +25,7 @@ Usage = {
     'help': 'Displays the help menu.',
     'exit': 'Exit Scanner.',
     'main': 'Back to the main menu.',
-    'run': 'Start the given worker module.',
+    'works': 'Lists active workers.',
     'usemodule': 'Use a Scanner module.',
     'set': 'Set a worker option.'
 }
