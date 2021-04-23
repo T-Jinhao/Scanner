@@ -21,7 +21,7 @@ Commands = {
 }
 
 Usage = {
-    'info': 'Display burp module options.',
+    'info': 'Display port module options.',
     'help': 'Displays the help menu.',
     'exit': 'Exit Scanner.',
     'set': 'Set a port option.',
