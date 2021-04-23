@@ -9,6 +9,7 @@
 - 存活主机探测 -H
 - 子域名挖掘 -D
 - 弱口令检测 -L
+- 交互式页面-i
 - 待开发
 
 
@@ -32,23 +33,16 @@ python3
 `pip install -r requirements.txt`
 
 
-### todo
-- 添加自定义请求头
-- 增加正则匹配库，自动匹配返回包中的敏感信息(完成)
-- 改用grequests库进行发包，提升发包效率(完成)
-- 输出信息以不同颜色进行分类，方便查看(完成)
-- 输出结果将整合进一个文件，并丰富信息量
-
 
 ### 结构
 文件夹 | 用途
 --- | ---
 dict | 预存payload字典
+interactive | 交互式功能模块
 lib | 具体功能模块
+model | 数据库模型
 modules | 底层工具类
 reports | 保存输出结果
-Sqliscan | sql检测功能
-sqlmapapi | sqlmapapi组件
 main.py | 入口启动文件
 config.ini | 配置文件
 
@@ -68,25 +62,61 @@ Domain模块下的参数
 `domain2IP`统计子域名对应IP的分布情况  
 `showIP`是否展示IP分布情况，开关与否均会保存结果至文件  
 
-### 主要模块实现
-#### module:scan  
-该模块会提取页面的链接并测试其能否访问，同时收集页面中的邮箱及手机号等信息。  
-添加选项`x`后，将同时爬取页面JS链接，提取其中的中文（易存在注释等敏感信息），同时拼凑出JS中的路径，帮助分析网站。  
+### 主要用法
+#### 普通模式
+获取帮助：  
+`python3 main.py -h`    
 
-#### module:domain  
-该模块会以字典的形式拼凑子域名并进行爆破。  
-添加选项`x`后，将改用从DNS解析记录商中获取DNS记录，并检测其存活性，能覆盖字典外的子域名。  
+扫描页面：  
+```
+python3 main.py -u target_url -S    # 页面信息捕获
+python3 main.py -u target_url -SX   # 递归扫描，默认深度：3
+```
 
-#### module:burp
-该模块会自动识别网站类型并调用相应的路径字典进行爆破。  
+目录爆破：  
+```
+python3 main.py -u target_url -B    # 内置字典爆破
+python3 main.py -u target_url -bF payload_file -B   # 自定义字典爆破 
+python3 main.py -u target_url -BX   # 全字典爆破
+```
 
+域名爆破：  
+```
+python3 main.py -u target_url -D    # 内置字典爆破
+python3 main.py -u target_url -dF payload_file -D    # 自定义字典爆破
+python3 main.py -u target_url -DX   # 在线DNS记录查询
+```
 
-### 不足
+端口扫描：  
+```
+python3 main.py -u target_url -P    # 常用端口扫描
+python3 main.py -u target_url -PX   # 自定义端口扫描
+```
 
-- 根据多次测试，感觉成功率并不能令人满意。网上综合环境过于复杂，很难把细节都考虑周全，每次都是自己用着发现哪里有不满意了再进行修补。
-- 能用celery调用其它模块了，但整体速度反而下降了很多。
-- 没有添加真正的分布式任务布局，没有添加扩展递归扫描，另还有很多celery的bug没有处理好。
-- 在windows环境下运行极慢，有待优化
+#### 交互式模式  
+启动：  
+```
+python3 main.py -i
+python3 main.py --interactive
+```
+
+基本信息：  
+每个页面下均可使用`help`获取帮助。  
+参数可通过快速键入两次`tab`获取补全或提示。  
+任意页面输入`exit`可直接退出运行。  
+
+使用模块：  
+每个页面下均可使用`usemodule`切换至特定功能模块。  
+Ps：可快速键入`tab`获取指令补全，及模块选项。  
+
+查看参数：  
+每个页面下均可使用`info`查看参数，确保每个标识`Required:True`的参数必须填写合理值。  
+
+设置参数：  
+通过`info`查看参数，再使用`set param value`对`param`设置`value`。  
+
+运行模块：  
+设置好参数后，使用`run`将启动运行，若必备参数没有提供，将不会运行并发出提示。  
 
 
 
