@@ -5,6 +5,7 @@
 import readline
 from lib.color_output import *
 from interactive.funcs import main_action, burp_action, domain_action, port_action, scan_action
+from interactive.funcs import worker_action
 from interactive.completer import main_completer
 from interactive.funcs import redisUtil, util
 
@@ -13,7 +14,8 @@ Func = {
     'burp': burp_action,
     'domain': domain_action,
     'port': port_action,
-    'scan': scan_action
+    'scan': scan_action,
+    'worker': worker_action
 }
 
 class Interactive():
