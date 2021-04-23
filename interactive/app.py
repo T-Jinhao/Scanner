@@ -6,7 +6,7 @@ import readline
 from lib.color_output import *
 from interactive.funcs import main_action, burp_action, domain_action, port_action, scan_action
 from interactive.funcs import worker_action
-from interactive.completer import main_completer
+from interactive.completer import main_completer,configuration
 from interactive.funcs import redisUtil, util
 
 Func = {
@@ -39,7 +39,7 @@ class Interactive():
 
     def checkIn(self, enter):
         # 分配工作区
-        if enter.split(' ')[0] in main_completer.Workbench[self.workbench]:
+        if enter.split(' ')[0] in configuration.Workbench[self.workbench]:
             self.workbench = Func[self.workbench].checkIn(enter)
         elif enter == '':
             pass

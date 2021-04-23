@@ -4,15 +4,6 @@
 
 import readline
 
-Workbench = {
-    'main': ['help', 'usemodule', 'exit', 'main', 'set', 'info'],
-    'burp': ['main', 'help', 'info', 'set', 'run', 'exit', 'usemodule', 'execute'],
-    'domain': ['main', 'help', 'info', 'set', 'usemodule', 'exit', 'run', 'execute'],
-    'scan': ['main', 'help', 'info', 'set', 'usemodule', 'exit', 'run', 'execute'],
-    'port': ['main', 'help', 'info', 'set', 'usemodule', 'exit', 'run', 'execute'],
-    'search': ['main', 'help', 'info', 'reset', 'set', 'usemodule', 'exit'],
-    'worker': ['main', 'help', 'info', 'set', 'run', 'exit', 'usemodule']
-}
 class Completer:
     def __init__(self, option):
         self.option = option
