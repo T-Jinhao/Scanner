@@ -4,6 +4,7 @@
 
 import threading
 from interactive.run import common
+from interactive.funcs import util
 from lib import func_ports
 
 class port(common.Common):
@@ -36,7 +37,13 @@ class port(common.Common):
         return ports
 
     def execute(self, Info):
-        t = threading.Thread(target=self.run, args=(Info,))
-        t.setName(Info['Taskname'][1])  # 多线程命名
-        t.start()
+        try:
+            t = threading.Thread(target=self.run, args=(Info,))
+            t.setName(Info['Taskname'][1])  # 多线程命名
+            t.start()
+            util.printBanner('Thread', 'Status')
+            util.output(t.getName(), t.is_alive())
+        except Exception as e:
+            util.printError("Can't execute!Something is wrong!")
+            print(e)
         return
