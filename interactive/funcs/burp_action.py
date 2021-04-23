@@ -7,13 +7,14 @@ import platform
 from interactive.funcs import util
 from interactive.check import check_set, check_burp
 from interactive.funcs import redisUtil
+from interactive.completer import modules
 from interactive.run import Burp
 r = redisUtil.Redis()
 
 Commands = {
     'info': ['Url', 'Timeout', 'Workers', 'Payload', 'Taskname'],
     'set': ['Url', 'Payload', 'Timeout', 'Workers', 'Taskname'],
-    'usemodule': ['burp', 'scan', 'domain', 'port', 'worker'],
+    'usemodule': modules.usemodule,
     'run': [],
     'exit': [],
     'main': [],
