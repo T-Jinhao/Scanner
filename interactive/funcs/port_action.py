@@ -56,7 +56,7 @@ def checkIn(enter):
         updateInfo()
         run()
     elif words[0] == 'execute':
-        print('execute')
+        execute()
     elif words[0] == 'info':
         updateInfo()
         util.printInfo(words, Info)
@@ -103,3 +103,8 @@ def updateInfo():
     for i in ['Ip', 'Taskname']:
         Info[i][1] = r.queryInitKey(i)
     return
+
+def execute():
+    obj = Port.port()
+    if obj.checkRequired(Info):
+        obj.execute(Info)

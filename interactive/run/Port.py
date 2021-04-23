@@ -36,4 +36,7 @@ class port(common.Common):
         return ports
 
     def execute(self, Info):
-        t = threading.Thread(target=self.run, args=Info)
+        t = threading.Thread(target=self.run, args=(Info,))
+        t.setName(Info['Taskname'][1])  # 多线程命名
+        t.start()
+        return
