@@ -2,6 +2,7 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
+import threading
 from interactive.run import common
 from lib import func_ports
 
@@ -33,3 +34,6 @@ class port(common.Common):
             else:
                 ports = interval
         return ports
+
+    def execute(self, Info):
+        t = threading.Thread(target=self.run, args=Info)

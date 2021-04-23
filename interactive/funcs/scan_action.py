@@ -16,7 +16,8 @@ Commands = {
     'run': [],
     'exit': [],
     'main': [],
-    'help': ['info', 'set', 'run', 'exit', 'help', 'main'],
+    'help': ['info', 'set', 'run', 'exit', 'help', 'main', 'execute'],
+    'execute': []
 }
 
 Usage = {
@@ -27,6 +28,7 @@ Usage = {
     'main': 'Back to the main menu.',
     'run': 'Start the given scan module.',
     'usemodule': 'Use a Scanner module.',
+    'execute': 'Run with threads.'
 }
 
 Info = {
@@ -55,6 +57,8 @@ def checkIn(enter):
     elif words[0] == 'run':
         updateInfo()
         run()
+    elif words[0] == 'execute':
+        print('execute')
     elif words[0] == 'info':
         updateInfo()
         util.printInfo(words, Info)
