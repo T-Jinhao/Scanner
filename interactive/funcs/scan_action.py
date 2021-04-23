@@ -12,7 +12,7 @@ r = redisUtil.Redis()
 Commands = {
     'info': ['Url', 'Timeout', 'Cookie', 'Taskname', 'Workers'],
     'set': ['Url', 'Cookie', 'Timeout', 'Taskname', 'Workers', 'Cycles', 'Recursion'],
-    'usemodule': ['burp', 'scan', 'domain', 'port'],
+    'usemodule': ['burp', 'scan', 'domain', 'port', 'worker'],
     'run': [],
     'exit': [],
     'main': [],

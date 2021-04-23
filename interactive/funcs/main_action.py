@@ -9,7 +9,7 @@ from interactive.check import common, check_set
 r = redisUtil.Redis()
 
 Commands = {
-    'usemodule': ['burp', 'scan', 'domain', 'port'],  # 功能模块
+    'usemodule': ['burp', 'scan', 'domain', 'port', 'worker'],  # 功能模块
     'help': ['usemodule', 'exit', 'main', 'works'],   # 帮助
     'set': ['Url', 'Ip', 'Taskname'],
     'info': ['Url', 'Ip', 'Taskname'],

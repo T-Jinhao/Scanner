@@ -8,7 +8,7 @@ from interactive.funcs import util
 Commands = {
     'info': [],
     'set': [],
-    'usemodule': ['burp', 'scan', 'domain', 'port'],
+    'usemodule': ['burp', 'scan', 'domain', 'port', 'worker'],
     'run': [],
     'main': [],
     'help': [],
