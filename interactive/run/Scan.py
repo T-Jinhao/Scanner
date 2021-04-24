@@ -45,6 +45,7 @@ class scan(common.Common):
         try:
             t = threading.Thread(target=self.run, args=(Info, True, False))
             t.setName(Info['Taskname'][1])
+            t.setDaemon(True)
             t.start()
             util.printBanner('Thread', 'Status')
             util.output(t.getName(), t.is_alive())

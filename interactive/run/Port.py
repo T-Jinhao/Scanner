@@ -40,6 +40,7 @@ class port(common.Common):
         try:
             t = threading.Thread(target=self.run, args=(Info, False,))
             t.setName(Info['Taskname'][1])  # 多线程命名
+            t.setDaemon(True)
             t.start()
             util.printBanner('Thread', 'Status')
             util.output(t.getName(), t.is_alive())
