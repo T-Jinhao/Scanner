@@ -2,6 +2,8 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
+import threading
+import sys
 from interactive.funcs import util
 
 class Common:
@@ -20,3 +22,10 @@ class Common:
             return 1
         else:
             return 0
+
+    def sysExit(self):
+        threads = threading.enumerate()
+        for t in threads:
+            t.setDaemon(True)
+            t.join(0)
+        sys.exit()

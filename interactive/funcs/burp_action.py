@@ -51,7 +51,7 @@ def checkIn(enter):
     elif words[0] == 'set':
         setOption(words)
     elif words[0] == 'exit':
-        sys.exit(0)
+        sysExit()
     elif words[0] == 'main':
         workbench = 'main'
     elif words[0] == 'help':
@@ -124,3 +124,7 @@ def execute():
         if Info['Payload'][1] == 'default':   # 获取默认payload
             checkSetValue('Payload', 'default')
         obj.execute(Info, P)
+
+def sysExit():
+    obj = Burp.burp()
+    obj.sysExit()

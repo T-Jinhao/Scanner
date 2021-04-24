@@ -6,6 +6,7 @@ import sys
 from interactive.funcs import util
 from interactive.funcs import redisUtil
 from interactive.check import common, check_set
+from interactive.run import Worker
 from interactive.completer import configuration
 r = redisUtil.Redis()
 
@@ -38,7 +39,7 @@ def checkIn(enter):
     if words[0] == 'usemodule':   # 调用其他模块
         workbench = util.usemodule('main', words, Commands['usemodule'])
     elif words[0] == 'exit':      # 退出程序
-        sys.exit(0)
+        sysExit()
     elif words[0] == 'main':      # 回到主控制台页面
         workbench = 'main'
     elif words[0] == 'help':      # 打印帮助信息
@@ -98,4 +99,7 @@ def updateInfo():
         Info[i][1] = r.queryInitKey(i)
     return
 
+def sysExit():
+    obj = Worker.worker()
+    obj.sysExit()
 

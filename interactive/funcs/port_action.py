@@ -48,7 +48,7 @@ def checkIn(enter):
     elif words[0] == 'set':
         setOption(words)
     elif words[0] == 'exit':
-        sys.exit(0)
+        sysExit()
     elif words[0] == 'main':
         workbench = 'main'
     elif words[0] == 'help':
@@ -110,3 +110,7 @@ def execute():
     obj = Port.port()
     if obj.checkRequired(Info):
         obj.execute(Info)
+
+def sysExit():
+    obj = Port.port()
+    obj.sysExit()

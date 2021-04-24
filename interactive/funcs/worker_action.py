@@ -42,7 +42,7 @@ def checkIn(enter):
     elif words[0] == 'set':
         setOption(words)
     elif words[0] == 'exit':
-        sys.exit(0)
+        sysExit()
     elif words[0] == 'main':
         workbench = 'main'
     elif words[0] == 'help':
@@ -72,3 +72,7 @@ def checkSetValue(key, value):
 def worker():
     obj = Worker.worker()
     obj.run()
+
+def sysExit():
+    obj = Worker.worker()
+    obj.sysExit()
