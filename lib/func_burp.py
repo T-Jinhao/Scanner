@@ -29,6 +29,8 @@ class Burp():
         self.timeout = config.getfloat("Burp", "timeout")
         system = platform.system()
         self.saveType = config.get("Result", system)
+        self.isThread = False
+        self.isShow = True
 
     def start(self):
         url = self.url
@@ -177,15 +179,18 @@ class Burp():
         return 0
 
 
-    def run(self, payloads, isShow=True):
+    def run(self, payloads):
         '''
         调用异步请求
         :param payloads: 导入的payload
         :return:
         '''
         URL = [self.url+x for x in payloads]
-        handler = burpTerminal.Terminal(scanmode=self.scan_mode, isShow=isShow)  # 获取文本处理对象+分类检测
+        handler = burpTerminal.Terminal(scanmode=self.scan_mode, isShow=self.isShow)  # 获取文本处理对象+分类检测
         REQ = asyncHttp.req(handler=handler)   # 申请异步
+        if self.isThread:   # 多线程异步
+            new_loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(new_loop)
         loop = asyncio.get_event_loop()
         loop.run_until_complete(REQ.run(URL))
         results = REQ.results   # 获取结果

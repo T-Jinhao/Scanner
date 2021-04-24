@@ -8,7 +8,7 @@ from interactive.funcs import util
 from lib import func_burp
 
 class burp(common.Common):
-    def run(self, Info, p_list, isShow =True):
+    def run(self, Info, p_list, isThread=False, isShow =True):
         # 设置参数配置
         payloads = p_list['payloads']
         r = func_burp.Burp(
@@ -20,14 +20,16 @@ class burp(common.Common):
         r.load_config()
         r.threads = int(Info['Workers'][1])
         r.timeout = float(Info['Timeout'][1])
+        r.isThread = isThread
+        r.isShow = isShow
         # 运行
         r.scan_mode_indetify()    # 获取Scanmode
-        results = r.run(payloads=payloads, isShow=isShow)  # 运行
+        results = r.run(payloads=payloads)  # 运行
         r.saveResult(results)
 
     def execute(self, Info, p_list):
         try:
-            t = threading.Thread(target=self.run, args=(Info, p_list, False))
+            t = threading.Thread(target=self.run, args=(Info, p_list, True, False))
             t.setName(Info['Taskname'][1])
             t.start()
             util.printBanner('Thread', 'Status')
