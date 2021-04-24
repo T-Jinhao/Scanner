@@ -177,14 +177,14 @@ class Burp():
         return 0
 
 
-    def run(self, payloads):
+    def run(self, payloads, isShow=True):
         '''
         调用异步请求
         :param payloads: 导入的payload
         :return:
         '''
         URL = [self.url+x for x in payloads]
-        handler = burpTerminal.Terminal(scanmode=self.scan_mode)  # 获取文本处理对象+分类检测
+        handler = burpTerminal.Terminal(scanmode=self.scan_mode, isShow=isShow)  # 获取文本处理对象+分类检测
         REQ = asyncHttp.req(handler=handler)   # 申请异步
         loop = asyncio.get_event_loop()
         loop.run_until_complete(REQ.run(URL))

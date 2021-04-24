@@ -2,11 +2,13 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
+import threading
 from interactive.run import common
+from interactive.funcs import util
 from lib import func_burp
 
 class burp(common.Common):
-    def run(self, Info, p_list):
+    def run(self, Info, p_list, isShow =True):
         # 设置参数配置
         payloads = p_list['payloads']
         r = func_burp.Burp(
@@ -20,5 +22,17 @@ class burp(common.Common):
         r.timeout = float(Info['Timeout'][1])
         # 运行
         r.scan_mode_indetify()    # 获取Scanmode
-        results = r.run(payloads=payloads)  # 运行
+        results = r.run(payloads=payloads, isShow=isShow)  # 运行
         r.saveResult(results)
+
+    def execute(self, Info, p_list):
+        try:
+            t = threading.Thread(target=self.run, args=(Info, p_list, False))
+            t.setName(Info['Taskname'][1])
+            t.start()
+            util.printBanner('Thread', 'Status')
+            util.output(t.getName(), t.is_alive())
+        except Exception as e:
+            util.printError("Can't execute!Something is wrong!")
+            print(e)
+        return
