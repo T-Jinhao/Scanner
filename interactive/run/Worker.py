@@ -2,8 +2,10 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
+import threading
 from interactive.run import common
+from interactive.funcs import util
 
 class worker(common.Common):
-    def run(self, Info):
-        print('worker')
+    def run(self):
+        pass

@@ -48,7 +48,7 @@ def checkIn(enter):
     elif words[0] == 'help':
         util.printHelp(words, Usage)
     elif words[0] == 'works':
-        print('works')
+        worker()
     elif words[0] == 'info':
         # updateInfo()
         util.printInfo(words, Info)
@@ -68,3 +68,7 @@ def checkSetValue(key, value):
     if key not in Commands['set']:
         return False
     pass
+
+def worker():
+    obj = Worker.worker()
+    obj.run()
