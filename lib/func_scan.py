@@ -40,6 +40,8 @@ class Scan():
         system = platform.system()
         self.saveType = config.get("Result", system)
         self.Cycles = config.getint("Scan", "cycles")
+        self.isThread = False
+        self.isShow = True
 
     def start(self):
         print(self.Output.fuchsia(">>>>>scan" + "-" * 40))
@@ -59,24 +61,27 @@ class Scan():
     def output(self):
         if self.Phone != []:
             r_phone = list(set(self.Phone))
-            phone = self.dealData(r_phone)
-            print(self.Output.green('[ output ] ') + self.Output.cyan('手机号码'))
-            for x in phone:
-                print(self.Output.blue('[ result ] ') + self.Output.green(x) + self.Output.interval() + phone[x])
+            if self.isShow:
+                phone = self.dealData(r_phone)
+                print(self.Output.green('[ output ] ') + self.Output.cyan('手机号码'))
+                for x in phone:
+                    print(self.Output.blue('[ result ] ') + self.Output.green(x) + self.Output.interval() + phone[x])
             self.saveResult(r_phone, 'phone', 'phone.txt', cut=' | ')
         if self.Email != []:
             r_email = list(set(self.Email))
-            email = self.dealData(r_email)
-            print(self.Output.green('[ output ] ') + self.Output.cyan('邮箱'))
-            for x in email:
-                print(self.Output.blue('[ result ] ') + self.Output.green(x) + self.Output.interval() + email[x])
+            if self.isShow:
+                email = self.dealData(r_email)
+                print(self.Output.green('[ output ] ') + self.Output.cyan('邮箱'))
+                for x in email:
+                    print(self.Output.blue('[ result ] ') + self.Output.green(x) + self.Output.interval() + email[x])
             self.saveResult(r_email, 'email', 'email.txt', cut=' | ')
         if self.ICP != []:
             r_icp = list(set(self.ICP))
-            icp = self.dealData(r_icp)
-            print(self.Output.green('[ output ] ') + self.Output.cyan('备案号'))
-            for x in icp:
-                print(self.Output.blue('[ result ] ') + self.Output.green(x) + self.Output.interval() + icp[x])
+            if self.isShow:
+                icp = self.dealData(r_icp)
+                print(self.Output.green('[ output ] ') + self.Output.cyan('备案号'))
+                for x in icp:
+                    print(self.Output.blue('[ result ] ') + self.Output.green(x) + self.Output.interval() + icp[x])
             self.saveResult(r_icp, 'icp', 'icp.txt', cut=' | ')
         return
 
