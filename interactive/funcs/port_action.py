@@ -57,6 +57,7 @@ def checkIn(enter):
         updateInfo()
         run()
     elif words[0] == 'execute':
+        updateInfo()
         execute()
     elif words[0] == 'info':
         updateInfo()
