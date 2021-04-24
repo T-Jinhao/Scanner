@@ -127,10 +127,11 @@ class Scan():
             Cycles = 1
             new_urls = util.filter_Url(list(set(self.Web)))
             while 1 and Cycles <= self.Cycles and new_urls != []:
-                print(self.Output.blue('[ schedule ] ') +
-                      self.Output.fuchsia(f'第{Cycles}轮遍历爬取 ') +
-                      self.Output.green(f'共{len(new_urls)}个链接')
-                      )
+                if self.isShow:
+                    print(self.Output.blue('[ schedule ] ') +
+                          self.Output.fuchsia(f'第{Cycles}轮遍历爬取 ') +
+                          self.Output.green(f'共{len(new_urls)}个链接')
+                          )
                 Cycles += 1  # 防止无限运行
                 self.webScan(new_urls)  # 运行后self.Web会刷新结果
                 new_urls = set()           # 重置
@@ -158,6 +159,9 @@ class Scan():
         '''
         handler = scanTerminal.Terminal(scanmode=self.scanmode)  # scanmode暂未实现，保留接口
         REQ = asyncHttp.req(handler=handler)
+        if self.isThread:
+            new_loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(new_loop)
         loop = asyncio.get_event_loop()
         loop.run_until_complete(REQ.run(url))
         # 获取结果
