@@ -8,7 +8,7 @@ from interactive.funcs import util
 from lib import func_ports
 
 class port(common.Common):
-    def run(self, Info):
+    def run(self, Info, isShow=True):
         # 设置参数配置
         ports = self.getPorts(Info['Ports'][1])
         r = func_ports.Ports(
@@ -21,7 +21,7 @@ class port(common.Common):
         r.max_workers = int(Info['Workers'][1])
         # 运行并保存
         report = r.run(port=ports)
-        new_report = r.showReport(report)
+        new_report = r.showReport(report, isShow=isShow)
         r.saveResult(new_report)
 
     def getPorts(self, input):
@@ -38,7 +38,7 @@ class port(common.Common):
 
     def execute(self, Info):
         try:
-            t = threading.Thread(target=self.run, args=(Info,))
+            t = threading.Thread(target=self.run, args=(Info, False,))
             t.setName(Info['Taskname'][1])  # 多线程命名
             t.start()
             util.printBanner('Thread', 'Status')

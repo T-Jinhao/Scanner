@@ -138,7 +138,7 @@ class Ports():
         reports = sniff.retResult()
         return reports
 
-    def showReport(self, reports):
+    def showReport(self, reports, isShow=True):
         new_report = []
         if reports == []:
             return new_report
@@ -147,11 +147,12 @@ class Ports():
                 service = port_dict[r['port']]
             else:
                 service = 'unrecognized'
-            print(self.Output.green('[ result ] ')
-                  + self.Output.fuchsia('port: ') + self.Output.green(r['port']) + self.Output.interval()
-                  + self.Output.fuchsia('server: ') + self.Output.green(service) + self.Output.interval()
-                  + self.Output.fuchsia('banner: ') + self.Output.green(r['banner'])
-                  )
+            if isShow:
+                print(self.Output.green('[ result ] ')
+                      + self.Output.fuchsia('port: ') + self.Output.green(r['port']) + self.Output.interval()
+                      + self.Output.fuchsia('server: ') + self.Output.green(service) + self.Output.interval()
+                      + self.Output.fuchsia('banner: ') + self.Output.green(r['banner'])
+                      )
             msg = "{0} : {1} : {2}  : {3}".format(self.host, str(r['port']), service, str(r['banner']))
             new_report.append(msg)
         return new_report
