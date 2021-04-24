@@ -6,9 +6,10 @@ import re
 from lib.color_output import ColorOutput
 
 class BaseModel:
-    def __init__(self, scanmode=0):
+    def __init__(self, scanmode=0, isShow=True):
         self.Output = ColorOutput()
         self.scanmode = scanmode
+        self.isShow = isShow
         # burp模块
         self.title_list = []
         self.length_list = []

@@ -28,13 +28,14 @@ class Terminal(BaseModel):
                         title=title,
                         url=resp.url
                     )
-                    print(self.Output.green('[ result ] ')
-                          + self.Output.fuchsia('status_code:') + self.Output.green(
-                        resp.status) + self.Output.interval()
-                          + self.Output.fuchsia('url:') + str(resp.url) + self.Output.interval()
-                          + self.Output.fuchsia('Content-Length:') + self.Output.green(resp.content_length)
-                          + self.Output.interval()
-                          + self.Output.fuchsia('title:') + self.Output.green(title))
+                    if self.isShow:
+                        print(self.Output.green('[ result ] ')
+                              + self.Output.fuchsia('status_code:') + self.Output.green(
+                            resp.status) + self.Output.interval()
+                              + self.Output.fuchsia('url:') + str(resp.url) + self.Output.interval()
+                              + self.Output.fuchsia('Content-Length:') + self.Output.green(resp.content_length)
+                              + self.Output.interval()
+                              + self.Output.fuchsia('title:') + self.Output.green(title))
                     return msg
             except:
                 pass
@@ -47,11 +48,12 @@ class Terminal(BaseModel):
                 title=title,
                 url=resp.url
             )
-            print(self.Output.green('[ result ] ')
-                  + self.Output.fuchsia('status_code:') + self.Output.green(resp.status) + self.Output.interval()
-                  + self.Output.fuchsia('url:') + str(resp.url) + self.Output.interval()
-                  + self.Output.fuchsia('Content-Length:') + self.Output.green(resp.content_length)
-                  + self.Output.interval()
-                  + self.Output.fuchsia('title:') + self.Output.green(title))
+            if self.isShow:
+                print(self.Output.green('[ result ] ')
+                      + self.Output.fuchsia('status_code:') + self.Output.green(resp.status) + self.Output.interval()
+                      + self.Output.fuchsia('url:') + str(resp.url) + self.Output.interval()
+                      + self.Output.fuchsia('Content-Length:') + self.Output.green(resp.content_length)
+                      + self.Output.interval()
+                      + self.Output.fuchsia('title:') + self.Output.green(title))
             # 用作数据保存
             return msg

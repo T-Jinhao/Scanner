@@ -35,20 +35,21 @@ class Terminal(BaseModel):
                     ip=resp.ip,
                     url=resp.url
                 )
-                output = "".join([
-                    self.Output.green('[ result ] '), self.Output.fuchsia('status_code:'),
-                    self.Output.green(resp.status), self.Output.interval(),
-                    self.Output.fuchsia('初始URL:'), self.Output.green(resp.protourl), self.Output.interval(),
-                    self.Output.fuchsia('标题:'), self.Output.green(title), self.Output.interval(),
-                    self.Output.fuchsia('最终URL:'), str(resp.url),
-                ])
+                if self.isShow:
+                    output = "".join([
+                        self.Output.green('[ result ] '), self.Output.fuchsia('status_code:'),
+                        self.Output.green(resp.status), self.Output.interval(),
+                        self.Output.fuchsia('初始URL:'), self.Output.green(resp.protourl), self.Output.interval(),
+                        self.Output.fuchsia('标题:'), self.Output.green(title), self.Output.interval(),
+                        self.Output.fuchsia('最终URL:'), str(resp.url),
+                    ])
+                    print(output)
+                    # sys.stdout.flush()
                 if resp.ip is not None:
                     if resp.ip not in self.IP_list:
                         self.IP_list[resp.ip] = 1
                     else:
                         self.IP_list[resp.ip] += 1
-                print(output)
-                # sys.stdout.flush()
                 return msg
             except:
                 pass
