@@ -8,4 +8,10 @@ from interactive.funcs import util
 
 class worker(common.Common):
     def run(self):
-        pass
+        threads = threading.enumerate()
+        util.printBanner("Threads", "Status")
+        for t in threads:
+            name = t.getName()
+            if name.startswith('ThreadPoolExecutor'):   # 忽略子线程
+                continue
+            util.output(t.getName(), t.isAlive())
