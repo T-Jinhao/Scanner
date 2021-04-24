@@ -69,7 +69,7 @@ class Common:
             payloadpath = input
         try:
             F = open(payloadpath, 'r')
-            payloads = ['/'+x.replace('\n', '') for x in F]
+            payloads = [x.replace('\n', '') for x in F]
             F.close()
             return payloads
         except:
