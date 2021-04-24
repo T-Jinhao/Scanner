@@ -46,7 +46,6 @@ class scan(common.Common):
             t = threading.Thread(target=self.run, args=(Info, True, False))
             t.setName(Info['Taskname'][1])
             t.start()
-            self.threads.append(t)
             util.printBanner('Thread', 'Status')
             util.output(t.getName(), t.is_alive())
         except Exception as e:

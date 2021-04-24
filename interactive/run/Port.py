@@ -41,7 +41,6 @@ class port(common.Common):
             t = threading.Thread(target=self.run, args=(Info, False,))
             t.setName(Info['Taskname'][1])  # 多线程命名
             t.start()
-            self.threads.append(t)
             util.printBanner('Thread', 'Status')
             util.output(t.getName(), t.is_alive())
         except Exception as e:

@@ -6,7 +6,7 @@ from interactive.funcs import util
 
 class Common:
     def __init__(self):
-        self.threads = []
+        pass
 
     def checkRequired(self, Info):
         for x in Info:
