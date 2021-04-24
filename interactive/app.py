@@ -33,8 +33,6 @@ class Interactive():
         while 1:
             readline.set_completer(main_completer.Completer(Func[self.workbench].Commands).completer)  # 自动补全
             enter = input("(Scanner\{}) > ".format(self.Output.green(self.workbench)))
-            if enter == 'exit':
-                break
             self.checkIn(enter)
 
     def checkIn(self, enter):

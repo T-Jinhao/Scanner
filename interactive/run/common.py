@@ -2,7 +2,6 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
-import threading
 import sys
 from interactive.funcs import util
 from lib.color_output import ColorOutput
@@ -26,11 +25,7 @@ class Common:
 
     def sysExit(self):
         out = ColorOutput()
-        confirm = input(out.red('Whether to exit the program? Y/n'))
+        confirm = input(out.red("Whether to exit the program? Y/n\n"))
         if confirm not in ['Y', 'y']:
             return
-        threads = threading.enumerate()
-        for t in threads:
-            t.setDaemon(True)
-            t.join(0)
         sys.exit()
