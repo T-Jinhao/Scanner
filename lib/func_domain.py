@@ -43,6 +43,8 @@ class Domain:
         self.chkStatus = json.loads(chkStatus)
         system = platform.system()
         self.saveType = config.get("Result", system)
+        self.isThread = False
+        self.isShow = True
 
 
     def start(self):
@@ -85,11 +87,13 @@ class Domain:
         :return:
         '''
         report = []
-        print(self.Output.blue('[ schedule ] ') + self.Output.cyan('正在运行在线查询，请耐心等待'))
-        print(self.Output.yellow('[ warn ] ') + self.Output.fuchsia('该过程请挂载代理，否则可能会访问超时，导致获取数据失败'))
+        if self.isShow:
+            print(self.Output.blue('[ schedule ] ') + self.Output.cyan('正在运行在线查询，请耐心等待'))
+            print(self.Output.yellow('[ warn ] ') + self.Output.fuchsia('该过程请挂载代理，否则可能会访问超时，导致获取数据失败'))
         urls = self.rapidSearch(domain)
         if urls == []:
-            print(self.Output.yellow('[ warn ] ') + self.Output.fuchsia('-X模式查询失败，稍后将执行payload爆破'))
+            if self.isShow:
+                print(self.Output.yellow('[ warn ] ') + self.Output.fuchsia('-X模式查询失败，稍后将执行payload爆破'))
         else:
             report = self.run(urls)
         return report
@@ -216,8 +220,11 @@ class Domain:
         :return:
         '''
         URL = ['http://'+u for u in payload]  # 需要添加协议头
-        handler = subdomainTerminal.Terminal(scanmode=self.scanmode)  # 申请文本处理起
+        handler = subdomainTerminal.Terminal(scanmode=self.scanmode, isShow=self.isShow)  # 申请文本处理起
         REQ = asyncHttp.req(handler=handler)
+        if self.isThread:   # 多线程异步
+            new_loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(new_loop)
         loop = asyncio.get_event_loop()
         loop.run_until_complete(REQ.run(URL))
         results = REQ.results   # 获取结果
@@ -249,12 +256,14 @@ class Domain:
         ranstr2 = ranstr[-4:]
         url1 = "{}.{}".format(ranstr1, domain)
         url2 = "{}.{}".format(ranstr2, domain)
-        print(self.Output.blue('[ checking ] ') + self.Output.fuchsia('是否存在泛解析'))
+        if self.isShow:
+            print(self.Output.blue('[ checking ] ') + self.Output.fuchsia('是否存在泛解析'))
         res = self.run([url1, url2])
         if len(res) == 2:   # 泛解析
             self.scanmode = 1  # 修改判断逻辑
-            print(self.Output.yellow('[ warn ] ') + self.Output.red("{} 存在泛解析 ".format(self.domain)))
-            print(self.Output.yellow('[ warn ] ') + self.Output.cyan('程序将使用差异化进行判断，但结果准确性可能下降'))
+            if self.isShow:
+                print(self.Output.yellow('[ warn ] ') + self.Output.red("{} 存在泛解析 ".format(self.domain)))
+                print(self.Output.yellow('[ warn ] ') + self.Output.cyan('程序将使用差异化进行判断，但结果准确性可能下降'))
         return
 
     def rapidSearch(self, domain):
@@ -264,6 +273,9 @@ class Domain:
         :return:
         '''
         url = f'https://rapiddns.io/subdomain/{domain}?full=1&down=1'
+        if self.isThread:
+            new_loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(new_loop)
         loop = asyncio.get_event_loop()
         task = loop.create_task(self.rapidDns(url))
         result = loop.run_until_complete(task)
@@ -276,7 +288,8 @@ class Domain:
                     text = await res.read()
                     ret_dict = await self.resultParse(text)  # 获取页面解析数据
                     if ret_dict != []:
-                        print(self.Output.blue('[ Load ] ') + self.Output.cyan('获取数据成功，即将开始存活性筛选'))
+                        if self.isShow:
+                            print(self.Output.blue('[ Load ] ') + self.Output.cyan('获取数据成功，即将开始存活性筛选'))
                         return ret_dict
         except Exception as e:
             print(e)

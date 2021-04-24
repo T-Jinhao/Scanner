@@ -61,7 +61,8 @@ def checkIn(enter):
         updateInfo()
         run()
     elif words[0] == 'execute':
-        print('execute')
+        updateInfo()
+        execute()
     elif words[0] == 'info':
         updateInfo()
         util.printInfo(words, Info)
@@ -119,3 +120,10 @@ def updateInfo():
     for i in ['Url', 'Taskname']:
         Info[i][1] = r.queryInitKey(i)
     return
+
+def execute():
+    obj = Domain.domain()
+    if obj.checkRequired(Info):
+        if Info['Payload'][1] == 'default':   # 获取默认payload
+            checkSetValue('Payload', 'default')
+        obj.execute(Info, P)

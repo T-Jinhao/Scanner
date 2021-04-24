@@ -2,12 +2,13 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
+import threading
 from interactive.run import common
 from lib import func_domain
 from interactive.funcs import util
 
 class domain(common.Common):
-    def run(self, Info, p_list):
+    def run(self, Info, p_list, isThread=False, isShow=True):
         # 设置参数
         payloads = p_list['payloads']
         flag = self.getFlag(Info['Online'][1])
@@ -25,6 +26,8 @@ class domain(common.Common):
         r.load_config()
         r.threads = int(Info['Workers'][1])
         r.timeout = float(Info['Timeout'][1])
+        r.isThread = isThread
+        r.isShow = isShow
         # 运行
         r.panAnalysis(domain)  # 分析泛解析
         if flag == 1:
@@ -36,3 +39,14 @@ class domain(common.Common):
         r.saveDomainResult(report=report)
         r.saveIpResult(report_dict=ip_list)
 
+    def execute(self, Info, p_list):
+        try:
+            t = threading.Thread(target=self.run, args=(Info, p_list, True, False))
+            t.setName(Info['Taskname'][1])
+            t.start()
+            util.printBanner('Thread', 'Status')
+            util.output(t.getName(), t.is_alive())
+        except Exception as e:
+            util.printError("Can't execute!Something is wrong!")
+            print(e)
+        return
