@@ -79,7 +79,7 @@ class Report:
         ws.append(self.banner)
         try:
             for m in self.report:
-                ws.append(self.str2list(m))
+                ws.append(self.dict2list(m))
             wb.save(file)
             isS = True
         except:
@@ -110,7 +110,7 @@ class Report:
             ws.append(self.banner)
         try:
             for m in self.report:
-                ws.append(self.str2list(m))
+                ws.append(self.dict2list(m))
             wb.save(file)
             isS = True
         except:
@@ -122,14 +122,15 @@ class Report:
                 isS = False
         return isS
 
-    def str2list(self, text):
+    def dict2list(self, data):
         '''
-        字符串转数组
-        :param text:
+        字典转数组
+        :param data:
         :return:
         '''
-        L = text.split(self.lable)
-        return [x.strip() for x in L]
+        DATA = [data[x] for x in self.lable]
+        return DATA
+
 
 
 

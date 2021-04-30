@@ -78,7 +78,8 @@ class Ports():
             return
         if self.saveType == 'xlsx':
             banner = ['IP', '端口', '服务', 'banner']
-            reports_xlsx.Report(report, self.name, 'Ports', banner).save()
+            lable = ['ip', 'port', 'service', 'banner']
+            reports_xlsx.Report(report, self.name, 'Ports', banner=banner, lable=lable).save()
         else:
             reports_txt.Report(report, self.name, 'port_report.txt', '主机端口扫描报告已存放于', '并没有扫描出主机开放端口').save()
         return
