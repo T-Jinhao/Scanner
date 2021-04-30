@@ -7,7 +7,7 @@ from lib.color_output import *
 
 class Report:
     def __init__(self,reports,taskname,filename,suc_msg,err_msg):
-        self.reports = reports
+        self.reports = self.transform(reports)
         self.dirname = taskname
         self.filename = filename
         self.suc_msg = suc_msg
@@ -35,4 +35,13 @@ class Report:
                 msg = "[ {} ]".format(self.err_msg)
         print(self.Output.green('[ 保存输出结果-text ] ') + self.Output.cyan(msg))
         return
+
+    def transform(self, data):
+        if data == []:
+            return []
+        if type(data[0]) == dict:
+            DATA = [' : '.join(str(i) for i in x.values()) for x in data]
+            return DATA
+        else:
+            return data
 
