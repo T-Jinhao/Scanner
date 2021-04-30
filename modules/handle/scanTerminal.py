@@ -52,20 +52,12 @@ class Terminal(BaseModel):
                 u = util.splicingUrl(url, y)
                 if u != None and u.startswith('http'):
                     if util.judgingOrigin(url, u):
-                        msg = {
-                            'protourl': url,
-                            'capture_url': u
-                        }
-                        self.capture_Url.append(msg.copy())  # 处理获取到的url
+                        self.capture_Url.append(u)  # 处理获取到的url
 
         for k in js_links:
             z = k.get('src')
             if z != None:
                 u = util.splicingUrl(url, z)
                 if u != None and u.startswith('http'):
-                    msg = {
-                        'protourl': url,
-                        'capture_js': z
-                    }
-                    self.capture_Js.append(msg.copy())
+                    self.capture_Js.append(u)
 

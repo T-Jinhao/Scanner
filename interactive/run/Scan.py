@@ -25,6 +25,7 @@ class scan(common.Common):
         r.scanmode = flag
         # 运行
         if flag:
+            r.webScan(Info['Url'][1])
             r.crazyWebScan()
         else:
             r.webScan(Info['Url'][1])
@@ -32,14 +33,8 @@ class scan(common.Common):
 
     def getResult(self, obj):
         obj.output()
-        # phone = obj.Phone
-        # email = obj.Email
-        # icp = obj.ICP
         results = obj.results
-        # obj.saveResult(phone, 'phone', 'phone.txt', cut=' | ')
-        # obj.saveResult(email, 'email', 'email.txt', cut=' | ')
-        # obj.saveResult(icp, 'icp', 'icp.txt', cut=' | ')
-        obj.saveResult(results, 'webScan', 'webScan.txt', cut=' | ')
+        obj.saveResult(results, 'webScan', 'webScan.txt')
 
     def execute(self, Info):
         try:
