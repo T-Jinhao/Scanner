@@ -28,13 +28,20 @@ class Terminal(BaseModel):
         if flag == True:
             try:
                 title = util.getTitle(resp.text).replace(' | ', ' || ')   # 防止保存时切割错误
-                msg = "{status} | {protourl} | {title} | {ip} | {url}".format(
-                    status=resp.status,
-                    protourl=resp.protourl,
-                    title=title,
-                    ip=resp.ip,
-                    url=resp.url
-                )
+                # msg = "{status} | {protourl} | {title} | {ip} | {url}".format(
+                #     status=resp.status,
+                #     protourl=resp.protourl,
+                #     title=title,
+                #     ip=resp.ip,
+                #     url=resp.url
+                # )
+                msg = {
+                    'status': resp.status,
+                    'protourl': resp.protourl,
+                    'title': title,
+                    'ip': resp.ip,
+                    'url': resp.url
+                }
                 if self.isShow:
                     output = "".join([
                         self.Output.green('[ result ] '), self.Output.fuchsia('status_code:'),
@@ -50,6 +57,6 @@ class Terminal(BaseModel):
                         self.IP_list[resp.ip] = 1
                     else:
                         self.IP_list[resp.ip] += 1
-                return msg
+                return msg.copy()
             except:
                 pass

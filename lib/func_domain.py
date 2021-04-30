@@ -118,7 +118,7 @@ class Domain:
                 banner = ['状态码', '跳转记录', '标题', '最终URL']
                 sheetname = 'subDomain'
                 cut = ' | '
-            reports_xlsx.Report(report, self.name, sheetname, banner, cut=cut).save()
+            reports_xlsx.Report(report, self.name, sheetname, banner, lable=cut).save()
         else:
             reports_txt.Report(report, self.name, 'domain_report.txt', '网站子域名挖掘报告已存放于', '保存出错').save()
         return

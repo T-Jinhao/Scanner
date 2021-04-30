@@ -62,7 +62,7 @@ class Ports():
             ports = self.scan_ports()
         print(self.Output.blue('[ schedule ] ') + self.Output.cyan('准备就绪，开始扫描'))
         report = self.run(ports)   # 获取开放端口
-        new_report = self.showReport(report)
+        new_report = self.showReport(report)   # 展示并添加服务标识
         self.saveResult(new_report)
         print(self.Output.fuchsia('-' * 40 + 'PortsScan<<<<<' + '\n'))
         return
@@ -154,8 +154,8 @@ class Ports():
                       + self.Output.fuchsia('banner: ') + self.Output.green(r['banner'])
                       )
             msg = "{0} : {1} : {2}  : {3}".format(self.host, str(r['port']), service, str(r['banner']))
-            new_report.append(msg)
-        return new_report
+            r['service'] = service
+        return reports
 
 
 

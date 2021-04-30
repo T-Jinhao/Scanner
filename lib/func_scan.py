@@ -102,7 +102,7 @@ class Scan():
                 banner = ['备案号', '捕获页面']
             else:
                 banner = []
-            reports_xlsx.Report(report, self.name, sheetname, banner, cut=cut).save()
+            reports_xlsx.Report(report, self.name, sheetname, banner, lable=cut).save()
         else:
             reports_txt.Report(report, self.name, txtFilename, '网页扫描报告已存放于', '并没有扫描出网页链接').save()
 

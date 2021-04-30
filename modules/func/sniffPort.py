@@ -56,7 +56,8 @@ class ScanPort(object):
                             banner = ''
                         res = {
                             'port': port,
-                            'banner': banner
+                            'banner': banner,
+                            'ip': self.ip
                         }
                         self.result.append(res.copy())
                         # print(time.strftime('%Y-%m-%d %H:%M:%S'), port, 'open', round(t2 - t1, 2))

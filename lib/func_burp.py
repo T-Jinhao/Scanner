@@ -62,7 +62,7 @@ class Burp():
         if self.saveType == 'xlsx':
             banner = ['网页状态码', '文本长度', '页面标题', 'URL']
             cut = ' : '    # 文本切割符
-            reports_xlsx.Report(report, self.name, 'Burp', banner, cut=cut).save()
+            reports_xlsx.Report(report, self.name, 'Burp', banner, lable=cut).save()
         else:
             reports_txt.Report(report, self.name, 'burp_report.txt', '网站目录爆破报告已存放于', '并没有扫描出可疑后台').save()
         return
