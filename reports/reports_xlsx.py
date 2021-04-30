@@ -82,7 +82,7 @@ class Report:
                 ws.append(self.dict2list(m))
             wb.save(file)
             isS = True
-        except:
+        except Exception as e:
             try:
                 bakFile = self.getAbsolutePath(self.taskname + '_bak')
                 wb.save(filename=bakFile)
@@ -128,7 +128,7 @@ class Report:
         :param data:
         :return:
         '''
-        DATA = [data[x] for x in self.lable]
+        DATA = [str(data[x]) for x in self.lable]
         return DATA
 
 
