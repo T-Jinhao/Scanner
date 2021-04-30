@@ -33,13 +33,12 @@ class Burp():
         self.isShow = True
 
     def start(self):
-        url = self.url
         print(self.Output.fuchsia('>>>>>burp' + '-' * 40))
         print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('开始分析网站: ') + self.Output.cyan(self.url))
         self.load_config()
         web_type = self.web_indetify(self.proto_url)   # 静态匹配后缀名
         if web_type == '':
-            web_type = self.web_auto_indetify(url)
+            web_type = self.web_auto_indetify()
         print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('网站类型: ') + self.Output.cyan(web_type))
         mode_msg = self.scan_mode_indetify()
         msg = {0: '基于网站状态码检验模式', 1: '基于网站页面内容检验模式'}
@@ -61,8 +60,8 @@ class Burp():
             return
         if self.saveType == 'xlsx':
             banner = ['网页状态码', '文本长度', '页面标题', 'URL']
-            cut = ' : '    # 文本切割符
-            reports_xlsx.Report(report, self.name, 'Burp', banner, lable=cut).save()
+            lable = ['status', 'len', 'title', 'url']
+            reports_xlsx.Report(report, self.name, 'Burp', banner, lable=lable).save()
         else:
             reports_txt.Report(report, self.name, 'burp_report.txt', '网站目录爆破报告已存放于', '并没有扫描出可疑后台').save()
         return
@@ -106,10 +105,9 @@ class Burp():
             return ''
 
 
-    def web_auto_indetify(self,url):
+    def web_auto_indetify(self):
         '''
         自动添加path并识别网页类型
-        :param url:
         :return:
         '''
         # web_type = []
@@ -118,7 +116,7 @@ class Burp():
         if len(res) > 1 or res == []:
             return '未能识别'
         else:
-            web_type = self.web_indetify(res[0].split(' : ')[-1].strip())
+            web_type = self.web_indetify(res[0]['url'])
             return web_type
 
     def load_payload(self, type):
