@@ -127,7 +127,8 @@ def execute():
         if Info['Payload'][1] == 'default':   # 获取默认payload
             checkSetValue('Payload', 'default')
         obj.execute(Info, P)
-        checkSetValue('Taskname', util.getRangeStr())   # 更改Taskname
+        reset = ['set', 'Taskname', util.getRangeStr()]
+        setOption(reset)
 
 def sysExit():
     obj = Domain.domain()
