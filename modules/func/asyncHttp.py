@@ -5,7 +5,7 @@
 import aiohttp
 import asyncio
 from modules.func import parsing
-from modules.terminal import baseModel
+from modules.handle import baseModel
 
 class req:
     def __init__(self, timeout=3, workers=500, handler=baseModel.BaseModel()):

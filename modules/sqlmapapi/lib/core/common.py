@@ -1041,7 +1041,7 @@ def dataToOutFile(filename, data):
 
 def readInput(message, default=None, checkBatch=True, boolean=False):
     """
-    Reads input from terminal
+    Reads input from handle
     """
 
     retVal = None

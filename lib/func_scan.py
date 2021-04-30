@@ -10,8 +10,8 @@ from .color_output import *
 from .load_config import Config
 from reports import reports_xlsx,reports_txt
 from modules.func import asyncHttp
-from modules.terminal import scanTerminal
-from modules.terminal import jsTerminal
+from modules.handle import scanTerminal
+from modules.handle import jsTerminal
 
 wrong_web_list = ['javascript:void(0)', None, '###', '#']
 

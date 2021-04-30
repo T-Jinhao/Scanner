@@ -5,7 +5,7 @@
 import re
 import yarl
 from bs4 import BeautifulSoup
-from modules.terminal.baseModel import BaseModel
+from modules.handle.baseModel import BaseModel
 from modules.func import util
 
 class Terminal(BaseModel):

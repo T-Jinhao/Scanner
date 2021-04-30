@@ -236,7 +236,7 @@ PLATFORM = os.name
 PYVERSION = sys.version.split()[0]
 IS_WIN = PLATFORM == "nt"
 
-# Check if running in terminal
+# Check if running in handle
 IS_TTY = os.isatty(sys.stdout.fileno())
 
 # DBMS system databases

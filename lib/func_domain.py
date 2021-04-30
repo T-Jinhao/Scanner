@@ -8,15 +8,17 @@ import dns.resolver
 import aiohttp
 import asyncio
 import json
+import model.pgsql
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from reports import reports_txt, reports_xlsx
 from .color_output import *
 from .load_config import Config
 from modules.func import util
-from modules.terminal import subdomainTerminal
+from modules.handle import subdomainTerminal
 from modules.func import asyncHttp
 from modules.func import _requests
+from model.DomainModel import DoaminModel
 
 
 class Domain:

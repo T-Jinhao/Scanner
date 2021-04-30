@@ -61,8 +61,8 @@ class AnsiToWin32(object):
 
         on_windows = os.name == 'nt'
         # We test if the WinAPI works, because even if we are on Windows
-        # we may be using a terminal that doesn't support the WinAPI
-        # (e.g. Cygwin Terminal). In this case it's up to the terminal
+        # we may be using a handle that doesn't support the WinAPI
+        # (e.g. Cygwin Terminal). In this case it's up to the handle
         # to support the ANSI codes.
         conversion_supported = on_windows and winapi_test()
 

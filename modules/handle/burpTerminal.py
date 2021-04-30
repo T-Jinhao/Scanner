@@ -2,7 +2,7 @@
 # -*- encoding:utf8 -*-
 #author:Jinhao
 
-from modules.terminal.baseModel import BaseModel
+from modules.handle.baseModel import BaseModel
 from modules.func import util
 
 class Terminal(BaseModel):

@@ -21,7 +21,7 @@
 #
 # Author: Konstantin Lepa <konstantin.lepa@gmail.com>
 
-"""ANSII Color formatting for output in terminal."""
+"""ANSII Color formatting for output in handle."""
 
 from __future__ import print_function
 import os
@@ -127,7 +127,7 @@ def cprint(text, color=None, on_color=None, attrs=None, **kwargs):
 
 
 if __name__ == '__main__':
-    print('Current terminal type: %s' % os.getenv('TERM'))
+    print('Current handle type: %s' % os.getenv('TERM'))
     print('Test basic colors:')
     cprint('Grey color', 'grey')
     cprint('Red color', 'red')

@@ -10,7 +10,7 @@ from urllib.parse import urlparse
 from .color_output import *
 from .load_config import Config
 from modules.func import util
-from modules.terminal import burpTerminal
+from modules.handle import burpTerminal
 from modules.func import asyncHttp
 
 class Burp():

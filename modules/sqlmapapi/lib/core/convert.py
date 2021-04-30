@@ -361,7 +361,7 @@ def stdoutEncode(value):
                 value = value[:ex.start] + "?" * (ex.end - ex.start) + value[ex.end:]
 
                 warnMsg = "cannot properly display (some) Unicode characters "
-                warnMsg += "inside your terminal ('%s') environment. All " % encoding
+                warnMsg += "inside your handle ('%s') environment. All " % encoding
                 warnMsg += "unhandled occurrences will result in "
                 warnMsg += "replacement with '?' character. Please, find "
                 warnMsg += "proper character representation inside "
