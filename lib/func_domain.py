@@ -110,15 +110,10 @@ class Domain:
             print(self.Output.blue('[ result ] ') + self.Output.yellow('[ 未能挖掘出网站子域名 ]'))
             return
         if self.saveType == 'xlsx':
-            if self.flag:    # 修改banner等信息
-                banner = ['状态码', '域名解析类型', '标题', '跳转记录', '最终URL']
-                sheetname = 'subDomain-X'
-                cut = ' | '
-            else:       # 普通格式
-                banner = ['状态码', '跳转记录', '标题', '最终URL']
-                sheetname = 'subDomain'
-                cut = ' | '
-            reports_xlsx.Report(report, self.name, sheetname, banner, lable=cut).save()
+            banner = ['状态码', '初始URL', '标题', '跳转记录', '最终URL']
+            sheetname = 'subDomain'
+            lable = ['status', 'protourl', 'title', 'ip', 'url']
+            reports_xlsx.Report(report, self.name, sheetname, banner, lable=lable).save()
         else:
             reports_txt.Report(report, self.name, 'domain_report.txt', '网站子域名挖掘报告已存放于', '保存出错').save()
         return

@@ -55,65 +55,65 @@ class Scan():
             self.crazyWebScan()
         # 输出
         self.output()
-        self.saveResult(self.results, 'webScan', 'webScan.txt', cut=' | ')
+        self.saveResult(self.results, 'webScan', 'webScan.txt')
         print(self.Output.fuchsia("-" * 40 + "<<<<<scan" + "\n"))
 
     def output(self):
         if self.Phone != []:
-            r_phone = list(set(self.Phone))
+            r_phone = []
             if self.isShow:
-                phone = self.dealData(r_phone)
                 print(self.Output.green('[ output ] ') + self.Output.cyan('手机号码'))
-                for x in phone:
-                    print(self.Output.blue('[ result ] ') + self.Output.green(x) + self.Output.interval() + phone[x])
-            self.saveResult(r_phone, 'phone', 'phone.txt', cut=' | ')
+                for x in self.Phone:
+                    if x['phone'] not in r_phone:
+                        r_phone.append(x['phone'])
+                        print(self.Output.blue('[ result ] ') + self.Output.green(x['url']) + self.Output.interval() + x['phone'])
+            self.saveResult(self.Phone, 'phone', 'phone.txt')
+
         if self.Email != []:
-            r_email = list(set(self.Email))
             if self.isShow:
-                email = self.dealData(r_email)
+                r_email = []
                 print(self.Output.green('[ output ] ') + self.Output.cyan('邮箱'))
-                for x in email:
-                    print(self.Output.blue('[ result ] ') + self.Output.green(x) + self.Output.interval() + email[x])
-            self.saveResult(r_email, 'email', 'email.txt', cut=' | ')
+                for x in self.Email:
+                    if x['email'] not in r_email:
+                        r_email.append(x['email'])
+                        print(self.Output.blue('[ result ] ') + self.Output.green(x['url']) + self.Output.interval() + x['email'])
+            self.saveResult(self.Email, 'email', 'email.txt')
+
         if self.ICP != []:
-            r_icp = list(set(self.ICP))
             if self.isShow:
-                icp = self.dealData(r_icp)
+                r_icp = []
                 print(self.Output.green('[ output ] ') + self.Output.cyan('备案号'))
-                for x in icp:
-                    print(self.Output.blue('[ result ] ') + self.Output.green(x) + self.Output.interval() + icp[x])
-            self.saveResult(r_icp, 'icp', 'icp.txt', cut=' | ')
+                for x in self.ICP:
+                    if x['icp'] not in r_icp:
+                        r_icp.append(x['icp'])
+                        print(self.Output.blue('[ result ] ') + self.Output.green(x['url']) + self.Output.interval() + x['icp'])
+            self.saveResult(self.ICP, 'icp', 'icp.txt')
         return
 
-    def saveResult(self, report, sheetname='', txtFilename='', cut=':'):
+    def saveResult(self, report, sheetname='', txtFilename=''):
         if report == []:
             print(self.Output.blue('[ result ] ') + self.Output.yellow("[ {}扫描结果为空 ]".format(sheetname)))
             return
         if self.saveType == 'xlsx':
             if sheetname == 'webScan':
                 banner = ['状态码', '文本长度', '标题', 'URL']
-            elif sheetname == 'webScanWithoutCheck':
-                banner = ['URL']
+                lable = ['status', 'len', 'title', 'url']
             elif sheetname == 'phone':
                 banner = ['手机号码', '捕获页面']
+                lable = ['phone', 'url']
             elif sheetname == 'email':
                 banner = ['邮箱', '捕获页面']
+                lable = ['email', 'url']
             elif sheetname == 'icp':
                 banner = ['备案号', '捕获页面']
+                lable = ['icp', 'url']
             else:
                 banner = []
-            reports_xlsx.Report(report, self.name, sheetname, banner, lable=cut).save()
+                lable = []
+            reports_xlsx.Report(report, self.name, sheetname, banner, lable=lable).save()
         else:
             reports_txt.Report(report, self.name, txtFilename, '网页扫描报告已存放于', '并没有扫描出网页链接').save()
 
-    def dealData(self, data, cut='|'):
-        DATA = {}
-        for d in data:
-            key = d.split(cut)[0].strip()
-            value = d.split(cut)[1].strip()
-            if key not in DATA.keys():
-                DATA[key] = value
-        return DATA
 
 
     def crazyWebScan(self):

@@ -128,7 +128,10 @@ class Report:
         :param data:
         :return:
         '''
-        DATA = [str(data[x]) for x in self.lable]
+        if type(data) == dict:
+            DATA = [str(data[x]) for x in self.lable]
+        else:
+            DATA = [x for x in data.split(':')]
         return DATA
 
 
