@@ -187,7 +187,11 @@ class Burp():
         '''
         URL = [self.url+x for x in payloads]
         handler = burpTerminal.Terminal(scanmode=self.scan_mode, isShow=self.isShow)  # 获取文本处理对象+分类检测
-        REQ = asyncHttp.req(handler=handler)   # 申请异步
+        REQ = asyncHttp.req(
+            handler=handler,
+            workers=self.threads,
+            timeout=self.timeout
+        )   # 申请异步
         if self.isThread:   # 多线程异步
             new_loop = asyncio.new_event_loop()
             asyncio.set_event_loop(new_loop)

@@ -182,7 +182,11 @@ class Scan():
         if url == []:
             return
         handler = jsTerminal.Terminal(scanmode=self.scanmode)
-        REQ = asyncHttp.req(handler=handler)
+        REQ = asyncHttp.req(
+            handler=handler,
+            workers=self.threads,
+            timeout=self.timeout
+        )  # 申请异步
         loop = asyncio.get_event_loop()
         loop.run_until_complete(REQ.run(url))
         self.Email += handler.capture_Email  # 附加

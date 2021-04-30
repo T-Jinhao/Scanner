@@ -221,7 +221,11 @@ class Domain:
         '''
         URL = ['http://'+u for u in payload]  # 需要添加协议头
         handler = subdomainTerminal.Terminal(scanmode=self.scanmode, isShow=self.isShow)  # 申请文本处理起
-        REQ = asyncHttp.req(handler=handler)
+        REQ = asyncHttp.req(
+            handler=handler,
+            workers=self.threads,
+            timeout=self.timeout
+        )  # 申请异步
         if self.isThread:   # 多线程异步
             new_loop = asyncio.new_event_loop()
             asyncio.set_event_loop(new_loop)
