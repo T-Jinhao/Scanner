@@ -18,8 +18,8 @@ class Hosts:
         print(self.Output.blue('[ schedule ] ') + self.Output.cyan('开始扫描开放主机'))
         url = self.c_hosts()
         report = self.run(url)
-        new_report = self.showReport(report)
-        self.saveResult(new_report)
+        self.showReport(report)
+        self.saveResult(report)
         print(self.Output.fuchsia('-'*40+'hosts<<<<<'))
         return report
 
@@ -37,7 +37,8 @@ class Hosts:
         saveType = config.get("Result", system)
         if saveType == 'xlsx':
             banner = ['C段主机', '探测端口']
-            reports_xlsx.Report(report, self.name, 'Hosts', banner).save()
+            lable = ['host', 'port']
+            reports_xlsx.Report(report, self.name, 'Hosts', banner=banner, lable=lable).save()
         else:    # txt类型为默认格式
             reports_txt.Report(report, self.name, 'c_hosts_report.txt', '主机c段扫描报告已存放于', '并没有扫描出存活主机').save()
 
@@ -71,14 +72,11 @@ class Hosts:
     def showReport(self, reports):
         if reports == []:
             return []
-        new_report = []
         for r in reports:
             print(self.Output.green('[ result ]' )
                   + self.Output.fuchsia('host: ') + self.Output.green(r['host']) + self.Output.interval()
                   + self.Output.fuchsia('sniffPort: ') + self.Output.green(r['port'])
                   )
-            msg = "{0}:{1}".format(r['host'], str(r['port']))
-            new_report.append(msg)
-        return new_report
+        return
 
 
