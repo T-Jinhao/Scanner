@@ -18,14 +18,20 @@ class Terminal(BaseModel):
         self.match_Phone(text, rurl)
         self.match_ICP(text, rurl)
         self.match_Url(text, rurl)
-        title = util.getTitle(resp.text).replace(' | ', ' || ')  # 防止保存时切割错误
-        msg = "{status} | {content_lenth} | {title} | {URL}".format(
-            status=resp.status,
-            content_lenth=str(resp.content_length),
-            title=title,
-            URL=str(resp.url)
-        )
-        return msg
+        title = util.getTitle(resp.text).strip()
+        # msg = "{status} | {content_lenth} | {title} | {URL}".format(
+        #     status=resp.status,
+        #     content_lenth=str(resp.content_length),
+        #     title=title,
+        #     URL=str(resp.url)
+        # )
+        msg = {
+            'status': resp.status,
+            'len': str(resp.content_length),
+            'title': title,
+            'url': str(resp.url)
+        }
+        return msg.copy()
 
 
     def match_Url(self, text, url):
@@ -46,12 +52,20 @@ class Terminal(BaseModel):
                 u = util.splicingUrl(url, y)
                 if u != None and u.startswith('http'):
                     if util.judgingOrigin(url, u):
-                        self.capture_Url.append(u)  # 处理获取到的url
+                        msg = {
+                            'protourl': url,
+                            'capture_url': u
+                        }
+                        self.capture_Url.append(msg.copy())  # 处理获取到的url
 
         for k in js_links:
             z = k.get('src')
             if z != None:
                 u = util.splicingUrl(url, z)
                 if u != None and u.startswith('http'):
-                    self.capture_Js.append(u)
+                    msg = {
+                        'protourl': url,
+                        'capture_js': z
+                    }
+                    self.capture_Js.append(msg.copy())
 

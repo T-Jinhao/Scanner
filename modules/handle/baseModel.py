@@ -39,8 +39,11 @@ class BaseModel:
         if ret != []:
             for x in ret:
                 if x not in self.capture_Email and x.split('.')[-1] != 'png':
-                    e = " | ".join([x, url])
-                    self.capture_Email.append(e)
+                    msg = {
+                        'url': url,
+                        'email': x
+                    }
+                    self.capture_Email.append(msg.copy())
         return
 
     def match_ICP(self, text, url):
@@ -53,8 +56,11 @@ class BaseModel:
         ret = compile_ICP.search(text)
         try:
             if ret != None and ret[0] not in self.capture_ICP and ret[0] != []:
-                i = " | ".join([ret[0], url])
-                self.capture_ICP.append(i)
+                msg = {
+                    'icp': ret[0],
+                    'url': url
+                }
+                self.capture_ICP.append(msg.copy())
         except:
             pass
         return
@@ -70,6 +76,9 @@ class BaseModel:
         if ret != []:
             for x in ret:
                 if x not in self.capture_Phone:
-                    p = " | ".join([str(x), url])
-                    self.capture_Phone.append(p)
+                    msg = {
+                        'phone': str(x),
+                        'url': url
+                    }
+                    self.capture_Phone.append(msg.copy())
         return
