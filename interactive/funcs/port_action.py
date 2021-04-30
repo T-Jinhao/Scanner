@@ -110,6 +110,7 @@ def execute():
     obj = Port.port()
     if obj.checkRequired(Info):
         obj.execute(Info)
+        checkSetValue('Taskname', util.getRangeStr())  # 更改Taskname
 
 def sysExit():
     obj = Port.port()
