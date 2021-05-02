@@ -77,8 +77,8 @@ class BaseModel:
             for x in ret:
                 if x not in self.capture_Phone:
                     msg = {
-                        'phone': str(x),
-                        'url': url
+                        'capture_phone': str(x),
+                        'current_url': url
                     }
                     self.capture_Phone.append(msg.copy())
         return

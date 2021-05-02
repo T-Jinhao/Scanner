@@ -6,6 +6,8 @@ class ScanPhoneModel(BaseModel):
     timestamp = DateTimeField()
     # 任务名
     taskname = CharField()
+    # taskname唯一编号
+    tasknameid = CharField()
     # 捕获的url编号
     current_wid = CharField()
     # 手机号
