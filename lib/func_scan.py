@@ -2,8 +2,7 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
-import re
-import time
+import datetime
 import asyncio
 from modules.func import util
 from .color_output import *
@@ -12,6 +11,12 @@ from reports import reports_xlsx,reports_txt
 from modules.func import asyncHttp
 from modules.handle import scanTerminal
 from modules.handle import jsTerminal
+from model import pgsql
+from model.ScanModel import ScanModel
+from model.ScanMailModel import ScanMailModel
+from model.ScanPhoneModel import ScanPhoneModel
+from model.ScanUrlModel import ScanUrlModel
+
 
 wrong_web_list = ['javascript:void(0)', None, '###', '#']
 
