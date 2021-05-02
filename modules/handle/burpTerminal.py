@@ -30,8 +30,8 @@ class Terminal(BaseModel):
                     #     url=resp.url
                     # )
                     msg = {
-                        'status': str(resp.status),
-                        'len': str(resp.content_length),
+                        'status_code': str(resp.status),
+                        'content_length': str(resp.content_length),
                         'title': title,
                         'url': resp.url
                     }
@@ -56,8 +56,8 @@ class Terminal(BaseModel):
             #     url=resp.url
             # )
             msg = {
-                'status': str(resp.status),
-                'len': str(resp.content_length),
+                'status_code': str(resp.status),
+                'content_length': str(resp.content_length),
                 'title': title,
                 'url': resp.url
             }

@@ -5,6 +5,7 @@
 import re
 import asyncio
 import yarl
+import datetime
 from reports import reports_txt,reports_xlsx
 from urllib.parse import urlparse
 from .color_output import *
@@ -12,6 +13,8 @@ from .load_config import Config
 from modules.func import util
 from modules.handle import burpTerminal
 from modules.func import asyncHttp
+from model import pgsql
+from model.BurpModel import BurpModel
 
 class Burp():
     def __init__(self, url, payload, name, flag):
@@ -49,6 +52,7 @@ class Burp():
             print(self.Output.blue('[ Load ] ') + self.Output.green('payload导入完成，数量：{}'.format(len(payloads))))
             report = self.run(payloads)
             self.saveResult(report)
+            self.insertData(report)
         else:
             print(self.Output.blue('[ Load ]') + self.Output.red('payload导入失败'))
         print(self.Output.fuchsia('-' * 40 + 'burp<<<<<' + '\n'))
@@ -60,7 +64,7 @@ class Burp():
             return
         if self.saveType == 'xlsx':
             banner = ['网页状态码', '文本长度', '页面标题', 'URL']
-            lable = ['status', 'len', 'title', 'url']
+            lable = ['status_code', 'content_length', 'title', 'url']
             reports_xlsx.Report(report, self.name, 'Burp', banner, lable=lable).save()
         else:
             reports_txt.Report(report, self.name, 'burp_report.txt', '网站目录爆破报告已存放于', '并没有扫描出可疑后台').save()
@@ -198,6 +202,20 @@ class Burp():
         results = REQ.results   # 获取结果
         # loop.close()
         return results
+
+    def insertData(self, data, tasknameid=''):
+        '''
+        保存数据进入数据库
+        :param data:
+        :param tasknameid:
+        :return:
+        '''
+        for d in data:
+            d['taskname'] = self.name
+            d['timestamp'] = datetime.datetime.now()
+            d['tasknameid'] = tasknameid
+            pgsql.insert(BurpModel, data=d)
+        return
 
 
 
