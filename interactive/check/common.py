@@ -84,6 +84,8 @@ class Common:
         return True
 
     def setTaskname(self, value):
+        if value == False:
+            return
         taskname = util.getTaskname(url=value)
         r = redisUtil.Redis()
         r.save(key='current_Taskname', value=taskname)

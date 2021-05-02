@@ -12,7 +12,7 @@ from interactive.run import Burp
 r = redisUtil.Redis()
 
 Commands = {
-    'info': ['Url', 'Timeout', 'Workers', 'Payload', 'Taskname'],
+    'info': ['Url', 'Timeout', 'Workers', 'Payload', 'Taskname', 'Tasknameid'],
     'set': ['Url', 'Payload', 'Timeout', 'Workers', 'Taskname'],
     'usemodule': configuration.usemodule,
     'run': [],
@@ -40,7 +40,9 @@ Info = {
     'Timeout': ['False', util.getConfigIni('Burp', 'timeout'), 'Timeout of a requests connect.'],
     'Workers': ['False', util.getConfigIni('Burp', 'threads'), 'Max number of workers'],
     'Payload': ['False', 'default', 'The path of the record text file.'],
-    'Taskname': ['False', '', 'The uniquely identifies of current work.']
+    'Taskname': ['False', '', 'The abbreviation of current work.'],
+    'Tasknameid': ['True', r.queryInitKey('Tasknameid'),
+                   'The uniquely identifies of current work.And it can\'t be modified.'],
 }
 
 def checkIn(enter):
@@ -79,6 +81,7 @@ def setOption(words):
 
 def checkSetValue(key, value):
     if key not in Commands['set']:
+        util.printError("{} cannot be modified".format(key))
         return False
     obj = check_burp.burp()
     if key == 'Timeout':
@@ -94,6 +97,8 @@ def checkSetValue(key, value):
             k = 'current_' + key
             Info[key][1] = url
             r.save(k, url)
+            # 自动刷新taskname
+            obj.setTaskname(url)
         return False  # 独立保存
     elif key == 'Payload':
         payloads = obj.checkPayload(value)
