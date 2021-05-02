@@ -11,4 +11,4 @@ class ScanMailModel(BaseModel):
     # 捕获的url
     current_url = CharField()
     # 邮箱
-    capture_mail = CharField()
+    capture_email = CharField()
