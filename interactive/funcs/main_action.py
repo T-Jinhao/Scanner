@@ -14,7 +14,7 @@ Commands = {
     'usemodule': configuration.usemodule,  # 功能模块
     'help': ['usemodule', 'exit', 'main', 'works'],   # 帮助
     'set': ['Url', 'Ip', 'Taskname'],
-    'info': ['Url', 'Ip', 'Taskname'],
+    'info': ['Url', 'Ip', 'Taskname', 'Tasknameid'],
     'exit': [],   # 退出程序
     'main': [],   # 回到主页面
 }
@@ -30,7 +30,8 @@ Usage = {
 Info = {
     'Ip': ['False', '', 'Target ip.'],
     'Url': ['True', '', 'Target url.'],
-    'Taskname': ['True', r.queryInitKey('Taskname'), 'The uniquely identifies of current work.']
+    'Taskname': ['False', '', 'The abbreviation of current work.'],
+    'Tasknameid': ['True', r.queryInitKey('Tasknameid'), 'The uniquely identifies of current work.And it can\'t be modified.'],
 }
 
 def checkIn(enter):
@@ -63,6 +64,7 @@ def setOption(words):
 
 def checkSetValue(key, value):
     if key not in Commands['set']:
+        util.printError("{} cannot be modified".format(key))
         return False
     obj = common.Common()
     if key == 'Url':
