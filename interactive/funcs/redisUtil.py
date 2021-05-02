@@ -3,6 +3,7 @@
 #author:Jinhao
 
 import redis
+import datetime
 from lib.load_config import Config
 from interactive.funcs import util
 
@@ -29,11 +30,14 @@ class Redis:
             pass
 
     def initTask(self, ran_str):
+        today = datetime.datetime.today()
+        formatted_today = today.strftime('%y%m%d')
+        taskname = formatted_today
         try:
             self.r.set('current_Tasknameid', ran_str)
             self.r.set('current_Url', '')
             self.r.set('current_Ip', '')
-            self.r.set('current_Taskname', '')
+            self.r.set('current_Taskname', taskname)
         except:
             pass
 
