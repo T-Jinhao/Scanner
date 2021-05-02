@@ -105,7 +105,7 @@ class Scan():
         if self.saveType == 'xlsx':
             if sheetname == 'webScan':
                 banner = ['状态码', '文本长度', '标题', 'URL']
-                lable = ['status', 'len', 'title', 'url']
+                lable = ['status_code', 'content_length', 'title', 'url']
             elif sheetname == 'phone':
                 banner = ['手机号码', '捕获页面']
                 lable = ['capture_phone', 'current_url']
@@ -223,6 +223,14 @@ class Scan():
             d['timestamp'] = datetime.datetime.now()
             d['tasknameid'] = tasknameid
             pgsql.insert(ScanIcpModel, data=d)
+        return
+
+    def insertUrlData(self, data, tasknameid=''):
+        for d in data:
+            d['taskname'] = self.name
+            d['timestamp'] = datetime.datetime.now()
+            d['tasknameid'] = tasknameid
+            pgsql.insert(ScanUrlModel, data=d)
         return
 
 

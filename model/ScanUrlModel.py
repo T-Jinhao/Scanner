@@ -12,3 +12,9 @@ class ScanUrlModel(BaseModel):
     current_url = CharField()
     # 捕获的url
     capture_url = CharField()
+    # 状态码
+    status_code = IntegerField()
+    # 文本长度
+    content_length = CharField()
+    # 标题
+    title = CharField()

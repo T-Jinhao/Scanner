@@ -20,8 +20,8 @@ class Terminal(BaseModel):
         self.match_Url(text, rurl)
         title = util.getTitle(resp.text).strip()
         msg = {
-            'status': resp.status,
-            'len': str(resp.content_length),
+            'status_code': resp.status,
+            'content_length': str(resp.content_length),
             'title': title,
             'url': str(resp.url)
         }
@@ -42,7 +42,7 @@ class Terminal(BaseModel):
 
         for j in web_links:
             y = j.get('href')  # 提取href后的链接
-            if y not in wrong_list:
+            if y.strip() not in wrong_list:
                 u = util.splicingUrl(url, y)
                 if u != None and u.startswith('http'):
                     if util.judgingOrigin(url, u):
