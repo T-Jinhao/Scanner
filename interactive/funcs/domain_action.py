@@ -12,7 +12,7 @@ from interactive.run import Domain
 r = redisUtil.Redis()
 
 Commands = {
-    'info': ['Url', 'Timeout', 'Workers', 'Payload', 'Taskname'],
+    'info': ['Url', 'Timeout', 'Workers', 'Payload', 'Taskname', 'Online', 'Tasknameid'],
     'set': ['Url', 'Payload', 'Timeout', 'Workers', 'Taskname', 'Online'],
     'usemodule': configuration.usemodule,
     'run': [],
@@ -80,6 +80,7 @@ def setOption(words):
 
 def checkSetValue(key, value):
     if key not in Commands['set']:
+        util.printError("{} cannot be modified".format(key))
         return False
     obj = check_domain.domain()
     if key == 'Timeout':
@@ -114,10 +115,11 @@ def run():
         if Info['Payload'][1] == 'default':   # 获取默认payload
             checkSetValue('Payload', 'default')
         obj.run(Info, P)
+        r.refreshTasknameid()
 
 def updateInfo():
     # 刷新数值
-    for i in ['Url', 'Taskname']:
+    for i in ['Url', 'Taskname', 'Tasknameid']:
         Info[i][1] = r.queryInitKey(i)
     return
 
@@ -127,8 +129,7 @@ def execute():
         if Info['Payload'][1] == 'default':   # 获取默认payload
             checkSetValue('Payload', 'default')
         obj.execute(Info, P)
-        reset = ['set', 'Taskname', util.getRangeStr()]
-        setOption(reset)
+        r.refreshTasknameid()
 
 def sysExit():
     obj = Domain.domain()

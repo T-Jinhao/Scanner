@@ -11,7 +11,7 @@ from interactive.funcs import redisUtil
 r = redisUtil.Redis()
 
 Commands = {
-    'info': ['Ip', 'Timeout', 'Ports', 'Workers', 'Taskname'],
+    'info': ['Ip', 'Timeout', 'Ports', 'Workers', 'Taskname', 'Tasknameid'],
     'set': ['Ip', 'Ports', 'Timeout', 'Workers', 'Taskname'],
     'usemodule': configuration.usemodule,
     'run': [],
@@ -37,7 +37,9 @@ Info = {
     'Ports': ['False', 'Common', 'Target port range,example:1-80;or 80,443,3306'],
     'Timeout': ['False', util.getConfigIni('Ports', 'timeout'), 'Timeout of a socket connect.'],
     'Workers': ['False', util.getConfigIni('Ports', 'max_workers'), 'Max number of workers'],
-    'Taskname': ['False', '', 'The uniquely identifies of current work.']
+    'Taskname': ['False', '', 'The abbreviation of current work.'],
+    'Tasknameid': ['True', r.queryInitKey('Tasknameid'),
+                   'The uniquely identifies of current work.And it can\'t be modified.'],
 }
 
 def checkIn(enter):
@@ -76,6 +78,7 @@ def setOption(words):
 
 def checkSetValue(key, value):
     if key not in Commands['set']:
+        util.printError("{} cannot be modified".format(key))
         return False
     obj = check_port.port()
     if key == 'Timeout':
@@ -102,7 +105,7 @@ def run():
 
 def updateInfo():
     # 刷新数值
-    for i in ['Ip', 'Taskname']:
+    for i in ['Ip', 'Taskname', 'Tasknameid']:
         Info[i][1] = r.queryInitKey(i)
     return
 
@@ -110,8 +113,7 @@ def execute():
     obj = Port.port()
     if obj.checkRequired(Info):
         obj.execute(Info)
-        reset = ['set', 'Taskname', util.getRangeStr()]
-        setOption(reset)
+        r.refreshTasknameid()
 
 def sysExit():
     obj = Port.port()
