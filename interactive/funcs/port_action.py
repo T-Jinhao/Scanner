@@ -102,6 +102,7 @@ def run():
     obj = Port.port()
     if obj.checkRequired(Info):
         obj.run(Info)
+        r.refreshTasknameid()
 
 def updateInfo():
     # 刷新数值
