@@ -6,6 +6,8 @@ class ScanModel(BaseModel):
     timestamp = DateTimeField()
     # 任务名
     taskname = CharField()
+    # taskname唯一编号
+    tasknameid = CharField()
     # 当前工作url
     current_url = CharField()
     # 设置此url编号

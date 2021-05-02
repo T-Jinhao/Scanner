@@ -19,12 +19,6 @@ class Terminal(BaseModel):
         self.match_ICP(text, rurl)
         self.match_Url(text, rurl)
         title = util.getTitle(resp.text).strip()
-        # msg = "{status} | {content_lenth} | {title} | {URL}".format(
-        #     status=resp.status,
-        #     content_lenth=str(resp.content_length),
-        #     title=title,
-        #     URL=str(resp.url)
-        # )
         msg = {
             'status': resp.status,
             'len': str(resp.content_length),

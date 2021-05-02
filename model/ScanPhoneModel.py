@@ -8,7 +8,7 @@ class ScanPhoneModel(BaseModel):
     taskname = CharField()
     # taskname唯一编号
     tasknameid = CharField()
-    # 捕获的url编号
-    current_wid = CharField()
+    # 捕获的url
+    current_url = CharField()
     # 手机号
     capture_phone = CharField()

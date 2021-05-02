@@ -6,7 +6,9 @@ class ScanUrlModel(BaseModel):
     timestamp = DateTimeField()
     # 任务名
     taskname = CharField()
-    # 捕获url编号
-    current_wid = CharField()
+    # taskname唯一编号
+    tasknameid = CharField()
+    # 捕获的url
+    current_url = CharField()
     # 捕获的url
     capture_url = CharField()

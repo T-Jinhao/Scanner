@@ -16,7 +16,7 @@ from model.ScanModel import ScanModel
 from model.ScanMailModel import ScanMailModel
 from model.ScanPhoneModel import ScanPhoneModel
 from model.ScanUrlModel import ScanUrlModel
-
+from model.ScanIcpModel import ScanIcpModel
 
 wrong_web_list = ['javascript:void(0)', None, '###', '#']
 
@@ -69,9 +69,9 @@ class Scan():
             if self.isShow:
                 print(self.Output.green('[ output ] ') + self.Output.cyan('手机号码'))
                 for x in self.Phone:
-                    if x['phone'] not in r_phone:
-                        r_phone.append(x['phone'])
-                        print(self.Output.blue('[ result ] ') + self.Output.green(x['url']) + self.Output.interval() + x['phone'])
+                    if x['capture_phone'] not in r_phone:
+                        r_phone.append(x['capture_phone'])
+                        print(self.Output.blue('[ result ] ') + self.Output.green(x['current_url']) + self.Output.interval() + x['capture_phone'])
             self.saveResult(self.Phone, 'phone', 'phone.txt')
 
         if self.Email != []:
@@ -105,7 +105,7 @@ class Scan():
                 lable = ['status', 'len', 'title', 'url']
             elif sheetname == 'phone':
                 banner = ['手机号码', '捕获页面']
-                lable = ['phone', 'url']
+                lable = ['capture_phone', 'current_url']
             elif sheetname == 'email':
                 banner = ['邮箱', '捕获页面']
                 lable = ['email', 'url']
@@ -196,6 +196,14 @@ class Scan():
         loop.run_until_complete(REQ.run(url))
         self.Email += handler.capture_Email  # 附加
         self.Phone += handler.capture_Phone  # 附加
+        return
+
+    def insertPhoneData(self, data, tasknameid=''):
+        for d in data:
+            d['taskname'] = self.name
+            d['timestamp'] = datetime.datetime.now()
+            d['tasknameid'] = tasknameid
+            pgsql.insert(ScanPhoneModel, data=d)
         return
 
 
