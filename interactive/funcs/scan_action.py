@@ -116,7 +116,7 @@ def execute():
     obj = Scan.scan()
     if obj.checkRequired(Info):
         obj.execute(Info)
-        reset = ['set', 'Taskname', util.getRangeStr()]
+        reset = r.refreshTasknameid()   # 刷新tasknameid
         setOption(reset)
 
 def sysExit():

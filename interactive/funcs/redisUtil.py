@@ -4,6 +4,7 @@
 
 import redis
 from lib.load_config import Config
+from interactive.funcs import util
 
 class Redis:
     def __init__(self):
@@ -44,8 +45,9 @@ class Redis:
         except:
             return
 
-    def getTaskname(self):
-        pass
+    def refreshTasknameid(self):
+        ran_str = util.getRangeStr()
+        self.r.set('current_Tasknameid', ran_str)
 
 if __name__ == '__main__':
     r = Redis()
