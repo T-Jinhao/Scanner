@@ -2,12 +2,13 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
-from socket import *
-from concurrent.futures import ThreadPoolExecutor
+import datetime
 from reports import reports_txt,reports_xlsx
 from .load_config import Config
 from .color_output import *
 from modules.func import sniffPort
+from model import pgsql
+from model.IpPortModel import IpPortModel
 
 port_dict = {
     21:'ftp',
@@ -64,6 +65,7 @@ class Ports():
         report = self.run(ports)   # 获取开放端口
         new_report = self.showReport(report)   # 展示并添加服务标识
         self.saveResult(new_report)
+        self.insertData(new_report)
         print(self.Output.fuchsia('-' * 40 + 'PortsScan<<<<<' + '\n'))
         return
 
@@ -140,9 +142,8 @@ class Ports():
         return reports
 
     def showReport(self, reports, isShow=True):
-        new_report = []
         if reports == []:
-            return new_report
+            return reports
         for r in reports:
             if r['port'] in port_dict:
                 service = port_dict[r['port']]
@@ -154,9 +155,22 @@ class Ports():
                       + self.Output.fuchsia('server: ') + self.Output.green(service) + self.Output.interval()
                       + self.Output.fuchsia('banner: ') + self.Output.green(r['banner'])
                       )
-            msg = "{0} : {1} : {2}  : {3}".format(self.host, str(r['port']), service, str(r['banner']))
             r['service'] = service
         return reports
+
+    def insertData(self, data, tasknameid=''):
+        '''
+        保存数据进入数据库
+        :param data:
+        :param tasknameid:
+        :return:
+        '''
+        for d in data:
+            d['taskname'] = self.name
+            d['timestamp'] = datetime.datetime.now()
+            d['tasknameid'] = tasknameid
+            pgsql.insert(IpPortModel, data=d)
+        return
 
 
 

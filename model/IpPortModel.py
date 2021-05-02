@@ -6,9 +6,13 @@ class IpPortModel(BaseModel):
     timestamp = DateTimeField()
     # 任务名
     taskname = CharField()
+    # taskname唯一编号
+    tasknameid = CharField()
     # ip
     ip = CharField()
     # port
     port = IntegerField()
     # banner
     banner = CharField()
+    # service
+    service = CharField()
