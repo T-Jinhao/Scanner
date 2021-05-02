@@ -23,6 +23,7 @@ class port(common.Common):
         report = r.run(port=ports)
         new_report = r.showReport(report, isShow=isShow)
         r.saveResult(new_report)
+        r.insertData(new_report, tasknameid='')
 
     def getPorts(self, input):
         if input == 'Common':

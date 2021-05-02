@@ -32,7 +32,7 @@ class scan(common.Common):
         self.getResult(r)   # 获取结果
 
     def getResult(self, obj):
-        obj.output()
+        obj.output()   # 内置其他信息的数据库保存调用
         results = obj.results
         obj.saveResult(results, 'webScan', 'webScan.txt')
         obj.insertUrlData(results, '')

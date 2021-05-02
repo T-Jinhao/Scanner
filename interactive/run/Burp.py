@@ -26,6 +26,7 @@ class burp(common.Common):
         r.scan_mode_indetify()    # 获取Scanmode
         results = r.run(payloads=payloads)  # 运行
         r.saveResult(results)
+        r.insertData(results, tasknameid='')
 
     def execute(self, Info, p_list):
         try:
