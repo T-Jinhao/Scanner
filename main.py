@@ -15,6 +15,7 @@ from lib import celery_run,func_base,load_config
 from modules.func import check, _requests
 from lib.color_output import *
 from interactive import app
+from modules.func import util
 
 warnings.filterwarnings('ignore')
 
@@ -85,24 +86,11 @@ class Scanner():
         os.system(cmd)
 
     def setTaskname(self):
-        if self.args.name != None:
-            self.taskname = self.args.name
-        else:
-            ip = re.compile('[\d]{1,3}\.[\d]{1,3}\.[\d]{1,3}\.[\d]{1,3}')
-            netloc = yarl.URL(self.args.url).host
-            res = ip.match(netloc)
-            if res:    # ip形式的名称，需要改名
-                today = datetime.datetime.today()
-                formatted_today = today.strftime('%y%m%d')
-                self.taskname = formatted_today
-            else:
-                n = netloc.split(".")
-                if len(n) == 2:
-                    self.taskname = n[0]
-                elif n[-2] not in ["com", "edu", "ac", "net", "org", "gov"]:  # 带地域标签的域名
-                    self.taskname = n[-2]
-                else:
-                    self.taskname = n[-3]
+        '''
+        设置全局任务名称
+        :return:
+        '''
+        self.taskname = util.getTaskname(self.args.url, name=self.args.name)
         return
 
 

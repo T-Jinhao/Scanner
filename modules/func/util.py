@@ -5,6 +5,7 @@
 import re
 import socket
 import yarl
+import datetime
 from urllib.parse import urljoin
 
 def getHostname(host):
@@ -106,3 +107,30 @@ def filter_Url(url):
         if name not in ignore_name and not isNumber(name):     # 忽略静态页面
             urls.add(u)
     return list(urls)
+
+def getTaskname(url, name=None):
+    '''
+    获取任务简称名，以域名为主
+    :param url: 网址
+    :param name: 自定义名称
+    :return:
+    '''
+    if name != None:
+        taskname = name
+    else:
+        ip = re.compile('[\d]{1,3}\.[\d]{1,3}\.[\d]{1,3}\.[\d]{1,3}')
+        netloc = yarl.URL(url).host
+        res = ip.match(netloc)
+        if res:    # ip形式的名称，需要改名
+            today = datetime.datetime.today()
+            formatted_today = today.strftime('%y%m%d')
+            taskname = formatted_today
+        else:
+            n = netloc.split(".")
+            if len(n) == 2:
+                taskname = n[0]
+            elif n[-2] not in ["com", "edu", "ac", "net", "org", "gov"]:  # 带地域标签的域名
+                taskname = n[-2]
+            else:
+                taskname = n[-3]
+    return taskname
