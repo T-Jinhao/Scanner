@@ -36,7 +36,9 @@ Info = {
     'Url': ['True', '', 'Target url.'],
     'Timeout': ['False', util.getConfigIni('Scan', 'timeout'), 'Timeout of a requests connect.'],
     'Cookie': ['False', '', 'Cookie for spider.'],
-    'Taskname': ['False', '', 'The uniquely identifies of current work.'],
+    'Taskname': ['False', '', 'The abbreviation of current work.'],
+    'Tasknameid': ['True', r.queryInitKey('Tasknameid'),
+                   'The uniquely identifies of current work.And it can\'t be modified.'],
     'Workers': ['False', util.getConfigIni('Scan', 'threads'), 'Max number of workers.'],
     'Cycles': ['False', util.getConfigIni('Scan', 'cycles'), 'Maximum number of recursive scans.'],
     'Recursion': ['False', 'False', 'Open multi-layer crawl.']
@@ -93,6 +95,8 @@ def checkSetValue(key, value):
             k = 'current_' + key
             Info[key][1] = url
             r.save(k, url)
+        # 自动刷新taskname
+        obj.setTaskname(url)
         return False  # 独立保存
     elif key == 'Workers':
         return obj.checkWorkers(value)
@@ -105,10 +109,11 @@ def run():
     obj = Scan.scan()
     if obj.checkRequired(Info):
         obj.run(Info)
+        r.refreshTasknameid()
 
 def updateInfo():
     # 刷新数值
-    for i in ['Url', 'Taskname']:
+    for i in ['Url', 'Taskname', 'Tasknameid']:
         Info[i][1] = r.queryInitKey(i)
     return
 
@@ -116,8 +121,7 @@ def execute():
     obj = Scan.scan()
     if obj.checkRequired(Info):
         obj.execute(Info)
-        reset = r.refreshTasknameid()   # 刷新tasknameid
-        setOption(reset)
+        r.refreshTasknameid()   # 刷新tasknameid
 
 def sysExit():
     obj = Scan.scan()

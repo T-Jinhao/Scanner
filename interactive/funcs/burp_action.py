@@ -97,7 +97,7 @@ def checkSetValue(key, value):
             k = 'current_' + key
             Info[key][1] = url
             r.save(k, url)
-            # 自动刷新taskname
+        # 自动刷新taskname
         obj.setTaskname(url)
         return False  # 独立保存
     elif key == 'Payload':
