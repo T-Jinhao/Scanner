@@ -11,7 +11,7 @@ from interactive.run import Scan
 r = redisUtil.Redis()
 
 Commands = {
-    'info': ['Url', 'Timeout', 'Cookie', 'Taskname', 'Workers'],
+    'info': ['Url', 'Timeout', 'Cookie', 'Taskname', 'Workers', 'Cycles', 'Recursion', 'Tasknameid'],
     'set': ['Url', 'Cookie', 'Timeout', 'Taskname', 'Workers', 'Cycles', 'Recursion'],
     'usemodule': configuration.usemodule,
     'run': [],
