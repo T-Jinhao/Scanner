@@ -27,20 +27,14 @@ class Terminal(BaseModel):
         # 输出
         if flag == True:
             try:
-                title = util.getTitle(resp.text).replace(' | ', ' || ')   # 防止保存时切割错误
-                # msg = "{status} | {protourl} | {title} | {ip} | {url}".format(
-                #     status=resp.status,
-                #     protourl=resp.protourl,
-                #     title=title,
-                #     ip=resp.ip,
-                #     url=resp.url
-                # )
+                title = util.getTitle(resp.text).strip()
                 msg = {
-                    'status': resp.status,
+                    'status_code': resp.status,
                     'protourl': resp.protourl,
                     'title': title,
                     'ip': resp.ip,
-                    'url': resp.url
+                    'url': resp.url,
+                    'content_length': resp.content_length
                 }
                 if self.isShow:
                     output = "".join([

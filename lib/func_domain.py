@@ -8,7 +8,8 @@ import dns.resolver
 import aiohttp
 import asyncio
 import json
-import model.pgsql
+import yarl
+import datetime
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from reports import reports_txt, reports_xlsx
@@ -18,7 +19,9 @@ from modules.func import util
 from modules.handle import subdomainTerminal
 from modules.func import asyncHttp
 from modules.func import _requests
-from model.DomainModel import DoaminModel
+from model import pgsql
+from model.DomainModel import DomainModel
+
 
 
 class Domain:
@@ -77,6 +80,7 @@ class Domain:
             else:
                 print(self.Output.blue('[ Load ] ') + self.Output.red('payload导入失败'))
         self.saveDomainResult(report)
+        self.insertSubDomainData(report)
         if self.IP_list:
             self.saveIpResult(self.IP_list)
         print(self.Output.fuchsia('-' * 40 + 'domain<<<<<' + '\n'))
@@ -110,9 +114,9 @@ class Domain:
             print(self.Output.blue('[ result ] ') + self.Output.yellow('[ 未能挖掘出网站子域名 ]'))
             return
         if self.saveType == 'xlsx':
-            banner = ['状态码', '初始URL', '标题', '跳转记录', '最终URL']
+            banner = ['状态码', '初始URL', '标题', '文本长度', '跳转记录', '最终URL']
             sheetname = 'subDomain'
-            lable = ['status', 'protourl', 'title', 'ip', 'url']
+            lable = ['status_code', 'protourl', 'title', 'content_length','ip', 'url']
             reports_xlsx.Report(report, self.name, sheetname, banner, lable=lable).save()
         else:
             reports_txt.Report(report, self.name, 'domain_report.txt', '网站子域名挖掘报告已存放于', '保存出错').save()
@@ -233,17 +237,17 @@ class Domain:
         return results
 
 
-    def getDomainType(self, url):
-        '''
-        获取域名解析记录类型
-        :param url:
-        :return:
-        '''
-        domain = url.replace('http://', '')
-        ans = dns.resolver(domain)
-        res = ans.response.answer
-        res_type = str(type(res[0][0])).split('.')[3]
-        return res_type
+    # def getDomainType(self, url):
+    #     '''
+    #     获取域名解析记录类型
+    #     :param url:
+    #     :return:
+    #     '''
+    #     domain = str(url).replace('http://', '').replace('https://', '').split('/')[0]
+    #     ans = dns.resolver(domain)
+    #     res = ans.response.answer
+    #     res_type = str(type(res[0][0])).split('.')[3]
+    #     return res_type
 
 
     def panAnalysis(self, domain):
@@ -316,6 +320,21 @@ class Domain:
                     cname_list.append(m[2])     # 收集被指向子域名，过多重复可不再重复收录
                 Urls.append(m[1])
         return Urls
+
+    def insertSubDomainData(self, data, tasknameid=''):
+        '''
+        保存数据进入数据库
+        :param data:
+        :param tasknameid:
+        :return:
+        '''
+        for d in data:
+            d['taskname'] = self.name
+            d['timestamp'] = datetime.datetime.now()
+            d['tasknameid'] = tasknameid
+            d['subdomain'] = yarl.URL(d['url']).host
+            pgsql.insert(DomainModel, data=d)
+        return
 
 
 class celery_domain:
