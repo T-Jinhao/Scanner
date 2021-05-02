@@ -63,7 +63,7 @@ class Scan():
         self.saveResult(self.results, 'webScan', 'webScan.txt')
         print(self.Output.fuchsia("-" * 40 + "<<<<<scan" + "\n"))
 
-    def output(self):
+    def output(self, tasknameid=''):
         if self.Phone != []:
             r_phone = []
             if self.isShow:
@@ -73,26 +73,29 @@ class Scan():
                         r_phone.append(x['capture_phone'])
                         print(self.Output.blue('[ result ] ') + self.Output.green(x['current_url']) + self.Output.interval() + x['capture_phone'])
             self.saveResult(self.Phone, 'phone', 'phone.txt')
+            self.insertPhoneData(self.Phone, tasknameid=tasknameid)
 
         if self.Email != []:
             if self.isShow:
                 r_email = []
                 print(self.Output.green('[ output ] ') + self.Output.cyan('邮箱'))
                 for x in self.Email:
-                    if x['email'] not in r_email:
-                        r_email.append(x['email'])
-                        print(self.Output.blue('[ result ] ') + self.Output.green(x['url']) + self.Output.interval() + x['email'])
+                    if x['capture_email'] not in r_email:
+                        r_email.append(x['capture_email'])
+                        print(self.Output.blue('[ result ] ') + self.Output.green(x['current_url']) + self.Output.interval() + x['capture_email'])
             self.saveResult(self.Email, 'email', 'email.txt')
+            self.insertMailData(self.Email, tasknameid=tasknameid)
 
         if self.ICP != []:
             if self.isShow:
                 r_icp = []
                 print(self.Output.green('[ output ] ') + self.Output.cyan('备案号'))
                 for x in self.ICP:
-                    if x['icp'] not in r_icp:
-                        r_icp.append(x['icp'])
-                        print(self.Output.blue('[ result ] ') + self.Output.green(x['url']) + self.Output.interval() + x['icp'])
+                    if x['capture_icp'] not in r_icp:
+                        r_icp.append(x['capture_icp'])
+                        print(self.Output.blue('[ result ] ') + self.Output.green(x['current_url']) + self.Output.interval() + x['capture_icp'])
             self.saveResult(self.ICP, 'icp', 'icp.txt')
+            self.insertIcpData(self.ICP, tasknameid=tasknameid)
         return
 
     def saveResult(self, report, sheetname='', txtFilename=''):
@@ -108,10 +111,10 @@ class Scan():
                 lable = ['capture_phone', 'current_url']
             elif sheetname == 'email':
                 banner = ['邮箱', '捕获页面']
-                lable = ['email', 'url']
+                lable = ['capture_email', 'current_url']
             elif sheetname == 'icp':
                 banner = ['备案号', '捕获页面']
-                lable = ['icp', 'url']
+                lable = ['capture_icp', 'current_url']
             else:
                 banner = []
                 lable = []
@@ -204,6 +207,22 @@ class Scan():
             d['timestamp'] = datetime.datetime.now()
             d['tasknameid'] = tasknameid
             pgsql.insert(ScanPhoneModel, data=d)
+        return
+
+    def insertMailData(self, data, tasknameid=''):
+        for d in data:
+            d['taskname'] = self.name
+            d['timestamp'] = datetime.datetime.now()
+            d['tasknameid'] = tasknameid
+            pgsql.insert(ScanMailModel, data=d)
+        return
+
+    def insertIcpData(self, data, tasknameid=''):
+        for d in data:
+            d['taskname'] = self.name
+            d['timestamp'] = datetime.datetime.now()
+            d['tasknameid'] = tasknameid
+            pgsql.insert(ScanIcpModel, data=d)
         return
 
 

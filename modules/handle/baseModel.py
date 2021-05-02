@@ -40,8 +40,8 @@ class BaseModel:
             for x in ret:
                 if x not in self.capture_Email and x.split('.')[-1] != 'png':
                     msg = {
-                        'url': url,
-                        'email': x
+                        'current_url': url,
+                        'capture_email': x
                     }
                     self.capture_Email.append(msg.copy())
         return
@@ -57,8 +57,8 @@ class BaseModel:
         try:
             if ret != None and ret[0] not in self.capture_ICP and ret[0] != []:
                 msg = {
-                    'icp': ret[0],
-                    'url': url
+                    'capture_icp': ret[0],
+                    'current_url': url
                 }
                 self.capture_ICP.append(msg.copy())
         except:
