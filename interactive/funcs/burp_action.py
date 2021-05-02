@@ -98,7 +98,7 @@ def checkSetValue(key, value):
             Info[key][1] = url
             r.save(k, url)
             # 自动刷新taskname
-            obj.setTaskname(url)
+        obj.setTaskname(url)
         return False  # 独立保存
     elif key == 'Payload':
         payloads = obj.checkPayload(value)
@@ -116,10 +116,11 @@ def run():
         if Info['Payload'][1] == 'default':   # 获取默认payload
             checkSetValue('Payload', 'default')
         obj.run(Info, P)
+        r.refreshTasknameid()   # 刷新tasknameid
 
 def updateInfo():
     # 刷新数值
-    for i in ['Url', 'Taskname']:
+    for i in ['Url', 'Taskname', 'Tasknameid']:
         Info[i][1] = r.queryInitKey(i)
     return
 
@@ -129,8 +130,7 @@ def execute():
         if Info['Payload'][1] == 'default':   # 获取默认payload
             checkSetValue('Payload', 'default')
         obj.execute(Info, P)
-        reset = ['set', 'Taskname', util.getRangeStr()]
-        setOption(reset)
+        r.refreshTasknameid()   # 刷新tasknameid
 
 def sysExit():
     obj = Burp.burp()
