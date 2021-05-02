@@ -35,6 +35,7 @@ class scan(common.Common):
         obj.output()
         results = obj.results
         obj.saveResult(results, 'webScan', 'webScan.txt')
+        obj.insertUrlData(results, '')
 
     def execute(self, Info):
         try:
