@@ -6,6 +6,7 @@ import re
 import os
 import socket
 from interactive.funcs import util
+from interactive.funcs import redisUtil
 
 class Common:
     def __init__(self):
@@ -81,3 +82,9 @@ class Common:
             util.printError('Invail Value.You can choice 0 or 1.')
             return False
         return True
+
+    def setTaskname(self, value):
+        taskname = util.getTaskname(url=value)
+        r = redisUtil.Redis()
+        r.save(key='current_Taskname', value=taskname)
+        return

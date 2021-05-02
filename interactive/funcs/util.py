@@ -4,6 +4,8 @@
 
 import random
 import string
+import datetime
+import yarl
 from lib.load_config import Config
 from lib.color_output import ColorOutput
 out = ColorOutput()
@@ -85,3 +87,30 @@ def getRangeStr(len=6):
     # 设置随机字符串
     ran_str = ''.join(random.sample(string.ascii_letters + string.digits, len))
     return ran_str
+
+def getTaskname(url, name=None):
+    '''
+    获取任务简称名，以域名为主
+    :param url: 网址
+    :param name: 自定义名称
+    :return:
+    '''
+    if name != None:
+        taskname = name
+    else:
+        ip = re.compile('[\d]{1,3}\.[\d]{1,3}\.[\d]{1,3}\.[\d]{1,3}')
+        netloc = yarl.URL(url).host
+        res = ip.match(netloc)
+        if res:    # ip形式的名称，需要改名
+            today = datetime.datetime.today()
+            formatted_today = today.strftime('%y%m%d')
+            taskname = formatted_today
+        else:
+            n = netloc.split(".")
+            if len(n) == 2:
+                taskname = n[0]
+            elif n[-2] not in ["com", "edu", "ac", "net", "org", "gov"]:  # 带地域标签的域名
+                taskname = n[-2]
+            else:
+                taskname = n[-3]
+    return taskname

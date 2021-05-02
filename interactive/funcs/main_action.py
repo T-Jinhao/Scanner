@@ -70,7 +70,7 @@ def checkSetValue(key, value):
     if key == 'Url':
         # 存入URL
         obj.checkUrl(value)
-        url = check_set.checkUrl(value)
+        url = check_set.checkUrl(value)  # 符合要求后的url
         if url != False:
             k = 'current_' + key
             Info[key][1] = url
@@ -83,6 +83,8 @@ def checkSetValue(key, value):
             k = 'current_' + key
             Info[key][1] = ip
             r.save(k, ip)
+        # 自动刷新taskname
+        obj.setTaskname(url)
         return False  # 独立保存
     elif key == 'Taskname':
         return obj.checkTaskname(value)
