@@ -38,7 +38,7 @@ class domain(common.Common):
         ip_list = r.IP_list
         r.saveDomainResult(report=report)
         r.saveIpResult(report_dict=ip_list)
-        r.insertSubDomainData(report, tasknameid='')
+        r.insertSubDomainData(report, tasknameid=Info['Tasknameid'][1])
 
     def execute(self, Info, p_list):
         try:
