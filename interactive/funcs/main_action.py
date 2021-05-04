@@ -60,6 +60,7 @@ def setOption(words):
         if checkSetValue(words[1], words[2]):
             key = 'current_' + words[1]
             r.save(key, words[2])
+            Info[words[1]][1] = words[2]
     return
 
 def checkSetValue(key, value):
@@ -100,7 +101,9 @@ def checkSetValue(key, value):
 def updateInfo():
     # 刷新数值
     for i in ['Ip', 'Taskname', 'Url', 'Tasknameid']:
-        Info[i][1] = r.queryInitKey(i)
+        new_value = r.queryInitKey(i)
+        if new_value != None:
+            Info[i][1] = new_value
     return
 
 def sysExit():

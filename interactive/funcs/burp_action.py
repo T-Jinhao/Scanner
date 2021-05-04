@@ -121,7 +121,9 @@ def run():
 def updateInfo():
     # 刷新数值
     for i in ['Url', 'Taskname', 'Tasknameid']:
-        Info[i][1] = r.queryInitKey(i)
+        new_value = r.queryInitKey(i)
+        if new_value != None:
+            Info[i][1] = new_value
     return
 
 def execute():
