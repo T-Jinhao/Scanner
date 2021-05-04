@@ -12,3 +12,5 @@ class TaskModel(BaseModel):
     description = CharField()
     # 目标
     target = CharField()
+    # 行为
+    action = CharField()

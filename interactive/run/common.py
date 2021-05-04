@@ -33,13 +33,14 @@ class Common:
             return
         sys.exit()
 
-    def saveRecord(self, Info, description='', target=''):
+    def saveRecord(self, Info, description='', target='', action=''):
         d = {
             'timestamp': datetime.datetime.now(),
             'taskname': Info['Taskname'][1],
             'tasknameid': Info['Tasknameid'][1],
+            'description': description,
             'target': target,
-            'description': description
+            'action': action
         }
         pgsql.insert(TaskModel, data=d)
         return
