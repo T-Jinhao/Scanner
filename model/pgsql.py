@@ -1,5 +1,5 @@
 from peewee import *
-
+from model.switch import getSwitch
 
 def get_connect(connect_info):
     '''
@@ -52,6 +52,8 @@ def insert(model, data):
     :param model: 对象模型
     :param data: 要插入的数据，字典类型，key对应字段，value对应值
     '''
+    if not getSwitch():   # 查看是否配置数据库
+        return
     # 如果表不存在，创建表
     create_table(model)
     # print(data)
