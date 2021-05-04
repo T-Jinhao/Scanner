@@ -56,7 +56,11 @@ class Redis:
 
     def refreshTasknameid(self):
         ran_str = util.getRangeStr()
-        self.r.set('current_Tasknameid', ran_str)
+        try:
+            self.r.set('current_Tasknameid', ran_str)
+            return True
+        except:
+            return False
 
 if __name__ == '__main__':
     r = Redis()
