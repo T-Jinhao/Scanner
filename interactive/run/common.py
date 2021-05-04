@@ -12,7 +12,7 @@ class Common:
 
     def checkRequired(self, Info):
         for x in Info:
-            if Info[x][0] == 'True' and Info[x][1] == '':
+            if Info[x][0] == 'True' and Info[x][1] in ['', None]:
                 util.printWarn('{} is required'.format(x))
                 return False
         return True

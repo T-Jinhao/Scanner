@@ -124,6 +124,8 @@ def updateInfo():
         new_value = r.queryInitKey(i)
         if new_value != None:
             Info[i][1] = new_value
+        if new_value == None and i == 'Tasknameid':
+            Info[i][1] = util.getRangeStr()
     return
 
 def execute():
