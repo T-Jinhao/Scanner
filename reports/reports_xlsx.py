@@ -20,7 +20,7 @@ class Report:
         :param lable: 用作文本切割
         '''
         self.report = report
-        self.taskname = str(taskname)
+        self.taskname = self.setTaskname(taskname)
         self.sheetname = sheetname
         self.banner = banner
         self.suc_msg = suc_msg
@@ -133,6 +133,19 @@ class Report:
         else:
             DATA = [x for x in data.split(':')]
         return DATA
+
+    def setTaskname(self, taskname):
+        '''
+        避免出现空文件名导致出错
+        :param taskname:
+        :return:
+        '''
+        taskname = str(taskname)
+        if taskname == '':
+            today = datetime.datetime.today()
+            formatted_today = today.strftime('%y%m%d')
+            taskname = formatted_today
+        return taskname
 
 
 
