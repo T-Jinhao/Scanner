@@ -33,12 +33,12 @@ class Common:
             return
         sys.exit()
 
-    def saveRecord(self, Info, description='', target='', action=''):
+    def saveRecord(self, Info, model='', target='', action=''):
         d = {
             'timestamp': datetime.datetime.now(),
             'taskname': Info['Taskname'][1],
             'tasknameid': Info['Tasknameid'][1],
-            'description': description,
+            'model': model,
             'target': target,
             'action': action
         }
