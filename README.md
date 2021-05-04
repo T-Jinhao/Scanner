@@ -30,9 +30,13 @@
 
 python3
 
-`pip install -r requirements.txt`
+`python3 setup.py install`
 
+redis  
+`环境需自行搭建，配置信息请在config.ini中正确填写，无redis亦可正常运行，但部分功能不完整`
 
+postgresql  
+`环境需自行搭建，配置信息请在config.ini中正确填写，并修改其中save=true，另database需自行创建`  
 
 ### 结构
 文件夹 | 用途
