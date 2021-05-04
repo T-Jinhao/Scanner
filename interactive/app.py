@@ -21,8 +21,6 @@ Func = {
 class Interactive():
     def __init__(self):
         self.Output = ColorOutput()
-        self.url = ''
-        self.action = ''
         self.workbench = 'main'
         ran_str = util.getRangeStr()
         redisUtil.Redis().initTask(ran_str)   # 初始化

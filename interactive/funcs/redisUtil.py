@@ -38,8 +38,9 @@ class Redis:
             self.r.set('current_Url', '')
             self.r.set('current_Ip', '')
             self.r.set('current_Taskname', taskname)
-        except:
-            pass
+        except Exception as e:
+            util.printWarn(str(e))
+            return False
 
     def queryInitKey(self, key):
         k = 'current_' + key
