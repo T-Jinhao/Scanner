@@ -3,7 +3,10 @@
 #author:Jinhao
 
 import sys
+import datetime
 from interactive.funcs import util
+from model import pgsql
+from model.TaskModel import TaskModel
 from lib.color_output import ColorOutput
 
 class Common:
@@ -29,3 +32,14 @@ class Common:
         if confirm not in ['Y', 'y']:
             return
         sys.exit()
+
+    def saveRecord(self, Info, description='', target=''):
+        d = {
+            'timestamp': datetime.datetime.now(),
+            'taskname': Info['Taskname'][1],
+            'tasknameid': Info['Tasknameid'][1],
+            'target': target,
+            'description': description
+        }
+        pgsql.insert(TaskModel, data=d)
+        return
