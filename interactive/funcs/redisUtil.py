@@ -13,8 +13,12 @@ class Redis:
         host = config.get("Redis", "host")
         port = config.get("Redis", "port")
         password = config.get("Redis", "password")
-        pool = redis.ConnectionPool(host=host, port=port, decode_responses=True, password=password)
-        self.r = redis.Redis(connection_pool=pool)
+        try:
+            pool = redis.ConnectionPool(host=host, port=port, decode_responses=True, password=password)
+            self.r = redis.Redis(connection_pool=pool)
+        except redis.ConnectionError as e:
+            util.printError("[!]Redis")
+            print(e)
 
     def query(self, key):
         try:
