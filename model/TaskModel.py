@@ -9,7 +9,7 @@ class TaskModel(BaseModel):
     # taskname唯一编号
     tasknameid = CharField()
     # 模块
-    model = CharField()
+    module = CharField()
     # 目标
     target = CharField()
     # 行为

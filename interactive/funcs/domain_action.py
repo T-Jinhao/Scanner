@@ -116,6 +116,12 @@ def run():
     if obj.checkRequired(Info):
         if Info['Payload'][1] == 'default':   # 获取默认payload
             checkSetValue('Payload', 'default')
+        obj.saveRecord(
+            Info=Info,
+            module='domain',
+            target=Info['Url'][1],
+            action='run'
+        )
         obj.run(Info, P)
         r.refreshTasknameid()
 
@@ -134,6 +140,12 @@ def execute():
     if obj.checkRequired(Info):
         if Info['Payload'][1] == 'default':   # 获取默认payload
             checkSetValue('Payload', 'default')
+        obj.saveRecord(
+            Info=Info,
+            module='domain',
+            target=Info['Url'][1],
+            action='execute'
+        )
         obj.execute(Info, P)
         r.refreshTasknameid()
 

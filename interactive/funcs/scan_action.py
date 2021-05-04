@@ -108,6 +108,12 @@ def checkSetValue(key, value):
 def run():
     obj = Scan.scan()
     if obj.checkRequired(Info):
+        obj.saveRecord(
+            Info=Info,
+            module='scan',
+            target=Info['Url'][1],
+            action='run'
+        )
         obj.run(Info)
         r.refreshTasknameid()
 
@@ -124,6 +130,12 @@ def updateInfo():
 def execute():
     obj = Scan.scan()
     if obj.checkRequired(Info):
+        obj.saveRecord(
+            Info=Info,
+            module='scan',
+            target=Info['Url'][1],
+            action='execute'
+        )
         obj.execute(Info)
         r.refreshTasknameid()   # 刷新tasknameid
 
