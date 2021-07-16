@@ -7,7 +7,7 @@ class Parsing:
         self.status = ''
         self.url = ''
         self.ip = ''
-        self.content_length = ''
+        self.content_length = 0
         self.protourl = protourl
 
     async def parse(self, res):
@@ -15,7 +15,8 @@ class Parsing:
         self.status = res.status
         self.url = res.url
         self.ip = await self.getIp(self.url)
-        self.content_length = res.content_length
+        if res.content_length:
+            self.content_length = res.content_length
 
     async def getIp(self, url):
         host = yarl.URL(url).host
