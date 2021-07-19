@@ -23,12 +23,6 @@ class Terminal(BaseModel):
                         flag = False   # 标题重复但文本长度不重复
 
                 if flag == True:  # 以上条件任意为真方可进入
-                    # msg = "{status} : {len} : {title} : {url}".format(
-                    #     status=str(resp.status),
-                    #     len=str(resp.content_length),
-                    #     title=title,
-                    #     url=resp.url
-                    # )
                     msg = {
                         'status_code': str(resp.status),
                         'content_length': str(resp.content_length),
@@ -49,12 +43,6 @@ class Terminal(BaseModel):
         # 内置判断
         elif resp.status in [200, 302, 500, 502, 403]:   # 仅需要这几个端口
             title = util.getTitle(resp.text)
-            # msg = "{status} : {len} : {title} : {url}".format(
-            #     status=str(resp.status),
-            #     len=str(resp.content_length),
-            #     title=title,
-            #     url=resp.url
-            # )
             msg = {
                 'status_code': str(resp.status),
                 'content_length': str(resp.content_length),
