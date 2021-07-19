@@ -40,15 +40,17 @@ class Burp():
         print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('开始分析网站: ') + self.Output.cyan(self.url))
         self.load_config()
         payloads = self.autoLoad(self.proto_url)
-        if payloads:
-            print(self.Output.blue('[ Load ] ') + self.Output.green('payload导入完成，数量：{}'.format(len(payloads))))
-            report = self.run(payloads)
-            self.saveResult(report)
-            self.insertData(report)
-        else:
+        if not payloads:   # 空白payload数组
             print(self.Output.blue('[ Load ]') + self.Output.red('payload导入失败'))
-        print(self.Output.fuchsia('-' * 40 + 'burp<<<<<' + '\n'))
-        return
+            print(self.Output.fuchsia('-' * 40 + 'burp<<<<<' + '\n'))
+            return
+        print(self.Output.blue('[ Load ] ') + self.Output.green('payload导入完成，数量：{}'.format(len(payloads))))
+        report = self.run(self.proto_url, payloads)
+        if self.flag:   # 递归403页面爆破
+            pass
+        self.saveResult(report)
+        self.insertData(report)
+
 
     def autoLoad(self, baseUrl):
         '''
@@ -66,6 +68,9 @@ class Burp():
         sys.stdout.flush()
         payloads = self.load_payload(web_type)
         return payloads
+
+    def autoRun(self):
+        pass
 
     def saveResult(self, report):
         if report == []:
@@ -196,7 +201,7 @@ class Burp():
         :param payloads: 导入的payload
         :return:
         '''
-        URL = [baseUrl+x for x in payloads]
+        URL = [baseUrl.rstrip('/')+x for x in payloads]
         handler = burpTerminal.Terminal(scanmode=self.scan_mode, isShow=self.isShow)  # 获取文本处理对象+分类检测
         REQ = asyncHttp.req(
             handler=handler,

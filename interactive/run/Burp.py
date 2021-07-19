@@ -17,14 +17,15 @@ class burp(common.Common):
             name=Info['Taskname'][1],
             flag=0
         )
+        baseUrl = r.url_parse(Info['Url'][1]).rstrip('/')
         r.load_config()
         r.threads = int(Info['Workers'][1])
         r.timeout = float(Info['Timeout'][1])
         r.isThread = isThread
         r.isShow = isShow
         # 运行
-        r.scan_mode_indetify()    # 获取Scanmode
-        results = r.run(payloads=payloads)  # 运行
+        r.scan_mode_indetify(baseUrl=baseUrl)    # 获取Scanmode
+        results = r.run(baseUrl=baseUrl, payloads=payloads)  # 运行
         r.saveResult(results)
         r.insertData(results, tasknameid=Info['Tasknameid'][1])
 
