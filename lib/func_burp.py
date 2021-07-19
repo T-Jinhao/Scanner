@@ -24,6 +24,7 @@ class Burp():
         self.name = name
         self.payload = payload
         self.scan_mode = 0
+        self.switch = 1
         self.Output = ColorOutput()
 
     def load_config(self):
@@ -45,9 +46,18 @@ class Burp():
             print(self.Output.fuchsia('-' * 40 + 'burp<<<<<' + '\n'))
             return
         print(self.Output.blue('[ Load ] ') + self.Output.green('payload导入完成，数量：{}'.format(len(payloads))))
-        report = self.run(self.proto_url, payloads)
-        if self.flag:   # 递归403页面爆破
-            pass
+        report = self.run(self.proto_url, payloads[:1000])
+        # 递归403页面爆破
+        while self.flag and self.switch:
+            urls = self.filterUrl(report)
+            if not urls:   # 没有403页面
+                self.switch = 0  # 跳出递归
+                break
+            nums = len(urls)
+            if nums > 20:   # 可视为不正常页面
+                self.switch = 0
+                break
+
         self.saveResult(report)
         self.insertData(report)
 
@@ -69,8 +79,23 @@ class Burp():
         payloads = self.load_payload(web_type)
         return payloads
 
-    def autoRun(self):
-        pass
+    def filterUrl(self, report):
+        '''
+        挑选403页面
+        :param report:
+        :return:
+        '''
+        urls = []
+        for r in report:
+            if r['status_code'] == '403':
+                url = str(r['url'])
+                path = url.split('/')[-1]
+                if path.startswith('.') and len(path.split('.')) < 3:  # 剔除403文件页面
+                    urls.append(r['url'])
+                elif len(path.split('.')) < 2:
+                    urls.append(r['url'])
+        urls = list(set(urls))
+        return urls
 
     def saveResult(self, report):
         if report == []:
