@@ -39,15 +39,7 @@ class Burp():
         print(self.Output.fuchsia('>>>>>burp' + '-' * 40))
         print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('开始分析网站: ') + self.Output.cyan(self.url))
         self.load_config()
-        web_type = self.web_indetify(self.proto_url)   # 静态匹配后缀名
-        if web_type == '':
-            web_type = self.web_auto_indetify()
-        print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('网站类型: ') + self.Output.cyan(web_type))
-        mode_msg = self.scan_mode_indetify()
-        msg = {0: '基于网站状态码检验模式', 1: '基于网站页面内容检验模式'}
-        print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('分析模式: ') + self.Output.cyan(msg[mode_msg]))
-        sys.stdout.flush()
-        payloads = self.load_payload(web_type)
+        payloads = self.autoLoad(self.proto_url)
         if payloads:
             print(self.Output.blue('[ Load ] ') + self.Output.green('payload导入完成，数量：{}'.format(len(payloads))))
             report = self.run(payloads)
@@ -57,6 +49,23 @@ class Burp():
             print(self.Output.blue('[ Load ]') + self.Output.red('payload导入失败'))
         print(self.Output.fuchsia('-' * 40 + 'burp<<<<<' + '\n'))
         return
+
+    def autoLoad(self, baseUrl):
+        '''
+        自动识别并加载payload
+        :param baseUrl: 基础URL
+        :return:
+        '''
+        web_type = self.web_indetify(baseUrl)
+        if web_type == '':
+            web_type = self.web_auto_indetify(baseUrl)
+        print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('网站类型: ') + self.Output.cyan(web_type))
+        mode_msg = self.scan_mode_indetify(baseUrl)
+        msg = {0: '基于网站状态码检验模式', 1: '基于网站页面内容检验模式'}
+        print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('分析模式: ') + self.Output.cyan(msg[mode_msg]))
+        sys.stdout.flush()
+        payloads = self.load_payload(web_type)
+        return payloads
 
     def saveResult(self, report):
         if report == []:
@@ -95,7 +104,7 @@ class Burp():
                 return x
 
 
-    def web_indetify(self,url):
+    def web_indetify(self, url):
         '''
         分析网站类型
         :param url:
@@ -109,14 +118,14 @@ class Burp():
             return ''
 
 
-    def web_auto_indetify(self):
+    def web_auto_indetify(self, baseUrl):
         '''
         自动添加path并识别网页类型
         :return:
         '''
         # web_type = []
         sites = ['/index.php', '/index.asp', '/index.aspx', '/index.mdb', '/index.jsp']
-        res = self.run(sites)
+        res = self.run(baseUrl, sites)
         if len(res) > 1 or res == []:
             return '未能识别'
         else:
@@ -154,7 +163,7 @@ class Burp():
                 payloads.append(x.replace('\n', ''))
             f.close()
 
-        elif filename == '' or self.flag:
+        elif filename == '':   # 未能识别网站类型
             file = 'dicc.txt'
             payloadpath = "{0}/{1}/{2}".format(path, r'../dict/burp', file)
             F = open(payloadpath, "r")
@@ -168,26 +177,26 @@ class Burp():
         payloads = list(set(payloads))
         return payloads
 
-    def scan_mode_indetify(self):
+    def scan_mode_indetify(self, baseUrl):
         '''
         用bad_payload去访问，获取出错页面的情况
         :return:
         '''
         impossible_payload = ['/aaaaaaaaaaaaaaaa','/bbbbbbbbbbbbbbbb','/asodhpfpowehrpoadosjfho']   # 无中生有的payload
-        res = self.run(impossible_payload)
+        res = self.run(baseUrl, impossible_payload)
         if res != []:
             self.scan_mode = 1
             return 1
         return 0
 
 
-    def run(self, payloads):
+    def run(self, baseUrl, payloads):
         '''
         调用异步请求
         :param payloads: 导入的payload
         :return:
         '''
-        URL = [self.url+x for x in payloads]
+        URL = [baseUrl+x for x in payloads]
         handler = burpTerminal.Terminal(scanmode=self.scan_mode, isShow=self.isShow)  # 获取文本处理对象+分类检测
         REQ = asyncHttp.req(
             handler=handler,
