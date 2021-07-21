@@ -14,7 +14,7 @@ class burp(common.Common):
         flag = self.getFlag(Info['Recursion'][1])
         r = func_burp.Burp(
             url=Info['Url'][1],
-            payload='',    # 运行时添加
+            payload=payloads,
             name=Info['Taskname'][1],
             flag=flag
         )
@@ -27,6 +27,8 @@ class burp(common.Common):
         # 运行
         r.scan_mode_indetify(baseUrl=baseUrl)    # 获取Scanmode
         results = r.run(baseUrl=baseUrl, payloads=payloads)  # 运行
+        if flag and results:   # 递归403页面爆破
+            results = r.autoRecursion(report=results)
         r.saveResult(results)
         r.insertData(results, tasknameid=Info['Tasknameid'][1])
 

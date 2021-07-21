@@ -49,23 +49,38 @@ class Burp():
         report = self.run(self.proto_url, payloads)
         # 递归403页面爆破
         if self.flag and report:
-            results = self.autoRecursion(report)
-
+            report = self.autoRecursion(report)
         self.saveResult(report)
         self.insertData(report)
 
     def autoRecursion(self, report):
-        results = []
+        '''
+        403页面递归爆破
+        :param report:
+        :return:
+        '''
+        results = report  # 附加
+        url_report = report
+        self.isShow = False   # 关闭输出
         while self.flag and self.switch:
-            urls = self.filterUrl(report)
-            print(urls)
+            urls = self.filterUrl(url_report)   # 筛选出403文件夹路径
+            url_report = []     # 重置列表
             if not urls:  # 没有403页面
+                print(self.Output.blue('[ schedule ] ') + self.Output.yellow('没有403页面，停止递归爆破'))
                 self.switch = 0  # 跳出递归
                 break
             nums = len(urls)
-            if nums > 20:  # 可视为不正常页面
+            if nums > 10:  # 可视为不正常页面
+                print(self.Output.blue('[ schedule ] ') + self.Output.yellow('403页面过多，响应可疑，已停止爆破'))
                 self.switch = 0
                 break
+            for u in urls:
+                print(self.Output.blue('[ schedule ] ') + self.Output.fuchsia('开始分析网站: ') + self.Output.cyan(u))
+                payloads = self.load_payload(type='')
+                result = self.run(baseUrl=u, payloads=payloads)  # 当前url爆破结果
+                if(len(result) < 100):   # 页面过多，可疑
+                    url_report += result
+                    results += url_report    # 总结果
         return results
 
 
@@ -98,9 +113,9 @@ class Burp():
                 url = str(r['url'])
                 path = url.split('/')[-1]
                 if path.startswith('.') and len(path.split('.')) < 3:  # 剔除403文件页面
-                    urls.append(r['url'])
+                    urls.append(url)
                 elif len(path.split('.')) < 2:
-                    urls.append(r['url'])
+                    urls.append(url)
         urls = list(set(urls))
         return urls
 
@@ -233,6 +248,8 @@ class Burp():
         :param payloads: 导入的payload
         :return:
         '''
+        if payloads == []:
+            return []
         URL = [baseUrl.rstrip('/')+x for x in payloads]
         handler = burpTerminal.Terminal(scanmode=self.scan_mode, isShow=self.isShow)  # 获取文本处理对象+分类检测
         REQ = asyncHttp.req(
