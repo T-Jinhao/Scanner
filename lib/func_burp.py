@@ -46,20 +46,27 @@ class Burp():
             print(self.Output.fuchsia('-' * 40 + 'burp<<<<<' + '\n'))
             return
         print(self.Output.blue('[ Load ] ') + self.Output.green('payload导入完成，数量：{}'.format(len(payloads))))
-        report = self.run(self.proto_url, payloads[:1000])
+        report = self.run(self.proto_url, payloads)
         # 递归403页面爆破
-        while self.flag and self.switch:
-            urls = self.filterUrl(report)
-            if not urls:   # 没有403页面
-                self.switch = 0  # 跳出递归
-                break
-            nums = len(urls)
-            if nums > 20:   # 可视为不正常页面
-                self.switch = 0
-                break
+        if self.flag and report:
+            results = self.autoRecursion(report)
 
         self.saveResult(report)
         self.insertData(report)
+
+    def autoRecursion(self, report):
+        results = []
+        while self.flag and self.switch:
+            urls = self.filterUrl(report)
+            print(urls)
+            if not urls:  # 没有403页面
+                self.switch = 0  # 跳出递归
+                break
+            nums = len(urls)
+            if nums > 20:  # 可视为不正常页面
+                self.switch = 0
+                break
+        return results
 
 
     def autoLoad(self, baseUrl):
