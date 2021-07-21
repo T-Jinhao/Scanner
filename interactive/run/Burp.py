@@ -11,11 +11,12 @@ class burp(common.Common):
     def run(self, Info, p_list, isThread=False, isShow =True):
         # 设置参数配置
         payloads = p_list['payloads']
+        flag = self.getFlag(Info['Recursion'][1])
         r = func_burp.Burp(
             url=Info['Url'][1],
             payload='',    # 运行时添加
             name=Info['Taskname'][1],
-            flag=0
+            flag=flag
         )
         baseUrl = r.url_parse(Info['Url'][1]).rstrip('/')
         r.load_config()

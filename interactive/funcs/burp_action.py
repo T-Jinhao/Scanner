@@ -12,8 +12,8 @@ from interactive.run import Burp
 r = redisUtil.Redis()
 
 Commands = {
-    'info': ['Url', 'Timeout', 'Workers', 'Payload', 'Taskname', 'Tasknameid'],
-    'set': ['Url', 'Payload', 'Timeout', 'Workers', 'Taskname'],
+    'info': ['Url', 'Timeout', 'Workers', 'Payload', 'Taskname', 'Tasknameid', 'Recursion'],
+    'set': ['Url', 'Payload', 'Timeout', 'Workers', 'Taskname', 'Recursion'],
     'usemodule': configuration.usemodule,
     'run': [],
     'exit': [],
@@ -43,6 +43,7 @@ Info = {
     'Taskname': ['False', '', 'The abbreviation of current work.'],
     'Tasknameid': ['True', r.queryInitKey('Tasknameid'),
                    'The uniquely identifies of current work.And it can\'t be modified.'],
+    'Recursion': ['False', 'False', 'Recursive directory blasting.']
 }
 
 def checkIn(enter):
