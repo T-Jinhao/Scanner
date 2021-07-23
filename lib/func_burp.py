@@ -110,7 +110,7 @@ class Burp():
         urls = []
         for r in report:
             if r['status_code'] == '403':
-                url = str(r['url'])
+                url = str(r['url']).rstrip('/')
                 path = url.split('/')[-1]
                 if not path.startswith('.') and len(path.split('.')) < 2:  # 剔除403文件页面
                     urls.append(url)
@@ -210,12 +210,16 @@ class Burp():
         path = os.path.dirname(__file__)
         if filename != '':
             filepath = "{0}/{1}/{2}".format(path, r'../dict/burp', filename)
-            f = open(filepath, 'r')
-            for x in f:
-                payloads.append(x.replace('\n', ''))
-            f.close()
+            try:
+                f = open(filepath, 'r')
+                for x in f:
+                    payloads.append(x.replace('\n', ''))
+                f.close()
+            except Exception as e:
+                print(self.Output.blue('[ Load ]') + self.Output.red('payload读取失败: '), e)
+                filename = ''   # 读取失败
 
-        elif filename == '':   # 未能识别网站类型
+        if filename == '':   # 未能识别网站类型
             file = 'dicc.txt'
             payloadpath = "{0}/{1}/{2}".format(path, r'../dict/burp', file)
             F = open(payloadpath, "r")
