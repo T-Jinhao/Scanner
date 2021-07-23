@@ -112,10 +112,10 @@ class Burp():
             if r['status_code'] == '403':
                 url = str(r['url']).rstrip('/')
                 path = url.split('/')[-1]
-                if not path.startswith('.') and len(path.split('.')) < 2:  # 剔除403文件页面
-                    urls.append(url)
-                # elif len(path.split('.')) < 2:
+                # if not path.startswith('.') and len(path.split('.')) < 2:  # 剔除403文件页面
                 #     urls.append(url)
+                if len(path.split('.')) < 2:
+                    urls.append(url)
         urls = list(set(urls))
         return urls
 
