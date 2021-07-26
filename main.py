@@ -170,7 +170,7 @@ def terminal_input():
     '''
     if len(sys.argv) == 1:
         sys.argv.append('-h')
-    parser = argparse.ArgumentParser(description='简易扫描器，[]内为可用功能模块，<>内为开启极致模式的简述',add_help=True)
+    parser = argparse.ArgumentParser(description='简易扫描器，[]内为可用功能模块，<>内为开启-X模式的简述', add_help=True)
     parser.add_argument('-u','--url', help='扫描对象的url')
     parser.add_argument('-i', '--interactive', help='交互式控制台', action='store_true')
     parser.add_argument('-n','--name', help='保存结果文本命名', default=None)
@@ -178,9 +178,9 @@ def terminal_input():
     parser.add_argument('-P', '--ports', help='探测目标主机开放端口[-X]<支持自定义端口范围>', action='store_true')
     parser.add_argument('-H','--hosts', help='探测存活主机', action='store_true')
     parser.add_argument('-S','--scan', help='爬取页面的网页链接并分析 [--cookie]<js文件分析>', action='store_true')
-    parser.add_argument('-L','--login', help='测试网站密码缺陷[-F,-T]<测试弱密码>', action='store_true')
-    parser.add_argument('-B','--burp', help='爆破网站目录[-F,-X,-T]<403页面递归爆破>', action='store_true')
-    parser.add_argument('-D','--domain',help='挖掘网站子域名[-F,-X]<使用在线数据爆破>', action='store_true')
+    parser.add_argument('-L','--login', help='测试网站密码缺陷[-lF]<测试弱密码>', action='store_true')
+    parser.add_argument('-B','--burp', help='爆破网站目录[-bF,-X]<403页面递归爆破>', action='store_true')
+    parser.add_argument('-D','--domain',help='挖掘网站子域名[-dF,-X]<使用在线数据爆破>', action='store_true')
     parser.add_argument('-bF', '--bfile', default=None, help='Burp模块自定义payload文件')
     parser.add_argument('-dF', '--dfile', default=None, help='Domain模块自定义payload文件')
     parser.add_argument('-lF', '--lfile', default=None, help='Login模块自定义payload文件')
