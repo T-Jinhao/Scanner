@@ -72,8 +72,8 @@ class Domain:
         # 普通模式及rapid获取数据失败的情况下，使用字典爆破
         if report == []:
             self.flag = False   # 更改为普通模式，用作保存时区别
-            onlineReport = self.chinaz_search()  # chinaz在线查询接口获得的数据
-            payload = self.load_payload(onlineReport)  # 合并数据
+            # onlineReport = self.chinaz_search()  # chinaz在线查询接口获得的数据
+            payload = self.load_payload(report)  # 合并数据
             if payload:
                 print(self.Output.blue('[ Load ] ') + self.Output.green('payload导入完成，数量：{}'.format(len(payload))))
                 report = self.run(payload)   # 运行爆破
@@ -175,7 +175,6 @@ class Domain:
         except:
             print(self.Output.yellow('[ warn ] ') + self.Output.cyan('站长之家api没有获取数据'))
             return []
-
         domain = re.compile('[\w]+\.{}'.format(self.domain))  # 正则提取子域名
         for i in range(1, pagenum+1):
             url = "https://tool.chinaz.com/subdomain/?domain={}&page={}".format(self.domain, str(i))
