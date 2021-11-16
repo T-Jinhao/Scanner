@@ -18,7 +18,7 @@ from .load_config import Config
 from modules.func import util
 from modules.handle import subdomainTerminal
 from modules.func import asyncHttp
-from modules.func import _requests
+from modules.func import gevent_requests
 from model import pgsql
 from model.DomainModel import DomainModel
 
@@ -28,7 +28,7 @@ class Domain:
     def __init__(self, url, payload,  name, flag):
         self.domain = self.url_check(url)
         self.payload = payload
-        self.REQ = _requests.Concurrent()
+        self.REQ = gevent_requests.Concurrent()
         self.flag = flag
         self.name = name
         self.url = url

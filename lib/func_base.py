@@ -4,7 +4,7 @@
 
 import re
 import socket
-from modules.func import _requests
+from modules.func import gevent_requests
 
 headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
@@ -73,7 +73,7 @@ class CDNcontent:
 
 
 if __name__ == '__main__':
-    r = _requests.Concurrent()
+    r = gevent_requests.Concurrent()
     x = IPcontent('baidu.com', r)
     rep = x.run()
     for m in rep:

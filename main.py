@@ -12,7 +12,7 @@ import yarl
 import socket
 from lib import func_sqli,func_hosts,func_domain,func_ports,func_burp,func_scan,func_login
 from lib import celery_run,func_base,load_config
-from modules.func import check, _requests
+from modules.func import check, gevent_requests
 from lib.color_output import *
 from interactive import app
 from modules.func import util
@@ -108,7 +108,7 @@ class Scanner():
 
         # 设置基础请求体
         self.cookies = O.checkCookies(self.args.cookies)
-        self.REQ = _requests.Concurrent(
+        self.REQ = gevent_requests.Concurrent(
             cookies=self.cookies,
         )
 
