@@ -2,6 +2,9 @@
 # -*- coding:utf8 -*-
 #author:Jinhao
 
+from gevent import monkey
+monkey.patch_all(select=False, thread=False)
+
 import argparse
 import re
 import threading
