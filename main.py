@@ -51,14 +51,13 @@ class Scanner():
             except Exception as e:
                 print(e)
         print(self.Output.red('[ Error ] ') + self.Output.cyan("{}:该域名未查询到绑定IP".format(self.args.url)))
-        exit(0)
 
 
     def base_report(self):
         self.host = self.getHostname()  # 获取domain
         print(self.Output.fuchsia('>>>>>base_report'+'-'*40))
         print(self.Output.green('[ 输入URL ] ') + self.Output.white(self.args.url))
-        print(self.Output.green('[ 解析host ] ') + self.host)
+        print(self.Output.green('[ 解析host ] ') + str(self.host))
         print(self.Output.green('[ 任务命名 ] ') + self.taskname)
         config = Config().readConfig()
         showIP = config.getboolean("Main", "ip_report")

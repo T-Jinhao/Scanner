@@ -16,6 +16,8 @@ class IPcontent:
         self.REQ = REQ
 
     def run(self):
+        if self.ip == None:
+            return []
         res = self.getDomainData()
         date = self.soupDate(res)
         domain = self.reDomain(res)
