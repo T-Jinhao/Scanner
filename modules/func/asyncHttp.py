@@ -33,7 +33,8 @@ class req:
                     if rep != None:
                         self.results.append(rep)
             except Exception as e:
-                print(e)
+                pass
+                # print(e)
 
 
     async def run(self, URLs):

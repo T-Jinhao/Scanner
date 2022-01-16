@@ -49,7 +49,8 @@ class Scanner():
                 ip = socket.gethostbyname(host)
                 return ip
             except Exception as e:
-                print(e)
+                # print(e)
+                pass
         print(self.Output.red('[ Error ] ') + self.Output.cyan("{}:该域名未查询到绑定IP".format(self.args.url)))
 
 

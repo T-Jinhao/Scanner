@@ -296,7 +296,8 @@ class Domain:
                             print(self.Output.blue('[ Load ] ') + self.Output.cyan('获取数据成功，即将开始存活性筛选'))
                         return ret_dict
         except Exception as e:
-            print(e)
+            pass
+            # print(e)
         return []
 
     async def resultParse(self, text):
